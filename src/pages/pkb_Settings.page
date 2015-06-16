@@ -1,0 +1,135 @@
+<apex:page standardController="PKB__c" 
+  extensions="pkb_SettingsController" 
+  tabStyle="PKB_2_Settings__tab"
+  title="Public Knowledge Base Settings Editor">
+<html>
+<head>
+<apex:includeScript value="{!$Resource.pkb_jquery_1_6_2}"/>
+<script type="text/javascript">
+var MULTI_LANG_CHECKBOX_ID = 'multiLanguageCheckbox';
+var LANG_SELECT_PANEL_ID = 'langSelectPanel';
+
+var $$ = jQuery.noConflict();
+
+var pageUrl = '{!$Page.pkb_Settings}';
+function selectingSettings(e) {
+  if (e.selectedIndex > 0) {
+    window.location.href = pageUrl+ '?id=' +e.options[e.selectedIndex].value;
+  }
+}
+
+function multiLangCheckboxClicked(o) {
+  var display = (o.checked ? 'block' : 'none');
+  $$('#' +LANG_SELECT_PANEL_ID)[0].style.display = display;
+}
+
+</script>
+</head>
+
+<apex:variable var="langDisplayValue" value="{!IF(PKB__c.Multi_Language_Enabled__c, 'block', 'none')}" />
+
+<body>
+
+  <apex:form >
+    <apex:pageBlock id="thePage" title="Public Knowledge Base Settings Editor" mode="edit">
+      <!--  empty rendering for standard controller purposes -->
+      <apex:outputField value="{!PKB__c.Selected_Languages__c}" rendered="false" />        
+
+      <apex:pageBlockSection showHeader="false" collapsible="false" rendered="{!settingsExist}" columns="1">
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel layout="block">{!$Label.PKB2_Select_Settings}</apex:outputPanel>
+            <apex:outputPanel layout="block">
+              <apex:selectList value="{!selectedSettings}" size="1" multiSelect="false" onchange="selectingSettings(this);">
+                <apex:selectOptions value="{!settingsOptions}" />
+              </apex:selectList>&nbsp;
+            <apex:outputLink value="{!$Page.pkb_Settings}">{!$Label.PKB2_Create_Settings}
+              <apex:param name="{!createSettingsParam}" value="{!createSettingsValue}" />
+            </apex:outputLink>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection showHeader="false" collapsible="false" rendered="{!NOT(settingsExist) && NOT(creatingSettings)}" columns="1">
+        <apex:pageBlockSectionItem >
+            <apex:outputPanel layout="block"></apex:outputPanel>
+            <apex:outputPanel layout="block">
+              {!$Label.PKB2_No_Settings_Yet}<br/><br/>
+              <apex:outputLink value="{!$Page.pkb_Settings}">{!$Label.PKB2_Create_Settings}
+              <apex:param name="createSettings" value="1" />
+            </apex:outputLink>
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+
+      <apex:pageBlockButtons rendered="{!(settingsPicked || creatingSettings)}" location="top">
+        <apex:commandButton value="Save" action="{!saveSettings}" rerender="thePage" status="theStatus" />
+        <apex:actionStatus id="theStatus">
+          <apex:facet name="start"><apex:image value="{!$Resource.pkb_loadingdots}" /></apex:facet>
+          <apex:facet name="stop"></apex:facet>
+        </apex:actionStatus>
+      </apex:pageBlockButtons>
+  
+      <apex:outputPanel layout="block" rendered="{!(settingsPicked || creatingSettings)}">
+
+          <apex:pageBlockSection showHeader="false" collapsible="false" columns="1">
+          <apex:pageBlockSectionItem >
+	          <apex:outputLabel for="Name" value="Name" />
+	          <apex:outputPanel layout="block">
+	            <apex:inputField value="{!PKB__c.Name}" id="Name" style="width: 200px;" />
+	            ({!$Label.PKB2_Value_Must_Match_Name})
+	          </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+          <apex:inputField value="{!PKB__c.Display_Article_Summary__c}" />
+          <apex:inputField value="{!PKB__c.Create_Contact_and_Account__c}" />       
+          <apex:inputField value="{!PKB__c.Popular_Articles_Size__c}" />
+          <apex:inputField value="{!PKB__c.Related_Articles_Size__c}" />
+          <apex:inputField value="{!PKB__c.Results_Page_Size__c}" />
+          <apex:inputField value="{!PKB__c.FBAppId__c}" />
+          <apex:inputField value="{!PKB__c.Multi_Language_Enabled__c}" id="multiLanguageCheckbox" onclick="multiLangCheckboxClicked(this);"/>
+          
+          <apex:pageBlockSectionItem id="langSelectItem">
+            <apex:outputPanel layout="inline">&nbsp;</apex:outputPanel>
+            <apex:outputPanel layout="block">
+              <div style="display: {!langDisplayValue};" id="langSelectPanel">
+                <span>Please select the languages that a user can choose from when searching the PKB:</span><br/>
+                <apex:selectList value="{!selectedLanguages}" multiSelect="true" size="{!allLanguageOptionsSize}">
+                  <apex:selectOptions value="{!allLanguageOptions}" />
+                </apex:selectList>
+              </div>
+            </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+
+        </apex:pageBlockSection>
+    
+          <apex:pageBlockSection showHeader="false" collapsible="false" columns="1">
+            <apex:inputField value="{!PKB__c.Category_Group_1__c}" />
+            <apex:inputField value="{!PKB__c.Root_Category_1__c}" />        
+          </apex:pageBlockSection>
+    
+          <apex:pageBlockSection showHeader="false" collapsible="false" columns="1">
+            <apex:inputField value="{!PKB__c.Category_Group_2__c}" />
+            <apex:inputField value="{!PKB__c.Root_Category_2__c}" />        
+          </apex:pageBlockSection>
+    
+          <apex:pageBlockSection showHeader="false" collapsible="false" columns="1">
+            <apex:inputField value="{!PKB__c.Category_Group_3__c}" />
+            <apex:inputField value="{!PKB__c.Root_Category_3__c}" />        
+          </apex:pageBlockSection>      
+    
+      </apex:outputPanel>
+
+
+      <apex:pageBlockSection showHeader="false" collapsible="false" columns="1">
+        <apex:pageBlockSectionItem >
+          <apex:outputPanel layout="block"></apex:outputPanel>
+          <apex:outputPanel layout="block">
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+
+    </apex:pageBlock>
+
+  </apex:form>
+
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,21 @@
+<apex:page >
+<html>
+<head>
+    <title>The World Cup of Sales</title>
+</head>
+<body>
+<font color="#000000" size="3" face="Verdana"><strong>Pamela</strong></font>
+<br/>
+<img src="http://image.comms.gumtree.com/lib/fef613727c6106/m/1/slovenia2.jpg"></img>
+<br/>
+<font color="#000000" size="3" face="Verdana"><strong>Ben</strong></font>
+<br/>
+<img src="http://image.comms.gumtree.com/lib/fef613727c6106/m/1/cameroon2.jpg"></img>
+<br/>
+<font color="#000000" size="3" face="Verdana"><strong>Emily</strong></font>
+<br/>
+<img src="http://image.comms.gumtree.com/lib/fef613727c6106/m/1/serbia2.jpg"></img>
+</body>
+</html>
+
+</apex:page>

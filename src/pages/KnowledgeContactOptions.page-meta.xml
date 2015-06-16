@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>17.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>&lt;apex:pageMessage severity=&quot;error&quot; strength=&quot;3&quot; summary=&quot;{!errorMessage}&quot;/&gt;</description>
+    <label>KnowledgeContactOptions</label>
+</ApexPage>

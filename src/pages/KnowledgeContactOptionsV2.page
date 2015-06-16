@@ -1,0 +1,113 @@
+<apex:page controller="KnowledgeController" showHeader="false" title="Public Knowledge Base" cache="true" expires="{!cacheMaxAge}">
+
+<html>
+<body>
+    <apex:composition template="{!$Site.Template}"> -->
+    <apex:define name="content">
+       <apex:variable var="productUrlVar" value="{!productUrl}" />
+       <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+       <apex:variable var="cpt" value="{!0}" />
+       <apex:variable var="categoryDescriptionsVar" value="{!categoryDescriptions}" />
+       <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+
+      
+                    <div class="page-content">
+                        <apex:outputPanel styleClass="pkbHpMaincs" layout="block">
+                        <apex:outputPanel styleClass="pkbResultPanelcs" layout="block">
+                                <apex:outputPanel styleClass="pkbResultInnercs" layout="block">
+                
+                                    <apex:outputPanel styleClass="pkbResultSummarycs" layout="block">
+                                       Top questions
+                                    </apex:outputPanel>
+                                        <ul>
+                                            <apex:variable var="anyDocument" value="false" />
+                                            <apex:variable var="hasMore" value="" />
+                    
+                                            <knowledge:articleList articleVar="article"  hasMoreVar="hasMore"
+                                                pageSize="5"
+                                                articleTypes="FAQ__kav"
+                                                sortBy="mostViewed"
+                                                categories="{!categoryGroupNameVar}:Contact_us_Top_questions"
+                                            >
+                                                <li class="pkbSearchResult"> <a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a></li>
+                                                <apex:variable var="anyDocument" value="true" /> 
+                                                
+                                            </knowledge:articleList>
+                                        </ul>                  
+                                        <apex:outputText value="No Result found for '{!subject}' in the selected category" rendered="{!anyDocument=='false'}" />&nbsp;
+                        </apex:outputPanel>
+                        
+                                 
+                          <apex:outputPanel styleClass="pkbForm" layout="block" > 
+                           <apex:outputPanel styleClass="pkbResultSummarycs" layout="block">  
+                                            &nbsp;&nbsp; Please choose your preferred method of contact:
+                                    </apex:outputPanel>    
+                          
+                          <apex:outputPanel layout="block">
+                                       <table width="640" align="center">
+                                            <tr height="10">
+                                                <td>
+                                                </td>
+                                            </tr>
+                                            <tr width="470" align="center">                                          
+                                                <td width="18">
+                                                </td>
+                                                <td width="140" height="65" align="center">    
+<!-- END Salesforce Live Agent Button/Link Code -->
+
+<!--CPN: 11-sept-2014, before when onclick="liveagent.startChat('57320000000CaZh')" with popup, now new tab -->
+<img id="liveagent_button_online_57320000000CaZh" style="display: none; border: 0px none; cursor: pointer" onclick="var winchat = window.open('','newChat');liveagent.startChatWithWindow ('57320000000CaZh',winchat.name);" src="https://gumtree.secure.force.com/Help/resource/1340789380000/GumtreeLiveChatOnline" />
+<img id="liveagent_button_offline_57320000000CaZh" style="display: none; border: 0px none; " src="https://gumtree.secure.force.com/Help/resource/1340789407000/GumtreeLiveChatOffline" />
+
+<script type="text/javascript">
+if (!window._laq) { window._laq = []; }
+window._laq.push(function(){liveagent.showWhenOnline('57320000000CaZh', document.getElementById('liveagent_button_online_57320000000CaZh'));
+liveagent.showWhenOffline('57320000000CaZh', document.getElementById('liveagent_button_offline_57320000000CaZh'));
+});</script>
+
+<!-- END Salesforce Live Agent Button/Link Code -->
+
+                                                </td>
+                                                <td width="2">
+                                                </td>
+                                                <td width="140" align="center">    
+                                                        <a href="http://gumtree.full.cs13.force.com/Help/knowledgeProduct?c=Phone_Support">
+                                                            <apex:image alt="Phone" value="{!$Resource.GumtreePhonev1}" width="140" height="65"/>
+                                                        </a>                                           
+                                                </td>
+                                                <td width="2">
+                                                </td>
+                                                <td width="140" align="center">    
+                                                       <a href="{!ContactURL}">
+                                                        <apex:image alt="Email" value="{!$Resource.GumtreeEmailv1}" width="140" height="65" />
+                                                       </a>                                       
+                                                </td>
+                                             </tr>
+
+                                       </table>
+                           </apex:outputPanel>                     
+                                                   
+                              
+                              </apex:outputPanel>
+                              
+                         </apex:outputPanel>
+                     </apex:outputPanel>
+                </div>
+
+                
+        
+               
+
+       
+    </apex:define>
+    </apex:composition>
+
+<script type='text/javascript' src='https://c.la1a1.salesforceliveagent.com/content/g/deployment.js'></script>
+<script type='text/javascript'>delete Array.prototype.toJSON;</script>
+<script type='text/javascript'>
+liveagent.init('https://d.la1a1.salesforceliveagent.com/chat', '57220000000CaZh', '00D200000006AK6');
+</script>
+
+</body>
+</html>
+</apex:page>

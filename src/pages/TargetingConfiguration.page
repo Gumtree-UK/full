@@ -1,0 +1,1602 @@
+<apex:page controller="TargetingConfiguration"  sidebar="false" ShowHeader="false"  id="thePage" docType="html-5.0" >
+<head>
+    <style>
+        input,textarea {
+            margin: 0;
+            border-radius: 3px;
+            border: 1px solid #999999;
+            padding: 3px 5px;
+            vertical-align: middle;
+        }
+        .addButton{
+            background-image: url("{!URLFOR($Resource.ComponentForKeyValue, '/plus_icons.png')}");         
+            vertical-align: middle;
+            width: 22px;
+            height: 20px;
+        }
+        
+        .content-Active{
+            display: inline;
+        }
+        .content-InActive{
+            display: none;
+        }
+        .MoveCurror{
+            cursor: move;
+        }
+        .contentKeyView{
+            background-color: #1797c0;
+            box-shadow: 1px 1px 5px #888888;
+            width: 160px;
+            padding-left: 10px;
+            padding-bottom: 1px;
+            padding-top: 1px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+        }
+         .contentSaveTargetingView{
+            background-color: #d8e3ee;
+            box-shadow: 1px 1px 5px #888888;
+            width: 160px;
+            padding-left: 10px;
+            padding-bottom: 1px;
+            padding-top: 1px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+        }
+        .table{
+            width: 100%;
+        }
+        .tdClose{
+            text-align: right;
+            padding-right: 5px;
+            cursor: pointer;
+        }
+        .titleText{
+            font-weight:bold;
+            border-bottom: 1px solid white;
+            padding-bottom: 5px;
+            padding-top:5px;
+            background-color:#d8e3ee;
+        }
+        .tdChildClick{
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+        .tdCol1{
+           text-align: center;
+            width: 50px;
+            cursor: pointer;
+        }
+        .textInActive{
+            color:gainsboro;        
+        }
+        .textActive{
+            color: black;
+        }
+        
+        .tdActive{
+            display: '';
+        }
+        .tdInActive{
+            display: none;
+        }
+        .tdChildView{
+            border-bottom: 1px solid white;
+        }
+        
+        .tab-lnk {
+            background: #ddd;
+            color: #444;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px 18px;
+            -moz-border-radius-topleft: 2px;
+            -moz-border-radius-topright: 2px;
+            -webkit-border-top-left-radius: 2px;
+            -webkit-border-top-right-radius: 2px;
+            -moz-border-radius-botom-left: 2px;
+            -moz-border-radius-bottom-right: 2px;
+            -webkit-border-bottom-left-radius: 2px;
+            -webkit-border-bottom-right-radius: 2px;
+        }
+        
+        .tab-active {
+            background: #125488;
+            color: #fff;
+        }
+         #Lv1ContentView div:HOVER {
+            background-color: #1797c0;
+        }
+        .value-Active{
+            background-color: #1797c0;
+            border-bottom: 1px solid white;
+        }
+        .value-InActive{
+            background-color: white;
+        }
+        .editKeyImage{
+            cursor:pointer;
+            padding-right:5px;
+            vertical-align: middle;
+            width: 12px;
+            height: 12px;
+        }
+        
+    </style>
+    <script type="text/javascript" src="{!URLFOR($Resource.ComponentForKeyValue, '/jquery.js')}"/>  
+    <script type="text/javascript" src="{!URLFOR($Resource.ComponentForKeyValue, '/jquery-ui.min.js')}"/>   
+     <apex:stylesheet value="{!URLFOR($Resource.ComponentForKeyValue, '/jquery-ui.css')}"/>
+    <script>
+        function addNewTargeting(ele){          
+            ele.style.display = "none";
+            document.getElementById('newKeySection').style.display = 'block';
+            reOpenNewSection();
+        }    
+        function keyValueSelect( ele ){
+            var val = ele.options[ele.selectedIndex].value;
+            document.getElementById('thePage:theForm:selectedKey').value = val ;
+            document.getElementById('searchKeyList').style.display='block';
+             document.getElementById('searchKeyListLv2').style.display='none';
+            document.getElementById('searchKeyList').innerHTML = '';
+            if( val.trim() !=''){
+                getChildValue();
+            }
+            
+        }
+        
+        function getDisableLv2Content(elelement){
+            var contentViewId =  elelement.parentNode.id =='searchKeyListLv2' ?  'Lv2ContentView' : 'Lv1ContentView' ;
+            var listContentVew = document.getElementById( contentViewId );
+             for(var i=0; i< listContentVew.childNodes.length;i++){
+                 var ele = listContentVew.childNodes[i];
+                 if( ele.id == elelement.id ){
+                     ele.style.pointerEvents = 'none';
+                    ele.style.color='graytext';
+                 }
+             }
+        }
+        function addKeyValues( ele, isFromLv1 ){
+            deselectAllValue( ele.parentNode );
+            getDisableLv2Content( ele);
+            ele.style.pointerEvents = 'none';
+            ele.style.color='graytext';
+             var parentSel = document.getElementById('selKeyValueLists');
+            var parentKey = parentSel.options[parentSel.selectedIndex].text;
+            document.getElementById('confirmTargetingSection').style.display = 'block' ;
+            parentSel.style.display = 'none' ;
+            document.getElementById('newKeyViewSection').style.display = 'block' ;
+            document.getElementById('newKeyViewSection').innerHTML = "  "+ parentKey;            
+            //disable select
+            var parentOpt = parentSel.options[parentSel.selectedIndex];
+            parentOpt.disabled = true;            
+             //add selected child
+            var lstChild =  document.getElementById('lstChild');
+            var val = document.getElementById(ele.id+'Label').innerHTML;        
+            var item = getValidChildKey( val,ele.id,isFromLv1 );         
+            lstChild.appendChild(item);         
+        }
+        
+       function getValidChildKey( val,validId ,isFromLv1 ){               
+            var item = document.createElement("div");
+            item.className ='contentKeyView';
+            var tableItem = document.createElement("table");
+            var itemTr = document.createElement("tr");
+            tableItem.appendChild( itemTr );
+            var itemTDTitle = document.createElement("td");
+            var itemTDClose = document.createElement("td");
+            itemTDClose.className ='tdClose';
+            tableItem.className ='table';
+            itemTr.appendChild( itemTDTitle );
+            itemTr.appendChild( itemTDClose );
+            
+            var itemClose = document.createElement("div");
+            var itemTitle = document.createElement("div");          
+            itemTitle.innerHTML = val;
+            itemClose.innerHTML ='X';
+            
+           itemTDTitle.title = val;
+            itemTDTitle.appendChild(itemTitle);
+            itemTDClose.appendChild(itemClose);                     
+            item.appendChild(tableItem);            
+           
+            //add event onclick to X
+            if(itemClose.addEventListener){
+                        itemClose.addEventListener("click", function(){handlerClick( validId ,isFromLv1);}, false);   
+            }else if (itemClose.attachEvent) {
+                        itemClose.attachEvent('onclick' ,function(){handlerClick(validId,isFromLv1 );});
+            }
+            
+            item.id = validId;
+            return item;
+        
+        }
+        
+       
+        
+        function handlerClick( val,isFromLv1 ){           
+            //remove child
+            var lstChild =  document.getElementById('lstChild');            
+            for(var i=0; i< lstChild.childNodes.length;i++){
+                var ele = lstChild.childNodes[i];               
+                if(ele.id == val ){
+                    lstChild.removeChild(ele);
+                }
+            }
+            var selectOptId = isFromLv1 ? 'Lv1ContentView' : 'Lv2ContentView';
+            //visible all child 
+            var allChildList = document.getElementById( selectOptId );
+            visibleContentView(allChildList,val);
+            //case remove all child
+            lstChild =  document.getElementById('lstChild');     
+            if( lstChild.childNodes.length == 0){
+                reOpenNewSection();
+                var parentSel = document.getElementById('selKeyValueLists');
+                var parentKey = document.getElementById('thePage:theForm:selectedKey').value;
+                visibleSelectValue(parentSel,parentKey, false);
+                
+            }
+            
+        }
+        
+        function visibleContentView(ele,val ){
+            for(var i=0; i< ele.childNodes.length;i++){
+                var opt = ele.childNodes[i];
+                if(opt.id == val ){
+                    opt.style.pointerEvents = 'auto';
+                    opt.style.color='black';
+                }
+            }       
+        }
+        
+        function visibleSelectValue(ele,val,isStatus ){
+            for(var i=0; i< ele.options.length;i++){
+                var opt = ele.options[i];
+                if(opt.value == val ){
+                    opt.disabled = isStatus;
+                }
+            }       
+        }
+        function reOpenNewSection(){               
+                document.getElementById('confirmTargetingSection').style.display = 'none' ;
+                document.getElementById('newKeyViewSection').style.display = 'none' ;
+                document.getElementById('selKeyValueLists').style.display = 'inline' ;         
+        }
+        function confirmTargeting(){
+            document.getElementById('navManager').style.display ='none';           
+            document.getElementById('newKeySection').style.display = 'none' ;      
+            document.getElementById('NewTargetingSection').style.display = 'block' ;  
+            document.getElementById('searchKeyList').innerHTML= '' ; 
+            document.getElementById('searchKeyListLv2').innerHTML= '' ; 
+              
+             var ele = document.getElementById('Lv1ContentView');  
+            var lstChild = [];              
+            for(var i=0; i< ele.childNodes.length;i++){
+                var opt = ele.childNodes[i];
+                var val = document.getElementById(opt.id+'Label').innerHTML;
+                var keyVal = document.getElementById(opt.id+'Key').innerHTML;
+                if( opt.style.pointerEvents == 'none'  ){                   
+                    lstChild.push({"lstChild": null ,"label": val ,"id": opt.id,"key":keyVal });
+                }
+            }           
+            
+            var ele2 = document.getElementById('Lv2ContentView');  
+            for(var i=0; i< ele2.childNodes.length;i++){
+                var opt = ele2.childNodes[i];
+                var val = document.getElementById(opt.id+'Label').innerHTML;
+                var keyVal = document.getElementById(opt.id+'Key').innerHTML;
+                if( opt.style.pointerEvents == 'none'  ){                   
+                    lstChild.push({"lstChild":null,"label": val ,"id": opt.id,"key":keyVal });              
+                }
+            } 
+          
+            ele.innerHTML ='';
+            ele2.innerHTML ='';
+            var parentName ='';
+            var parentKey = document.getElementById('thePage:theForm:selectedKey').value;
+            var parentSel = document.getElementById('selKeyValueLists');
+            var parrentTopKeyvalue ='';
+            for(var i=0; i< parentSel.options.length;i++){
+                var opt = parentSel.options[i];               
+                if( opt.value == parentKey  ){
+                    parentName = opt.text;
+                    parrentTopKeyvalue =document.getElementById(opt.value+'TopKey').innerHTML;
+                }
+            }       
+            parentSel.selectedIndex = 0;
+            var val = document.getElementById('thePage:theForm:jsonObject').value;
+            var lstRecords = JSON.parse( val ); 
+            lstRecords.push({"lstChild": lstChild ,"label": parentName,"id": parentKey,"key":parrentTopKeyvalue });
+            
+            var jsonString = JSON.stringify( lstRecords );                  
+            document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+            
+            //remove 
+            removeTableList();
+            
+            refreshTableList();
+            document.getElementById('thePage:theForm:selectedKey').value ='';
+            document.getElementById('searchKeyValueBox').value ='';
+            
+        }
+        
+        function removeTableList(){
+            var lstChild =  document.getElementById('lstChild');            
+            for(var i=lstChild.childNodes.length - 1; i >= 0;i--){
+                var opt = lstChild.childNodes[i];
+                lstChild.removeChild(opt);
+                
+            }
+        
+        }
+        function refreshTableList(){
+             var val = document.getElementById('thePage:theForm:jsonObject').value;             
+             var lstRecords = JSON.parse( val ); 
+             var tableVal = document.getElementById('tableShowSelectedKey');
+             removeAllChild(true,'');             
+              for(var i=0; i< lstRecords.length;i++){
+                  var obj = lstRecords[i];
+                  var tr = getItemKey(obj.label,obj.id);
+                  var tr1 = getChildTr(obj);
+                  tableVal.appendChild( tr);  
+                  tableVal.appendChild( tr1); 
+                  
+              }
+            document.getElementById('ListSelectedKey').style.display ='block';  
+            refreshLineDesc();         
+        }
+        
+        function getCreateChildTableForSavingKeyValue(valLabel,valId,parId){
+            var itemTable = document.createElement("table");   
+            var itemTr = document.createElement("tr");
+            var itemTdCol1 = document.createElement("td");
+            var itemTdCol2 = document.createElement("td");
+             itemTable.appendChild( itemTr); 
+              itemTr.appendChild( itemTdCol1);            
+              itemTr.appendChild( itemTdCol2);     
+             itemTdCol1.innerHTML =valLabel;
+             itemTdCol2.innerHTML = 'X';
+             itemTable.className ='table';
+             itemTdCol2.className = 'tdClose';
+             
+              itemTdCol1.title =valLabel;
+               //add event onclick to X
+            if(itemTdCol2.addEventListener){
+                        itemTdCol2.addEventListener("click", function(){deleteSaveKeyValue( valId,parId );}, false);   
+            }else if (itemTdCol2.attachEvent) {
+                        itemTdCol2.attachEvent('onclick' ,function(){deleteSaveKeyValue(valId,parId );});
+            }else {
+                        itemTdCol2['onclick'] = function(){deleteSaveKeyValue(valId,parId);};
+            }     
+            
+             return itemTable;    
+        }
+        
+        function deleteSaveKeyValue(valId,parId){
+          var parElmemt = document.getElementById( 'TD'+parId );
+          var lstDivs = parElmemt.getElementsByTagName('div');
+          var rowCount = lstDivs.length;
+          var childId = 'SectionView'+valId;
+          var childLstId ='SectionChildView'+valId;
+             for (var x=rowCount-1; x>=0; x--) {
+                var elem = lstDivs[x];               
+                if(elem.id == childId  || elem.id == childLstId ){
+                     parElmemt.removeChild( elem );
+                }
+            }
+           
+             var val = document.getElementById('thePage:theForm:jsonObject').value;             
+             var lstRecords = JSON.parse( val ); 
+               for(var i=0; i< lstRecords.length;i++){
+                  var obj = lstRecords[i];
+                  if( obj.id == parId ){
+                    for(var j=0; j< obj.lstChild.length;j++){
+                        var childObj = obj.lstChild[j];
+                        if( childObj.id == valId){
+                            lstRecords[i].lstChild.splice(j,1);
+                        } 
+                    }
+                    if(  obj.lstChild.length == 0 ){
+                         lstRecords.splice(i,1);
+                         //remove child
+                         removeAllChild(false,parId );
+                         var parentSel = document.getElementById('selKeyValueLists');
+                         visibleSelectValue(parentSel,parId , false);
+                    }
+                     
+                  }                  
+                                 
+              }
+            var jsonString = JSON.stringify( lstRecords );                  
+            document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+               refreshLineDesc();    
+        
+        }
+        
+        function getChildDivLv2( obj ){
+            var childDiv = document.createElement("div");
+             childDiv.className ='contentKeyView';
+             childDiv.innerHTML = obj.label;
+             return  childDiv;        
+        }  
+        
+        function getChildTr(obj){
+            var itemTr = document.createElement("tr");   
+             var itemTdCol1 = document.createElement("td");
+             var itemTdCol2 = document.createElement("td");
+             var itemTdCol3 = document.createElement("td"); 
+              itemTr.appendChild( itemTdCol1);            
+              itemTr.appendChild( itemTdCol2);     
+             itemTr.appendChild( itemTdCol3); 
+              itemTdCol1.className ='tdChildView';
+              itemTdCol2.className ='tdChildView';
+              itemTdCol3.className ='tdChildView';          
+             if( obj.lstChild != null ){                 
+                 for(var j=0; j< obj.lstChild.length;j++ ){
+                     var childDiv = document.createElement("div");
+                     childDiv.className ='contentKeyView';
+                    itemTdCol2.appendChild( childDiv);
+                    var itemTable = getCreateChildTableForSavingKeyValue(   obj.lstChild[j].label , obj.lstChild[j].id , obj.id  );
+                     childDiv.id = 'SectionView'+obj.lstChild[j].id ;
+                     childDiv.appendChild( itemTable );                   
+                 }      
+                        
+             }
+             itemTr.id ='Child'+ obj.id;
+             itemTdCol2.id='TD'+obj.id;
+             itemTr.className = 'tdInActive';
+             return itemTr;
+        }
+        function removeAllChild( isRemoveAll, valId ){
+              var tableVal = document.getElementById('tableShowSelectedKey');
+              var tableRows = tableVal.getElementsByTagName('tr');
+             var rowCount = tableRows.length;
+             for (var x=rowCount-1; x>=0; x--) {
+                if( isRemoveAll ){                   
+                    if( tableRows[x].id !='' )
+                      tableVal.removeChild(tableRows[x]);
+                    
+                }else{
+                    if(tableRows[x].id == valId || tableRows[x].id =='Child'+valId){
+                         tableVal.removeChild(tableRows[x]);
+                    }
+                }
+              
+            }
+        }
+        
+        function findRealLabel( val ){
+            if( val.indexOf('(') != -1){                
+                var lstVal = val.split('(');
+                val = lstVal[0];
+                return val.substring( 0, val.length-1 );
+            }
+            return val;
+        }
+        
+        
+        function getDescriptionForExceptionCase(lstChild){
+                var description ='Age ';
+                if(  lstChild.length == 1){
+                    var childObj =lstChild[0];
+                    var validChildLabel = findRealLabel( childObj.label );
+                    description = description + validChildLabel;
+                }else{
+                    var childObj =lstChild[0];
+                    var childLastObj =lstChild[ lstChild.length-1 ];
+                    var validChildLabel = findRealLabel( childObj.label );
+                    var validLastChildLabel = findRealLabel( childLastObj.label );
+                    var lstFirstChild = validChildLabel.split('-');
+                    var lstLastChild = validLastChildLabel.split('-');
+                    var validLastLabel = lstLastChild.length == 1? lstLastChild[0] : lstLastChild[1];
+                    description = description + lstFirstChild[0] + '-'+ validLastLabel;
+                }
+               
+               return description;
+        }
+        function refreshLineDesc(){
+            var val = document.getElementById('thePage:theForm:jsonObject').value;
+            var lstRecords = JSON.parse( val );
+             var lineDescr ='';
+             var keyValue ='';
+              var keyValueId ='';
+              for(var i=0; i< lstRecords.length;i++){
+                  var obj = lstRecords[i]; 
+                  //Example: (key1=value1 or key1=value2) AND (key2=value11 OR key2=value12).
+                  // This can also be abbreviated to key1=value1, value2 AND key2=value11, value12.                
+                  keyValue = i== 0?  obj.label+'=' : keyValue + ' And ' + obj.label+'=';
+                   keyValueId = i== 0?  obj.key+'%Start%' : keyValueId + '%ParKey%' + obj.key+'%Start%';
+                  //Rule for population is “Key1” “Values1”, “Key2” “Values2” 
+                  var parentLabel = obj.label;                
+                  if( obj.lstChild != null ){
+                       for(var j=0; j< obj.lstChild.length;j++ ){
+                         var childObj = obj.lstChild[j];
+                          if( parentLabel.indexOf('Age') == -1) lineDescr =  lineDescr +  obj.label+' ' + childObj.label  + ',' ;
+                           keyValue = j==0?  keyValue + childObj.label : keyValue + ',' + childObj.label;
+                           keyValueId = j==0?  keyValueId + childObj.id+'%CKey%'+childObj.key : keyValueId + '%Skey%' + childObj.id +'%CKey%'+childObj.key;
+                           
+                           if(childObj.lstChild != null ){
+                                for(var k=0; k < childObj.lstChild.length;k++ ){
+                                    var childLv2 = childObj.lstChild[k];
+                                    keyValue =  keyValue + ',' + childLv2.label;
+                                    keyValueId =  keyValueId + '%Skey%' + childLv2.id+ +'%CKey%'+childLv2.key ;
+                                     lineDescr =  lineDescr +  childObj.label+' ' + childLv2.label  + ',' ;
+                                }                           
+                           }
+                       }
+                       //exception case
+                       //e.g. values selected are 31-35 and 36-40 will show as “Age 31-40”. 
+                        if( parentLabel.indexOf('Age') != -1) lineDescr =  lineDescr +  getDescriptionForExceptionCase( obj.lstChild )  + ',' ;
+                  }
+              }
+             
+             document.getElementById('keyValueString').value = keyValue;
+              document.getElementById('keyValueStringId').value = keyValueId;
+             document.getElementById('thePage:theForm:LineDes').value = lineDescr;
+             
+        }
+        
+        function openchildLv2( validId ){    
+             validId = validId.replace('child','');     
+             var childStatus =  document.getElementById('SectionChildView'+validId);
+              var disStatus = childStatus.className;
+              var col =  document.getElementById( 'child'+validId );
+               col.innerHTML = disStatus=='tdInActive'? '-' : '>'; 
+               var newStatus = disStatus=='tdInActive' ? 'tdActive': 'tdInActive';
+              childStatus.className = newStatus;
+             
+        }
+         function openchild( validId ){
+            var childStatus =  document.getElementById('Child'+validId);
+            var disStatus = childStatus.className;
+            var col =  document.getElementById( 'Col1'+validId );
+            col.innerHTML = disStatus=='tdInActive'? '-' : '>'; 
+            var newStatus = disStatus=='tdInActive' ? 'tdActive': 'tdInActive';
+            childStatus.className = newStatus;
+            
+            
+            
+         }
+        function getItemKey( val,validId ){
+            
+             var itemTr = document.createElement("tr");
+             var itemTdCol1 = document.createElement("td");
+             var itemTdCol2 = document.createElement("td");
+             var itemTdCol3 = document.createElement("td");
+             itemTr.appendChild( itemTdCol1);
+             itemTr.appendChild( itemTdCol2);
+             itemTr.appendChild( itemTdCol3);
+             itemTdCol1.className ='tdCol1 titleText';
+             itemTdCol2.className ='titleText';
+             itemTdCol3.className ='tdClose titleText';
+             itemTdCol1.innerHTML =">";
+             //itemTdCol2.innerHTML = val;
+             itemTdCol3.innerHTML ="X";
+             
+             var imageEdit = document.createElement("img");  
+             imageEdit.className='editKeyImage';  
+             imageEdit.src="/img/func_icons/util/pencil12.gif"; 
+             imageEdit.title="Click here to edit.";      
+             var spanVal = document.createElement("span");
+             spanVal.innerHTML = val;
+             itemTdCol2.appendChild( imageEdit);
+             itemTdCol2.appendChild( spanVal);
+               
+             itemTdCol1.id='Col1'+validId;
+             
+               //add event onclick to image
+            if(imageEdit.addEventListener){
+                        imageEdit.addEventListener("click", function(){editKeyValue( validId );}, false);   
+            }else if (imageEdit.attachEvent) {
+                        imageEdit.attachEvent('onclick' ,function(){editKeyValue(validId );});
+            }else {
+                        imageEdit['onclick'] = function(){editKeyValue(validId);};
+            }    
+             
+              //add event onclick to X
+            if(itemTdCol1.addEventListener){
+                        itemTdCol1.addEventListener("click", function(){openchild( validId );}, false);   
+            }else if (itemTdCol1.attachEvent) {
+                        itemTdCol1.attachEvent('onclick' ,function(){openchild(validId );});
+            }else {
+                        itemTdCol1['onclick'] = function(){openchild(validId);};
+            }    
+             //add event onclick to X
+            if(itemTdCol3.addEventListener){
+                        itemTdCol3.addEventListener("click", function(){removeKeyValue( validId );}, false);   
+            }else if (itemTdCol3.attachEvent) {
+                        itemTdCol3.attachEvent('onclick' ,function(){removeKeyValue(validId );});
+            }else {
+                        itemTdCol3['onclick'] = function(){removeKeyValue(validId);};
+            }   
+            
+            itemTr.id = validId;
+            
+            
+             return itemTr ;        
+        }
+        
+        function removeKeyValue(valId){
+             //remove child
+             removeAllChild(false,valId);
+             var parentSel = document.getElementById('selKeyValueLists');
+             visibleSelectValue(parentSel,valId, false);
+             removeKeyFromJson( valId );            
+        }
+        function visbleSelectFromExistingkey( valId ){
+             var parentSel = document.getElementById('selKeyValueLists');
+             visibleSelectValue(parentSel,valId, true);
+        }
+        
+        function removeKeyFromJson( valId ){
+             var val = document.getElementById('thePage:theForm:jsonObject').value;
+             var lstRecords = JSON.parse( val ); 
+              for(var i=0; i< lstRecords.length;i++){
+                  var obj = lstRecords[i];
+                  if(obj.id == valId ){
+                    lstRecords.splice(i,1);
+                  }
+              }
+             var jsonString = JSON.stringify( lstRecords );                  
+            document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+             refreshLineDesc();   
+        }
+        
+        function takeOverChange(ele){
+            var className = ele.checked ? 'textActive': 'textInActive';
+            document.getElementById('divTextTakeOver').className = className ;
+        
+        }
+       
+        
+        function cancel(){
+             var divOverLay =document.getElementById('overlayBackground');
+             var divEditDialog =document.getElementById('InlineEditDialog');
+             divOverLay.style.display='none';                      
+             divEditDialog.style.display='none'; 
+            
+        }
+        
+        function OpenSaveToMyList(){
+             var divOverLay =document.getElementById('overlayBackground');
+             var divEditDialog =document.getElementById('InlineEditDialog');
+             divOverLay.style.display='inline';                      
+             divEditDialog.style.display='inline';              
+        
+        }
+        
+        function checkSaveToList(){
+            var saveName = document.getElementById('thePage:theForm:saveLstName').value;
+            var keyValue =  document.getElementById('keyValueString').value;
+            if( keyValue=='' ){
+                alert('No keyvalue to save.');
+                 cancel();
+                 return;
+            }
+            if( saveName=='' ){
+                alert('Please input name.');
+                saveName.focus;
+                return;
+            }
+            
+            
+            cancel();
+            saveTargetToList( saveName );   
+        }
+        
+        function saveTargetToList( saveName){
+            var lstSaveTarget = document.getElementById('lstSaveTargetingView');
+             var item = document.createElement("div");
+            item.className ='contentSaveTargetingView MoveCurror';
+            var tableItem = document.createElement("table");
+            var itemTr = document.createElement("tr");
+            tableItem.appendChild( itemTr );
+            var itemTDTitle = document.createElement("td");
+            var itemTDClose = document.createElement("td");
+            itemTDClose.className ='tdClose';
+            tableItem.className ='table';
+            itemTr.appendChild( itemTDTitle );
+            itemTr.appendChild( itemTDClose );
+            
+            var itemClose = document.createElement("div");
+            var itemTitle = document.createElement("div");          
+            itemTitle.innerHTML = saveName;
+            itemClose.innerHTML ='X';
+            itemTDTitle.appendChild(itemTitle);
+            itemTDClose.appendChild(itemClose);                     
+            item.appendChild(tableItem);
+            
+            //save to lst save targeting
+            var val = document.getElementById('thePage:theForm:saveTargetingJson').value;
+            var lstRecords = JSON.parse( val ); 
+            var keyVal = document.getElementById('keyValueString').value;
+             var keyValId = document.getElementById('keyValueStringId').value;
+           lstRecords.push({"keyVal": keyVal,"label": saveName,"pos": (lstRecords.length),"id":null,"keyValueId": keyValId});
+            var jsonString = JSON.stringify( lstRecords );                  
+            document.getElementById('thePage:theForm:saveTargetingJson').value= jsonString;
+             
+             var itemId = saveName + (lstRecords.length -1);
+             item.id =itemId;
+            lstSaveTarget.appendChild( item );
+            
+             //add event onclick to X
+            if(itemClose.addEventListener){
+                        itemClose.addEventListener("click", function(){removeSaveTargeting( (lstRecords.length -1) , saveName,itemId );}, false);   
+            }else if (itemClose.attachEvent) {
+                        itemClose.attachEvent('onclick' ,function(){removeSaveTargeting( (lstRecords.length -1) , saveName,itemId   );});
+            }else {
+                        itemClose['onclick'] = function(){removeSaveTargeting( (lstRecords.length -1) , saveName,itemId  );};
+            }  
+            
+             //add event onclick to X
+            if(itemTitle.addEventListener){
+                        itemTitle.addEventListener("dblclick", function(){editSaveTargeting( (lstRecords.length -1),itemId );}, false);   
+            }else if (itemTitle.attachEvent) {
+                       itemTitle.attachEvent('ondblclick' ,function(){editSaveTargeting( (lstRecords.length -1),itemId );});
+            }else {
+                        itemTitle['ondblclick'] = function(){editSaveTargeting( (lstRecords.length -1),itemId );};
+            } 
+            
+            item.draggable = true; 
+           
+           if( item.addEventListener){
+                item.addEventListener("dragstart", function(event){dragTargeting( event,(lstRecords.length -1) );}, false);   
+            }else if ( item.attachEvent) {
+                item.attachEvent('ondragstart' ,function(event){dragTargeting( event,(lstRecords.length -1));});
+            }else {
+               item['ondragstart'] = function(event){ dragTargeting( event,(lstRecords.length -1));};
+            }     
+             
+            document.getElementById('thePage:theForm:saveLstName').value =''; 
+        }
+        
+        function removeSaveTargeting(pos,name, valId){
+            var val = document.getElementById('thePage:theForm:saveTargetingJson').value;
+            var lstRecords = JSON.parse( val ); 
+              for(var i=0; i<lstRecords.length;i++){
+                var obj = lstRecords[i]; 
+                if( obj.label == name && pos == obj.pos){
+                    lstRecords.splice(i,1);
+                }                       
+            }  
+            var jsonString = JSON.stringify( lstRecords );                  
+            document.getElementById('thePage:theForm:saveTargetingJson').value= jsonString;
+           // var valId = name+pos;
+             var lstChild = document.getElementById('lstSaveTargetingView');                   
+            for(var i=lstChild.childNodes.length - 1; i >= 0;i--){
+                var obj = lstChild.childNodes[i];
+                if( obj.id == valId){
+                    lstChild.removeChild( obj);
+                }               
+                
+            }
+            
+        }
+        
+        function getValidIdFromSelect(val){
+             var ele = document.getElementById('selKeyValueLists');
+             for(var i=0; i< ele.options.length;i++){
+                var opt = ele.options[i];
+                if(opt.text == val ){
+                    opt.disabled = true;
+                    return opt.value;
+                }
+            }       
+            return null;
+        }
+        function editSaveTargeting( pos, eleId ){
+              document.getElementById('NewTargetingSection').style.display = 'block';
+              document.getElementById('newKeySection').style.display = 'none';
+              document.getElementById('ListSelectedKey').style.display = 'block';
+              document.getElementById( 'searchKeyList' ).style.display='block';
+               document.getElementById( 'searchKeyListLv2' ).style.display='none';
+               document.getElementById( 'Lv1ContentView' ).innerHTML ='';
+              document.getElementById( 'Lv2ContentView' ).innerHTML ='';
+              document.getElementById( 'searchKeyList' ).innerHTML =''; 
+               document.getElementById( 'searchKeyListLv2' ).innerHTML ='';           
+              document.getElementById('navManager').style.display = "none" ;
+              var tableVal = document.getElementById('tableShowSelectedKey');            
+             var val = document.getElementById('thePage:theForm:saveTargetingJson').value;
+             var validObj = null;
+             var lstRecords = JSON.parse( val ); 
+               for(var i=0; i<lstRecords.length;i++){
+                    var obj = lstRecords[i]; 
+                    if(  pos == obj.pos ){
+                        validObj = obj;
+                    }                       
+                } 
+            
+            var jsonString = JSON.stringify( lstRecords );                  
+            document.getElementById('thePage:theForm:saveTargetingJson').value= jsonString;
+            if( validObj != null ){
+                var keyValue = validObj.keyVal;
+                var keyValueId = validObj.keyValueId;
+                keyValueId = keyValueId.trim();
+                var lstVal = keyValue.split('And');
+                var lstValId = keyValueId.split('%ParKey%');
+                var lstChildvalue =[];
+                var lstIdToCheck =[];
+                for( var i=0; i< lstVal.length;i++){
+                    var record = lstVal[i];
+                    var recordId = lstValId[i];
+                    var lstKeys = record.split('=');
+                    var lstKeysId = recordId.split('%Start%');
+                    var parKey = lstKeys[0];                                
+                    var parId = getValidIdFromSelect(parKey.trim() );
+                    var parTopKey =  document.getElementById(parId+'TopKey')== null ? '': document.getElementById(parId+'TopKey').innerHTML;
+                    removeAllChild(false,parId);
+                     var tr = getItemKey(parKey,parId);
+                     tableVal.appendChild( tr);  
+                     var itemTr = document.createElement("tr");   
+                     var itemTdCol1 = document.createElement("td");
+                     var itemTdCol2 = document.createElement("td");
+                     var itemTdCol3 = document.createElement("td"); 
+                     itemTdCol1.className ='tdChildView';
+                     itemTdCol2.className ='tdChildView';
+                     itemTdCol3.className ='tdChildView';
+                      itemTr.appendChild( itemTdCol1);            
+                      itemTr.appendChild( itemTdCol2);     
+                     itemTr.appendChild( itemTdCol3);                      
+                      tableVal.appendChild( itemTr );  
+                    var lstChildKey = lstKeys[1].split(',');
+                    var lstChildKeyId = lstKeysId[1].split('%Skey%');
+                    var lstChild =[];
+                    for( var j=0; j< lstChildKey.length;j++){
+                        var label = lstChildKey[j];
+                        var lstChilKeyVal = lstChildKeyId[j].split('%CKey%');
+                        var labelId = lstChilKeyVal[0];
+                         var childTopKey = lstChilKeyVal[1];
+                        var childDiv = document.createElement("div");
+                         childDiv.className ='contentKeyView';
+                        childDiv.appendChild( getCreateChildTableForSavingKeyValue(  label , labelId ,parId  ));
+                        childDiv.id = 'SectionView'+labelId ;
+                        itemTdCol2.appendChild( childDiv);                       
+                        lstChild.push({"lstChild":null,"label": label ,"id": labelId,"key":childTopKey});
+                    }
+                    lstIdToCheck.push( parId );
+                    lstChildvalue.push( {"lstChild": lstChild ,"label": parKey  ,"id": parId,"key":parTopKey} );
+                    itemTr.id ='Child'+ parId;
+                     itemTdCol2.id='TD'+parId;
+                    itemTr.className = 'tdInActive';
+                }
+                saveDoubleClickObj( lstChildvalue,lstIdToCheck );
+                
+            } 
+            
+            
+            
+              refreshLineDesc();    
+        }
+        
+        function saveDoubleClickObj( lstChildvalue, lstIdToCheck ){
+            var val = document.getElementById('thePage:theForm:jsonObject').value;
+            var lstRecords = JSON.parse( val );
+             for(var i= lstRecords.length -1 ; i>=0;i--){
+               var obj = lstRecords[i];
+               for(var k=0;k< lstIdToCheck.length;k++){
+                    var valToCheck = lstIdToCheck[k];
+                     if(obj.id == valToCheck ){
+                        lstRecords.splice(i,1);
+                        break;
+                     }
+               }
+             }
+             
+               for(var i=0; i< lstChildvalue.length;i++){
+                 var record = lstChildvalue[i];
+                 lstRecords.push( record );
+               }
+              var jsonString = JSON.stringify( lstRecords );                  
+             document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+             
+             
+        }
+        
+        function resetList(){
+            removeAllChild(true,'');
+            document.getElementById('thePage:theForm:jsonObject').value ='[]';
+            document.getElementById('thePage:theForm:selectedKey').value ='';
+            refreshLineDesc();
+            var ele = document.getElementById('selKeyValueLists');             
+            for(var i=0; i< ele.options.length;i++){
+                var opt = ele.options[i];              
+                 opt.disabled = false;                
+            }  
+           ele.selectedIndex = 0;   
+           document.getElementById('navManager').style.display ='none';   
+           document.getElementById('newKeySection').style.display = 'none';  
+           document.getElementById('NewTargetingSection').style.display = 'block'; 
+           removeTableList();
+            
+        }
+        
+        function removeValLatestCri( valId ){           
+            var lstChild = document.getElementById('lstLateView');                   
+            for(var i=lstChild.childNodes.length - 1; i >= 0;i--){
+                var obj = lstChild.childNodes[i];
+                if( obj.id == valId){
+                    lstChild.removeChild( obj);
+                }               
+                
+            }
+            
+        }
+      
+        
+        function getKeyValueForParent(){
+             var val = document.getElementById('thePage:theForm:jsonObject').value;
+            var lstRecords = JSON.parse( val );
+            if( lstRecords.length  ==0 ) return '';
+            var keyValue ='(';
+             for(var i=0; i< lstRecords.length ; i++){
+                var obj = lstRecords[i];
+                 var validKey = obj.key=='' ? obj.label : obj.key; 
+                 keyValue = i== 0?  validKey+'=' : keyValue + ' And ' + validKey+'=';               
+                for(var j=0; j< obj.lstChild.length;j++){
+                    var childObj = obj.lstChild[j];
+                    var childKey = childObj.key;                   
+                    keyValue = j==0?  keyValue + childKey : keyValue + ',' + childKey;                    
+                }
+             }    
+            return keyValue;
+        }
+        
+        function getFinalKeyValueFromParent(){
+            var val = document.getElementById('thePage:theForm:jsonObject').value;
+            var lstRecords = JSON.parse( val );
+            if( lstRecords.length  ==0 ) return '';
+            var keyValue ='(';
+             for(var i=0; i< lstRecords.length ; i++){
+                var obj = lstRecords[i];
+                 var validKey = obj.key=='' ? obj.label : obj.key; 
+                 keyValue = i== 0 ?  keyValue : keyValue + ' And (';
+                for(var j=0; j< obj.lstChild.length;j++){
+                    var childObj = obj.lstChild[j];
+                    var childKey = childObj.key;
+                   if( obj.lstChild.length == 1 || j == obj.lstChild.length-1 ){
+                        keyValue =  keyValue + validKey +'='+  childKey;
+                        
+                    }else{
+                        keyValue =  keyValue +  validKey +'='+  childKey+' OR ';
+                    }
+                    
+                }
+                keyValue =  keyValue + ')';
+             }         
+            
+            return keyValue;
+        }
+        function doneAndClose(){
+            if( document.getElementById( 'thePage:theForm:isSaveError' ).value=='true') return;
+            try{  
+	            var winParent = window.opener;
+	             var targetingId = 'myPage:myForm:MyPageBlock:myRepeat6:{!$CurrentPage.parameters.pos}:hidTargetId';
+	             var keyValueId ='myPage:myForm:MyPageBlock:myRepeat6:{!$CurrentPage.parameters.pos}:keyvalueString';
+	             var finalkeyValueId ='myPage:myForm:MyPageBlock:myRepeat9:{!$CurrentPage.parameters.pos}:finalKey';
+	             var descriptionId = 'myPage:myForm:MyPageBlock:myRepeat1:{!$CurrentPage.parameters.pos}:LineDescription'; 
+	            var targeting= winParent.document.getElementById( targetingId );
+	            var  keyValueString = winParent.document.getElementById( keyValueId );
+	            var  lineDescription = winParent.document.getElementById( descriptionId );
+	            var  finalKeyValueEle = winParent.document.getElementById( finalkeyValueId );            
+	             targeting.value = document.getElementById( 'thePage:theForm:targetId' ).value=='' ? targeting.value : document.getElementById( 'thePage:theForm:targetId' ).value;
+	            keyValueString.value = getKeyValueForParent(); 
+	            if( finalKeyValueEle != null ) finalKeyValueEle.value = getFinalKeyValueFromParent();
+	            var lineDesString =  document.getElementById('thePage:theForm:LineDes').value;
+	             lineDesString = lineDesString !='' &&   lineDesString.length > 255 ? lineDesString.substr(0, 252) : lineDesString;     
+	            lineDescription.value = lineDesString; 	           
+	           window.close();  
+           }catch(e){
+             alert(e);
+           }      
+        }
+        
+        function allowDrop(ev){
+            ev.preventDefault();
+        }
+
+        function drag(ev,isFromLv1){            
+             var ele = document.getElementById( ev.target.parentNode.id);
+             var dropSelId ='';
+             for(var i=0; i< ele.childNodes.length;i++){
+               var opt = ele.childNodes[i];
+               if( opt.className == 'value-Active' ){
+                 dropSelId = dropSelId =='' ? opt.id : dropSelId+'#'+ opt.id;
+               }
+             }
+            if( dropSelId==''){
+                dropSelId= ev.target.id;
+            }
+            
+           ev.dataTransfer.setData("Text",dropSelId );
+           ev.dataTransfer.setData("isFromLv1",isFromLv1);
+           ev.dataTransfer.setData("FromKey","FromKey");
+           
+        }
+        
+        function drop(ev){
+            ev.preventDefault();
+            var fromWheres=ev.dataTransfer.getData("FromKey");          
+            if( fromWheres =="FromSaveTargeting"){              
+                return;
+            }
+           var data=ev.dataTransfer.getData("Text");
+           var lstDropId = data.split("#");
+            var dragLv=ev.dataTransfer.getData("isFromLv1");
+            var isFromLv1 = (dragLv=='true');
+            var ele = document.getElementById( isFromLv1 ? 'Lv1ContentView' :'Lv2ContentView' );
+            for(var i=0; i< ele.childNodes.length;i++){
+                var opt = ele.childNodes[i];
+                var isDisabledStatus = opt.style.pointerEvents;
+                if(   isDisabledStatus != 'none' ){ 
+                    for(var k=0;k< lstDropId.length;k++){                       
+                        if( opt.id == lstDropId[k]){
+                             addKeyValues( opt ,isFromLv1 );
+                             break;
+                        }
+                    }                 
+                }
+           } 
+                           
+        }
+        
+         function dragTargeting(ev,pos){  
+            ev.dataTransfer.setData("Text", ev.target.id );
+            ev.dataTransfer.setData("Pos", pos );
+            ev.dataTransfer.setData("FromKey","FromSaveTargeting");
+         }
+         function dropTargeting(ev){
+            ev.preventDefault();
+            var fromWheres=ev.dataTransfer.getData("FromKey");          
+            if( fromWheres =="FromKey"){                
+                return;
+            }
+            var data=ev.dataTransfer.getData("Text");
+            var pos = ev.dataTransfer.getData("Pos");
+            editSaveTargeting( parseInt( pos) , data );
+         }
+         
+         function allowDropTargeting(ev){         
+             ev.preventDefault();            
+         }
+        
+        function doLoadKeyProcess(ele, val,eleKeyList ){
+            
+             for(var i=0; i< ele.childNodes.length;i++){
+                var opt= ele.childNodes[i];
+                var label = document.getElementById(opt.id+'Label').innerHTML;
+                label = label.toLowerCase();              
+                if( label.search( val ) != -1 ){
+                    var divCon = document.createElement('div');
+                    var spanCon = document.createElement('span');
+                    spanCon.innerHTML = document.getElementById(opt.id+'Label').innerHTML;
+                    spanCon.id = opt.id+'Label';
+                    divCon.style.color = opt.style.color;
+                    divCon.style.padding = '3px 5px';
+                    divCon.style.pointerEvents =  opt.style.pointerEvents;
+                    divCon.id = opt.id;
+                    divCon.draggable = opt.draggable;
+                    divCon.ondragstart = opt.ondragstart;                      
+                     divCon.appendChild(spanCon);                   
+                     eleKeyList.appendChild(divCon);  
+                   
+                }
+            }
+            
+        }
+        
+        function loadKeyValue(){
+            var isHaveLv2 = document.getElementById('thePage:theForm:isHaveLv2').value;
+            var tabClassName = document.getElementById('tabLv2').className;
+            var selectedOptId = isHaveLv2=='true' && tabClassName.indexOf('tab-active') != -1 ? 'Lv2ContentView' :'Lv1ContentView';
+            var ele = document.getElementById( selectedOptId );
+            var eleKeyListId = isHaveLv2=='true' && tabClassName.indexOf('tab-active') != -1 ? 'searchKeyListLv2' :'searchKeyList';
+            var eleKeyList = document.getElementById( eleKeyListId );
+            var val = document.getElementById('searchKeyValueBox').value;
+            document.getElementById('searchKeyListLv2').innerHTML = '';
+            document.getElementById('searchKeyList').innerHTML = '';
+            if(ele.childNodes.length== 0 || val.trim()=='' ){
+                return;
+            }
+            
+            val =  val.toLowerCase();
+             doLoadKeyProcess(ele, val,eleKeyList );     
+            
+        }
+          var panelTab = ["tabLv1","tabLv2"];
+        function tabClick( tabElement){       
+            var tabActive =  "tab-lnk tab-active";
+            var tabInActive =  "tab-lnk";   
+            var childId=''; 
+            for(var i=0;i<panelTab.length;i++){
+                var tabEle = document.getElementById( panelTab[i] );
+                tabEle.className = tabInActive;             
+            }
+            tabElement.className = tabActive;
+            if( tabElement.id=='tabLv1'){
+                document.getElementById('searchKeyList').style.display ='block';
+                document.getElementById('searchKeyListLv2').style.display ='none';
+            }else{
+                document.getElementById('searchKeyList').style.display ='none';
+                document.getElementById('searchKeyListLv2').style.display ='block';
+                
+            }            
+             loadKeyValue();
+              //document.getElementById('searchKeyValueBox').value ='';
+            
+        }
+        
+        function deselectAllValue( parentNode ){
+            for(var i=0; i< parentNode.childNodes.length;i++){
+                var childEle = parentNode.childNodes[i]; 
+                var className =  'value-InActive';  
+                childEle.className = className;         
+            }        
+        }        
+        function valueClick( ele ){
+            var parentNode = ele.parentNode; 
+            deselectAllValue( parentNode );
+            ele.className = 'value-Active';  
+            
+               
+        }
+        function keyLv1Click(valId){
+            var tabElement =   document.getElementById('tabLv2');
+            tabClick( tabElement );
+            clickCategory( valId );
+        }
+        
+        function clickCategory( valId ){
+            var listContentVew = document.getElementById('Lv2ContentView');
+            var searchList2 = document.getElementById('searchKeyListLv2');
+            searchList2.innerHTML='';
+            for(var i=0; i< listContentVew.childNodes.length;i++){
+                var ele = listContentVew.childNodes[i];
+                var val  = document.getElementById( ele.id+'Parrent').innerHTML;
+                if(val == valId){
+                    var divCon = document.createElement('div');
+                    var spanCon = document.createElement('span');
+                    spanCon.innerHTML = document.getElementById(ele.id+'Label').innerHTML;
+                    spanCon.id = ele.id+'Label';
+                    divCon.style.color = ele.style.color;
+                    divCon.style.padding = '3px 5px';
+                    divCon.style.pointerEvents = ele.style.pointerEvents;
+                    divCon.id = ele.id;
+                    divCon.draggable = ele.draggable;
+                    divCon.ondragstart = ele.ondragstart; 
+                    divCon.appendChild(spanCon);   
+                    searchList2.appendChild( divCon );
+                }
+            }
+        }
+        
+       function editKeyValue(keyId){
+            var val = document.getElementById('thePage:theForm:jsonObject').value;
+            var lstRecords = JSON.parse( val );
+            var objFound = null;
+            for(var i=0; i< lstRecords.length ; i++){
+                 var obj = lstRecords[i];
+                 if( obj.id == keyId ){
+                    objFound = obj;
+                    removeKeyValue( keyId );  
+                            
+                 }
+            }
+            if( objFound != null ){
+                var parentSel = document.getElementById('selKeyValueLists');
+                document.getElementById('NewTargetingSection').style.display='none';
+                document.getElementById('newKeySection').style.display = 'block';
+                document.getElementById('confirmTargetingSection').style.display = 'block';
+                parentSel.style.display='none';
+                document.getElementById('newKeyViewSection').style.display = 'block';
+                for(var i=0; i< parentSel.options.length;i++){
+                    var opt = parentSel.options[i];
+                    if(opt.value == keyId ){
+                        parentSel.selectedIndex = i;
+                        opt.disabled = true;   
+                        document.getElementById('newKeyViewSection').innerHTML = opt.text;        
+                    }
+                }  
+                if( objFound.lstChild != null ){
+                     var lstChild =  document.getElementById('lstChild');  
+                     removeTableList();  
+                    for(var j=0; j< objFound.lstChild.length;j++){
+                        var obj = objFound.lstChild[j];
+                         var item = getValidChildKey( obj.label , obj.id, true ); 
+                         lstChild.appendChild(item);  
+                         if( obj.lstChild != null ){
+                            for(var i=0; i< obj.lstChild.length;i++){
+                                var objChild = obj.lstChild[i];
+                                var itemChild = getValidChildKey( objChild.label , objChild.id, false ); 
+                                lstChild.appendChild(itemChild);  
+                            }
+                         }
+                    }
+                }     
+                keyValueSelect( parentSel );
+                
+            }
+        
+       }
+       function checkListChild(){
+         var lstChild =  document.getElementById('lstChild');
+         var lstView1 =  document.getElementById('Lv1ContentView');
+         if(lstChild.childNodes.length != null && lstChild.childNodes.length > 0){
+            for(var j=0; j< lstChild.childNodes.length;j++){
+                var childNode =  lstChild.childNodes[j];
+                var isNotFound = true;
+                for(var i=0; i< lstView1.childNodes.length;i++){
+                    var childLv1 = lstView1.childNodes[i];
+                    if(childLv1.id == childNode.id  ){
+                        childLv1.style.pointerEvents = 'none';
+                        childLv1.style.color='graytext';
+                        isNotFound = false;
+                    }
+                }
+                if( isNotFound ){
+                     var lstView2 =  document.getElementById('Lv2ContentView');
+                     for(var i=0; i< lstView2.childNodes.length;i++){
+                        var childLv1 = lstView2.childNodes[i];
+                        if(childLv1.id == childNode.id  ){
+                            childLv1.style.pointerEvents = 'none';
+                            childLv1.style.color='graytext';
+                        }
+                     }
+                }
+            }
+         }   
+       }
+    </script>
+</head>     
+    <apex:form id="theForm">       
+        <apex:inputHidden value="{!targetId}" id="targetId"/>  
+        <apex:inputHidden value="{!selectedKey}" id="selectedKey"/>
+        <apex:inputHidden value="{!jsonObject}" id="jsonObject"/>  
+         <apex:inputHidden value="{!isHaveLv2}" id="isHaveLv2"/>           
+         <apex:inputHidden value="{!saveTargetingJson}" id="saveTargetingJson"/>  
+         <apex:inputHidden value="{!isSaveError}" id="isSaveError"/>         
+        <apex:actionFunction name="getChildValue" action="{!getChildValue}" rerender="theMessages,childValueSection,isHaveLv2" onComplete="checkListChild();"  status="status"/>
+        <input type="hidden" id="keyValueString"/>
+         <input type="hidden" id="keyValueStringId"/>
+         
+         <apex:pageMessages id="theMessages"/>
+        <div style="background: white;padding: 15px 10px; margin: 15px 10px; box-shadow: 1px 1px 5px #888888;border-radius: 3px;" >
+            <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:10px">
+                <tr>
+                    <td valign="top" style="padding-left: 10px;" >                          
+                            <div Style="padding-bottom: 10px;font-weight: bold;">Values</div>                       
+                            <input type="text" id="searchKeyValueBox"  style="margin-bottom: 5px;" /> <br/>                           
+                            <div  id="navManager"  style="margin-top: 5px;display: none;">
+                                    <span class="tab-lnk  tab-active" id="tabLv1" onclick="tabClick(this);"  >Level1</span>
+                                    <span class="tab-lnk"  id="tabLv2" onclick="tabClick(this);">Level2</span>      
+                            </div>  
+                            <br/>                                         
+                          
+                             <div id="searchKeyList"  style="min-width: 100px;box-shadow: 1px 1px 5px #888888;border-radius: 3px;height:200px;border: 1px solid #888888; overflow-y:auto; margin-top: 3px;"  >
+                                  
+                              </div> 
+                               <div id="searchKeyListLv2"  style="min-width: 100px;box-shadow: 1px 1px 5px #888888;border-radius: 3px;height:200px;border: 1px solid #888888; overflow-y:auto; margin-top: 3px;display: none;"  >
+                                    
+                              </div>                   
+                            <div style="margin-top: 50px;">                               
+                                <apex:outputPanel id="childValueSection"> 
+                                    <div Style="padding-bottom: 10px;font-weight: bold;vertical-align: bottom;">
+                                        {!If(isHaveLv2,'All Categories','All Values')}                                  
+                                    </div>  
+                                                                    
+                                    <div id="Lv1ContentView"  style="min-width: 100px;box-shadow: 1px 1px 5px #888888;border-radius: 3px;height:200px;border: 1px solid #888888; overflow-y:auto; "  >
+                                        <apex:repeat value="{!listChildKey}" var="itemChild"  > 
+                                        		 <apex:repeat value="{!itemChild.lstChild}" var="item" >                                        		 
+	                                        		 	<div   id="{!item.id}" draggable="true" ondragstart="drag(event,true)"  style="padding: 3px 5px;"  > 
+	                                                        <span id="{!item.id}Label"  style="display: none;" > {! item.label}  </span>
+	                                                        <span id="{!item.id}Key"  style="display: none;" > {! item.key}  </span>
+	                                                        <span  > {!If(isHaveLv2,' >'& item.label, item.label )}  </span>
+	                                                    </div>     
+                                        		 </apex:repeat>                                         
+                                                                              
+                                            
+                                         </apex:repeat>                                          
+                                    </div>
+                                    
+                                    <div id="Lv2ContentView"  style="min-width: 100px;box-shadow: 1px 1px 5px #888888;border-radius: 3px;height:200px;border: 1px solid #888888; overflow-y:auto; display: none; "  >
+                                                <apex:repeat value="{!listChildKey}" var="item" >
+                                                	 <apex:repeat value="{!item.lstChild}" var="itemChild1" >
+		                                                    <apex:repeat value="{!itemChild1.lstChild}" var="itemChild" >
+		                                                        <div   id="{!itemChild.id}" draggable="true" ondragstart="drag(event,false)"  style="padding: 3px 5px;"  > 
+		                                                            <span id="{!itemChild.id}Label" > {!itemChild.label}  </span>
+		                                                             <span id="{!itemChild.id}Key"  style="display: none;" > {! itemChild.key}  </span>
+		                                                            <span id="{!itemChild.id}Parrent" style="display:none;" > {!itemChild1.id}  </span>
+		                                                        </div>
+		                                                    </apex:repeat> 
+		                                              </apex:repeat>                                 
+                                                 </apex:repeat> 
+                                           
+                                    </div>
+                                    <script>                                        
+                                        document.getElementById('navManager').style.display = "{!If(isHaveLv2,'inline','none')}" ;
+                                        document.getElementById('tabLv1').className = "tab-lnk tab-active";
+                                        document.getElementById('tabLv2').className = "tab-lnk";
+                                    </script>
+                                </apex:outputPanel>                                 
+                            </div>                      
+                    </td>
+                    <td  valign="top" style="padding-left: 20px;padding-right: 20px;" >
+                            <div Style="padding-bottom: 10px;font-weight: bold;">Targeting configuration</div>
+                            <div style="box-shadow: 1px 1px 5px #888888;border-radius: 3px;height:300px;max-height:300px;border: 1px solid #888888; overflow-y: auto;"  >
+                                <div style="background-color: #d8e3ee;display: block; overflow-y: auto; max-height: 160px;min-height: 20px;"   id="ListSelectedKey" ondrop="dropTargeting(event)" ondragover="allowDropTargeting(event)"  >
+                                 <!--<div style="background-color: #d8e3ee;display: {!If(isHaveItem,'block','none')}; overflow-y: auto; max-height: 160px;"   id="ListSelectedKey" ondrop="dropTargeting(event)" ondragover="allowDropTargeting(event)"  >-->
+                                    <table  width="100%"  >
+                                        <tbody id="tableShowSelectedKey">
+                                              <apex:repeat value="{!lstItem}" var="item"  >   
+                                                    <tr id="{!item.id}"  >
+                                                        <td class="tdCol1 titleText" id="Col1{!item.id}"  onclick="openchild('{!item.id}');">></td>
+                                                        <td class="titleText">
+                                                            <apex:image value="/img/func_icons/util/pencil12.gif" title="Click here to edit." styleClass="editKeyImage" onclick="editKeyValue('{!item.id}');"/>                                                         
+                                                            {!item.label}
+                                                            
+                                                        </td>
+                                                        <td class="tdClose titleText" onclick="removeKeyValue( '{!item.id}' );">X</td>
+                                                    </tr>   
+                                                    <tr id="Child{!item.id}" class="tdInActive">
+                                                        <td class="tdChildView"></td>
+                                                        <td class="tdChildView" id="TD{!item.id}">
+                                                              <apex:repeat value="{!item.lstChild}" var="childItem"  >   
+                                                                    <div class="contentKeyView" id="SectionView{!childItem.id}">
+                                                                        <table class="table">
+                                                                            <tr><td title="{!childItem.label}">{!childItem.label}</td>
+                                                                                <td class="tdClose" onclick="deleteSaveKeyValue('{!childItem.id}','{!item.id}');">X</td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </div>
+                                                              </apex:repeat>
+                                                        </td>
+                                                        <td class="tdChildView"></td>
+                                                  </tr>     
+                                                                                                                        
+                                              </apex:repeat>
+                                          </tbody>
+                                    </table>
+                                </div>
+                                <div id="newKeySection" style="display: none;"  ondrop="drop(event)" ondragover="allowDrop(event)" >
+                                    <div style="padding-left: 10px;padding-top: 10px;padding-bottom: 10px;background-color: #d8e3ee;max-height: 150px;overflow-y: auto;"  >
+                                        <table>
+                                            <tr>
+                                                <td> <img src="{!URLFOR($Resource.ComponentForKeyValue, '/minus_icons.png')}" style="vertical-align: middle;"  />  </td>
+                                                <td>
+                                                    <select style="width: 150px;height: 21px;" id="selKeyValueLists"  onchange="keyValueSelect( this );"  > 
+                                                            <option value=""></option>
+                                                            <apex:repeat value="{!listTopLevelKey}" var="item" >
+                                                                <option value="{!item.id}" > {!item.label} </option>
+                                                            </apex:repeat>                 
+                                                    </select>
+                                                     <apex:repeat value="{!listTopLevelKey}" var="item" >
+                                                        <span style="display:none;" id="{!item.id}TopKey">{!item.key}</span>
+                                                     </apex:repeat>
+                                                     <apex:repeat value="{!lstItem}" var="item"  >   
+                                                            <script>
+                                                             visbleSelectFromExistingkey('{!item.id}');
+                                                          </script> 
+                                                     </apex:repeat>
+                                                    <span id="newKeyViewSection"  style="display: none;" > &nbsp;&nbsp; </span>
+                                                </td>
+                                            </tr>
+                                        </table>                               
+                                        <div id="lstChild" style="margin-top: 10px;min-height: 50px;"  ></div>                                   
+                                    </div>  
+                                    <div align="right" id="confirmTargetingSection" onclick="confirmTargeting();"  class="content-InActive" style="background-color: #d8e3ee;padding-right:10px;padding-bottom: 10px;color:#1797c0 ;text-decoration: underline;cursor: pointer;" >
+                                            Confirm Targeting
+                                    </div>                              
+                                </div>
+                                <div style="margin-left: 10px;padding-top: 10px;cursor: pointer;" onclick="addNewTargeting(this);" id="NewTargetingSection" ><img src="/s.gif"  class="addButton plus_image"  />  &nbsp;&nbsp;Add New Targeting </div>
+                            </div>
+                            <div align="right" style="margin-top: 10px;padding-right: 10px;">
+                                <a href="#" style="color:#1797c0 ;" onclick="resetList();return false;" >Reset</a>
+                                <a href="#" style="color:#1797c0 ;padding-left: 10px;" id="saveToMyList" onclick="OpenSaveToMyList();return false;">Save to My List</a>
+                            </div>
+                            <div style="font-weight: bold;padding-bottom: 10px">
+                                Line Description
+                            </div>
+                            <div>                      
+                                <apex:inputTextarea id="LineDes"  value="{!lineDesc}"  cols="50" rows="3" style="width: 100%" />
+                                        
+                            </div>
+                            <div align="right" style="padding-top: 10px">
+                                <div  style="padding-bottom: 30px;" class="textInActive"   id="divTextTakeOver" >  Take Over Description &nbsp;&nbsp; <apex:inputCheckbox value="{!isTakeOverDes}" onclick="takeOverChange(this);"  /> </div>
+                                <apex:commandButton value="Save" style="width:80px;" action="{!saveRecords}" rerender="theMessages,targetId,isSaveError"   status="status" oncomplete="doneAndClose();"/>
+                                 
+                                
+                            </div>
+                    </td>
+                    <td  valign="top"  style="padding-left: 10px;" >   
+                             <div Style="padding-bottom: 10px;font-weight: bold;">My Save Targeting
+                                <div id="lstSaveTargetingView" style="padding-top: 10px;min-height: 150px;"  >
+                                        <apex:repeat value="{!lstSaveTargeting}" var="item" >
+                                                 <div class="contentSaveTargetingView MoveCurror" id="{!item.id}" draggable="true" ondragstart="dragTargeting(event,{!item.pos} )"   >
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td title=" Double click to edit {!item.label}." ondblclick="editSaveTargeting( {!item.pos} ,'{!item.id}' );">
+                                                                <div>{!item.label}</div>
+                                                            </td>
+                                                            <td class="tdClose" onclick=" removeSaveTargeting( {!item.pos},'{!item.label}','{!item.id}');" >
+                                                                <div >X</div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                 </div>
+                                         </apex:repeat>  
+                                </div>
+                             </div> 
+                             <div Style="padding-bottom: 10px;font-weight: bold;">My latest criteria
+                                <div id="lstLateView" style="padding-top: 10px" >
+                                        <apex:repeat value="{!lstLateCri}" var="item" >
+                                                 <div class="contentKeyView" id="{!item.id}">
+                                                    <table class="table">
+                                                        <tr>
+                                                            <td title=" {!item.label} ">
+                                                                <div>{!item.label}</div>
+                                                            </td>
+                                                            <td class="tdClose" onclick="removeValLatestCri('{!item.id}');" >
+                                                                <div >X</div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                 </div>
+                                         </apex:repeat>  
+                                     
+                                 </div>
+                             </div> 
+                                        
+                           
+                    </td>
+                </tr>               
+            </table>
+        </div>   
+    <div id="InlineEditDialog" class="overlayDialog inlineEditDialog" style="width:500px;  visibility: visible;top: 25%;">
+                    <div class="topRight">
+                        <div class="topLeft">
+                            <img id="InlineEditDialogX" class="dialogClose" src="/s.gif" onclick="cancel();" title="Close" onmouseout="this.className = 'dialogClose'" onmouseover="this.className = 'dialogCloseOn'"/>
+                            <h2 id="InlineEditDialogTitle">Save to My List</h2>
+                        </div>
+                    </div>
+                    <div class="middle">
+                        <div id="InlineEditDialogContent" class="innerContent">
+                            <div class="activeField">
+                                <div class="inlineEditCompoundDiv" align="left">                        
+                                    <div style="border:0px solid #888888;" > 
+                                        <p><b>Save this Targeting to My List</b></p><br/>
+                                        Saving a complete Targeting Combination may help me to adjust actual targeting faster on clients request.<br/><br/>                             
+                                        <apex:inputTextarea value="{!savelstName}" id="saveLstName"  rows="2" cols="35"  style="width: 96%;" />                                     
+                                        <div style="text-align: right;margin-bottom: 20px;margin-top: 20px;" >
+                                                <a href="#" onclick="checkSaveToList();return false;" >Save To My List</a>
+                                            
+                                        </div>
+                                        
+                                                                                         
+                                    </div> 
+                                                                      
+                                </div>
+                             </div>
+                            <div></div>
+                            <div style="display: none;"></div>
+                           
+                        </div>
+                        <div class="bottomRight">
+                            <div class="bottomLeft"></div>
+                        </div>
+                    </div>
+                </div>
+               <div id="overlayBackground" class="overlayBackground" style=" width:100%;display: none; left: 0; top: 0px;height: 1000px;"></div>
+    <apex:actionStatus id="status">
+                <apex:facet name="start">
+                    <c:Load BackColor="#efefef" borderColor="#efefef" borderSize="3" height="50px" width="180px" Message="Please, wait..." messageStyle="color:darkred;font-size:10pt;font-family:arial;font-weight:bold;" imageUrl="/img/loading.gif"/>
+                </apex:facet>
+       </apex:actionStatus> 
+       <script type="text/javascript">
+        //without this, tabclick will stop working after jQuery lib imported.
+        var $ = jQuery.noConflict();
+        
+        function shiftClickAction( lstChildNodes, eleId  ){                 
+                var startPos = null;
+                var endPos = null;                      
+                for(var i=0; i< lstChildNodes.length; i++){
+                    var childNode = lstChildNodes[i];
+                    if( childNode.id == eleId ){
+                        endPos = i;
+                    }
+                    if( childNode.className == 'value-Active' && startPos== null ){
+                        startPos=i;
+                    }
+                }
+                if( startPos > endPos){
+                    var tmpPos = startPos;
+                    startPos = endPos;
+                    endPos = tmpPos;
+                }                       
+                for(var i=0; i< lstChildNodes.length; i++){
+                    var childNode = lstChildNodes[i];
+                    if( i >= startPos && i<= endPos  && childNode.style.pointerEvents != 'none'){
+                        childNode.className = 'value-Active';
+                    }else{
+                        childNode.className = 'value-InActive';
+                    }                           
+                }                       
+        }
+        jQuery(document).ready(function($) {
+                 
+              var PLACEHOLDER = '-KeyValue search-'; 
+              var itemObjects;        
+              var queryTerm;  
+             
+                refreshLineDesc();
+                        
+              $('[id$=searchKeyValueBox]').autocomplete({
+                        minLength: 0,
+                        source: function(request, response) {
+                                    queryTerm = request.term; 
+                                   loadKeyValue();
+                               },
+                        
+                });           
+                
+               // Add or remove placeholder values
+                $('[id$=searchKeyValueBox]').val(PLACEHOLDER);
+                $('[id$=searchKeyValueBox]').on("focus",  function(event){
+                    $tgt = $(event.target);
+                    if($tgt.val() === PLACEHOLDER ){
+                        $tgt.val('');                  
+                    }
+                });
+                $('[id$=searchKeyValueBox]').on( "blur",  function(event){
+                    $tgt = $(event.target);
+                    if($tgt.val() === '' ){
+                        $tgt.val(PLACEHOLDER);                    
+                    }
+                });
+                
+               
+              $("#Lv1ContentView>div, #searchKeyList>div").live("click",function(e){
+                    if( e.ctrlKey ){
+                        var activClassName = this.className =='' || this.className=='value-InActive' ? 'value-Active' :  'value-InActive';
+                        this.className =  activClassName ;  
+                    }else if( e.shiftKey ){                                                 
+                        var lstChildNodes =  $(this).parent().children();                                               
+                        shiftClickAction( lstChildNodes ,this.id);
+                        
+                    }else{
+                        valueClick(this);
+                        var isHavelv2 =  document.getElementById('thePage:theForm:isHaveLv2').value;
+                        if( isHavelv2== 'true'){                                                    
+                            keyLv1Click( this.id );
+                        }
+                    }
+                                            
+             });        
+             $( "#Lv1ContentView>div, #searchKeyList>div" ).live("dblclick",function(e){
+                addKeyValues( this,true );
+            }); 
+            
+            
+            
+             $("#searchKeyListLv2>div").live("click",function(e){
+                    if( e.ctrlKey ){
+                        var activClassName = this.className =='' || this.className=='value-InActive' ? 'value-Active' :  'value-InActive';
+                        this.className =  activClassName ;  
+                    }else if( e.shiftKey ){ 
+                        var lstChildNodes =  $(this).parent().children();                                               
+                        shiftClickAction( lstChildNodes ,this.id);
+                    }else{
+                        valueClick(this);
+                    }
+                                            
+             });
+              $( "#searchKeyListLv2>div" ).live("dblclick",function(e){
+                addKeyValues( this,false );
+            });                                 
+          
+        });
+    
+        
+    
+  </script>
+   </apex:form>
+</apex:page>

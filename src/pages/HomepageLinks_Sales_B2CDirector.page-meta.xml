@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>34.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>2015-06-15 - GTCRM-1539 - HTML Homepage components deprecated</description>
+    <label>HomepageComponent - Sales - B2C Director</label>
+</ApexPage>

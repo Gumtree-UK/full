@@ -1,0 +1,488 @@
+<!-- 
+
+    Change log;
+    - 2015-02-02 - GTCRM-1564- Live chat - remove how can i help you question  
+      
+-->
+<apex:page showHeader="false" cache="false" controller="P2P_MySupport_ChatController" standardStylesheets="false"> 
+    <!-- This script takes the endpoint URL parameter passed from the deployment page and makes it the action for the form -->
+    <script type="text/javascript">
+
+         (
+            function() { 
+                function handlePageLoad() {
+                    var endpointMatcher = new RegExp("[\\?\\&]endpoint=([^&#]*)");
+                    document.getElementById('prechatForm').setAttribute('action',
+                        decodeURIComponent(endpointMatcher.exec(document.location.search)[1]));
+                } 
+                
+                if(window.addEventListener) {
+                    window.addEventListener('load', handlePageLoad, false);
+                }else{ 
+                    window.attachEvent('onload', handlePageLoad, false);
+                }
+            }
+        )();
+        window.onload = function(){ window.resizeTo(430,630);}
+        document.title = "Gumtree Help Live Chat"; 
+        
+        function checkIsEmailExist(){
+            var emailAddr = document.getElementById('prechat_email').value.trim(); 
+            var adRef = document.getElementById('prechat_AdRef').value.trim(); 
+            var description = document.getElementById('prechat_description').value.trim();
+            var emailPattern = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            if (!emailPattern.test(emailAddr)) {
+                    alert('Please provide a valid email address');                      
+                    return false;
+            } 
+            var emailOptOut = document.getElementById('prechat_emailoptout').checked+'';    
+            try{
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.P2P_MySupport_ChatController.checkIsEmailExist}',
+                    emailAddr, 
+                    adRef,
+                    emailOptOut, 
+                    description,
+                    '{!Customer_Services}',                   
+                    function(result, event)
+                    {
+                        if (event.status) {
+                             if(result['Result'] =='true'){
+                                document.getElementById('UserError').innerHTML = '{!$Label.User_Block_Error}';
+                                return false;
+                             }else if(result['Result'] =='false'){                                   
+                                document.getElementById('prechat_caseId').value = result['CaseId'];
+                                document.getElementById('prechat_conId').value = result['PreChatConId'];
+                                document.forms["prechatForm"].submit();                                     
+                                return true;                                 
+                             }else{
+                                alert('Error= '+result['Error']);
+                                return false;
+                             }
+                        } 
+                    },
+                    {escape: false}
+                );
+            
+            }catch(ex){
+                alert(ex.message);                  
+                return false;
+            }
+            return false;               
+        }
+                                
+    </script>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <meta name="apple-mobile-web-app-capable" content="yes"/>   
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+        <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
+        <style type="text/css">
+            body {
+                font-family: Arial,sans-serif; 
+                font-size: 13px ;
+                margin:0;
+                padding:0;
+                min-width:240px;
+            }
+            /************************************
+             We want the buttons to have the same
+             visual feedback as normal links.
+            
+             START - Links visual feedback
+             ************************************/
+        
+            /* 'position' and 'top' are used to
+                override global links behaviour */
+            a:active.button {
+                position: relative;
+                top: 0px;
+            }
+            /* 'position' and 'top' are used to
+                replicate global links behaviour */
+            a:active.button span,
+            a:active.button input,
+            button:active span {
+                position: relative;
+                top: 1px;
+            }
+            input.button[type='submit']:active {
+                padding-top: 1px !important;
+            }
+            /*  'position' and 'top' are used to
+                override global links behaviour */
+            a:active.button.disabled span,
+            a:active.button.disabled input,
+            button:active.disabled span {
+                position: relative;
+                top: 0px !important;
+            }
+            input.button[type='submit']:active.disabled {
+                padding-top: 0px !important;
+            }
+            /*
+               We make the button non-selectable,
+               since it is disabled and the user could
+               click it more than once, highlighting the
+               text unintentionally.
+            */
+            a.button.disabled span,
+            a.button.disabled input {
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -o-user-select: none;
+                user-select: none;
+            }
+            /****************************
+             END - Links visual feedback
+            *****************************/
+        
+        
+            /**********************
+             Common button styling
+             **********************/
+            .button,
+            input.button {
+                display: inline-block;
+                *display: inline;
+                zoom: 1;
+                vertical-align: middle;
+                text-align: center;
+                outline: none;
+                text-decoration: none;
+                cursor: pointer;
+                white-space: nowrap;
+                margin: 0;
+            }
+            .button.disabled,
+            input.button[disabled] {
+                cursor: not-allowed;
+            }
+            input.button,
+            button.button {
+                *overflow: visible;
+                /* prevents the dynamic expanding width depending on the value */
+                *width: auto;
+                *border: none !important;
+                /* with the gradient background you get a really ugly border */
+                *position: static  !important;
+                *float: none !important;
+            }
+            button::-moz-focus-inner,
+            input.button[type='submit']::-moz-focus-inner {
+                border: 0;
+                padding: 0;
+            }
+            .button span {
+                display: block;
+            }
+            .button-ie7-wrapper {
+                *display: inline;
+                /* wrapper to fix the really ugly border */
+                *zoom: 1;
+                position: relative;
+            }
+            .button-ie7-wrapper .button {
+                margin: 0 !important;
+            }
+            .button:hover,
+            .button:focus,
+            .button:active  {
+                text-decoration: none !important;
+            }
+            /******************
+             Button dimensions
+             ******************/
+            .button.small span {
+                line-height: 14px;
+                height: 14px;
+            }
+            input.button.small,
+            button.button.small {
+                height: 16px;
+                *height: 14px;
+            }
+            .button.medium span {
+                line-height: 22px;
+                height: 22px;
+            }
+            input.button.medium,
+            button.button.medium {
+                height: 24px;
+                *height: 22px;
+            }
+            .button.large span {
+                line-height: 32px;
+                height: 32px;
+            }
+            input.button.large,
+            button.button.large {
+                font-size: 11px;
+                height: 34px;
+                *height: 32px;
+            }
+            .button-ie7-wrapper.medium {
+                height: 22px;
+            }
+            .button-ie7-wrapper.small {
+                height: 14px;
+            }
+            .button-ie7-wrapper.large {
+                height: 32px;
+            }
+            .button.primary.medium,
+            .button.primary.large,
+            .button.secondary.large {
+                padding: 0 12px;
+            }
+            .button.secondary.medium,
+            .button.secondary.small {
+                padding: 0 4px;
+            }
+            /******************
+             PRIMARY buttons
+             ******************/
+            .button.primary {
+                font-size: 1px;
+                font-weight: bold;
+                color: white;
+                border: 1px solid #69aa47;
+                background: #69aa47;
+                background: -webkit-gradient(linear, left top, left bottom, from(#96c859), to(#69aa47));
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#96c859", endColorstr="#69aa47", GradientType=0);
+                -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#96c859", endColorstr="#69aa47", GradientType=0);
+                background: -moz-linear-gradient(top, #96c859 0%, #69aa47 100%);
+                background: -webkit-linear-gradient(top, #96c859 0%, #69aa47 100%);
+                background: -o-linear-gradient(top, #96c859 0%, #69aa47 100%);
+                background: -ms-linear-gradient(top, #96c859 0%, #69aa47 100%);
+                background: linear-gradient(top, #96c859 0%, #69aa47 100%);
+                -moz-box-shadow: inset 0 1px 0 #96c859;
+                -webkit-box-shadow: inset 0 1px 0 #96c859;
+                box-shadow: inset 0 1px 0 #96c859;
+            }
+            .button-ie7-wrapper.primary {
+                border: 1px solid #69aa47;
+            }
+            .button.primary:hover {
+                background: #69aa47;
+                -moz-box-shadow: inset 0 1px 0 #69aa47, 0 1px 3px #AAAAAA;
+                -webkit-box-shadow: inset 0 1px 0 #69aa47, 0 1px 3px #AAAAAA;
+                box-shadow: inset 0 1px 0 #69aa47, 0 1px 3px #AAAAAA;
+            }
+            .button.primary:active {
+                background: #69aa47;
+                -moz-box-shadow: inset 0 1px 1px #69aa47;
+                -webkit-box-shadow: inset 0 1px 1px #69aa47;
+                box-shadow: inset 0 1px 1px #69aa47;
+            }
+            .button.primary.disabled,
+            .button.primary.large.disabled {
+                color: #CBDDF2 !important;
+                border: 1px solid #7FA4CF;
+                background: #A8CBF4;
+                background: -webkit-gradient(linear, left top, left bottom, from(#A8CBF4), to(#7FA4CF));
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#A8CBF4", endColorstr="#7FA4CF", GradientType=0) PROGID:DXImageTransform.Microsoft.DropShadow(Color='white', OffX=0, OffY=0);
+                -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#A8CBF4", endColorstr="#7FA4CF", GradientType=0);
+                background: -moz-linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+                background: -webkit-linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+                background: -o-linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+                background: -ms-linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+                background: linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+                -moz-box-shadow: inset 0 1px 0 #BED9F7;
+                -webkit-box-shadow: inset 0 1px 0 #BED9F7;
+                box-shadow: inset 0 1px 0 #BED9F7;
+            }
+            .button-ie7-wrapper.primary.disabled,
+            .button-ie7-wrapper.primary.large.disabled {
+                border: 1px solid #7FA4CF;
+            }
+            .headerbox{
+                background-color: #79b74a;
+                -webkit-box-shadow: 0px 1px 1px #79b74a;
+                -moz-box-shadow: 0px 1px 1px #79b74a;
+                box-shadow: 0px 1px 1px #888888;
+                text-align: center;
+                height: 75px;
+            }
+            .headerSideLeft{
+                position: absolute;
+                clip: rect(0px,90px,100px,0px);
+                left: 20px;
+            }
+            .headerSideRight{   
+                position: absolute;
+                clip: rect(0px,210px,100px,90px);
+                right: 20px;
+            }
+            .cropImageHeaderRight{
+                display: block;
+                float: right;
+                height: 75px;
+                width: 122px;
+            }
+            .cropImageHeaderLeft{
+                display: block;
+                float: left;
+                height: 75px;
+                overflow: hidden;
+                width: 85px;
+            }
+        
+            /*Test screen*/
+            @media all and (max-width: 1024px) {
+                
+            }
+            @media all and (max-width: 1007px) {
+                
+            }
+            @media all and (max-width: 990px) {
+                
+            }
+            @media all and (max-width: 768px) {
+                
+            }
+            @media all and (max-width: 750px) {
+                
+            }
+            @media all and (max-width: 700px) {
+                
+            }
+            @media all and (max-width: 600px) {
+                
+            }
+            @media all and (max-width: 497px) { 
+                
+            }
+            @media all and (max-width: 480px) {
+                
+            }
+            @media all and (max-width: 380px){
+                
+            }
+            @media all and (max-width: 320px){
+                input[type="text"], input[type="password"], textarea{width: 100%;}
+            }
+            @media all and (max-width: 300px){
+                
+            }
+            @media all and (max-width: 240px){
+                
+            }
+            /*device phone*/
+            @media all and (max-device-width: 1024px){
+                
+            }
+            @media all and (max-device-width: 1007px) {
+                
+            }
+            @media all (max-device-width: 990px) {
+                
+            }
+            @media all and (max-device-width: 768px){
+                
+            }
+            @media all and (max-device-width: 700px){
+                
+            }
+            @media all and (max-device-width: 600px){
+                
+            }
+            @media all and (max-device-width: 497px){
+                
+            }
+            @media all and (max-device-width: 480px){
+                
+            }
+            @media all and (max-device-width: 380px){
+                
+            }
+            @media all and (max-device-width: 320px){
+                input[type="text"], input[type="password"], textarea{width: 100%;}
+            }
+            @media all and (max-device-width: 300px){
+                
+            }
+            @media all and (max-device-width: 240px){
+                
+            }
+        </style> 
+    </head>
+    <div style="margin:10px; padding:0px; border:#79b74a 2px solid; min-width: 220px;">    
+        <table style="width:100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>
+                    <div>
+                        <div class="headerbox">
+                            <div class="cropImageHeaderLeft" style="background: url('{!URLFOR($Resource.GumtreeLiveChatHeader)}') no-repeat scroll 0 -13px transparent;">
+                                
+                            </div>
+                            <div class="cropImageHeaderRight" style="background: url('{!URLFOR($Resource.GumtreeLiveChatHeader)}') no-repeat scroll -95px -13px transparent;">
+                                
+                            </div>
+                        </div>
+                        <div style="padding: 10px 15px;">
+                            <span style="font-size:18px; font-weight:bold; ">Welcome to Live Chat</span>
+                            <br/>
+                            <br/>
+                            <font style="font-size:12px;">Please input your name and email to help us help you.</font><br/>
+                            <font style="font-size:9px; font-weight:bold;">Fields marked with an * are required</font>
+                            <br />
+                            <br />
+                            <form method='post' id='prechatForm'>               
+                                <font style="font-size:12px; font-weight:bold;">What is your name? *</font> <br/>               
+                                <input type='text' style="height:30px; border:#A1A1A1 1px solid;" name='liveagent.prechat.name' id='prechat_field' size="35"/>
+                                <br />
+                                <br />
+                                <font style="font-size:12px; font-weight:bold;">What is your email address? *</font><br/>
+                                <input type='text' style="height:30px; border:#A1A1A1 1px solid;" name='liveagent.prechat:Email' id='prechat_email' size="35" />
+                                <br />
+                                <br />
+                              
+                                   <!--   GTCRM-1564- Live chat - remove how can i help you question  -->               
+                                   <!--  <textarea style="height:70px; border:#A1A1A1 1px solid; width:240px;" name="liveagent.prechat:description" id="prechat_description" ></textarea><br/>-->
+                                   <!--   <input type='text' style="height:30px; border:#A1A1A1 1px solid;" name='liveagent.prechat.description' id='prechat_description' size="50"/>-->
+                               <font style= "font-size:12px; font-weight:bold; width:250px;"> What is your issue? *</font> <br/>              
+                                <select style="height:30px;font-size:12px; font-weight:bold; width:270px;"  name="liveagent.prechat:description" id="prechat_description" >
+                                <option value=" None"> --None-- </option> 
+                                <option value=" Question about my free ad "> Question about my free ad </option> 
+                                <option value=" Question about my paid ad "> Question about my paid ad </option> 
+                                <option value=" Report Fraud/Scam/Abuse "> Report Fraud/Scam/Abuse  </option> 
+                                <option value=" Question about Replying to ads "> Question about Replying to ads </option> 
+                                <option value=" General Feedback "> General Feedback </option> 
+                               
+                               </Select><br/><br/>
+  
+                                <font style="font-size:12px;">If you have your ad reference number, please enter it here.</font><br/>
+                                <input type='text' style="height:30px; border:#A1A1A1 1px solid;" name='liveagent.prechat:AdRef' size="35"  id="prechat_AdRef"/>
+                                <br />
+                                <br />
+                               
+                                <font style="font-size:12px;"> Would you like to receive a copy of this chat? </font>
+                                <input type='checkbox' name='liveagent.prechat:EmailOptOut' id='prechat_emailoptout'/>
+                                <input type="hidden" name="liveagent.prechat:PreChatConId" value="" id="prechat_conId" />
+                                <!--end  -->
+                                <input type="hidden" name="liveagent.prechat:PreChatCaseId" value="" id="prechat_caseId" />
+                                <input type="hidden" name="liveagent.prechat.query:PreChatCaseId" value="Case,Case.Id" />
+                                <input type="hidden" name="liveagent.prechat.save:PreChatCaseId" value="CaseId" /> 
+                                    
+                                <br/>
+                                <br/>    
+                                <input type='submit' onclick="checkIsEmailExist();" class='button primary large'  style=" font-size:15px; font-family:Arial, Helvetica, sans-serif;"  value='Start Live Chat'  id='prechat_submit'/>
+                                <div id="UserError" style="color: red;padding-top:3px;"> </div>
+                            </form> 
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- START Salesforce Live Agent Deployment Code: MUST BE PLACED DIRECTLY ABOVE THE CLOSING </BODY> TAG and AFTER/OUTSIDE ALL HTML -->
+    <script type="text/javascript">
+    var __ALC_Deployment = 9930;
+    document.write(unescape("%3Cscript src='"+document.location.protocol+"//depot.liveagentforsalesforce.com/app/js/lt.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <!-- END Salesforce Live Agent Deployment Code -->
+
+</apex:page>

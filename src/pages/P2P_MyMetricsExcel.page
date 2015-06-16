@@ -1,0 +1,240 @@
+<apex:page controller="P2P_MyMetricsExcelController" renderAs="" contenttype="application/vnd.ms-excel#{!metricCon.acc.Name}_Gumtree_Metrics_{!metricCon.pmFromDatestr}-{!metricCon.pmEndDatestr}.xls">
+    <!-- contenttype="application/vnd.ms-excel#MyMetriceExcel.xls" -->
+    <style>
+        .label {font-weight: bold; font-family: Arial;}
+        .header1 {
+            font-weight: normal;
+            border: 1pt solid black;
+            color: white;
+            background-color: #7F7F7F;
+        }
+        .header2 {
+            font-weight: bold;
+            border: 1pt solid black;
+            background-color: #BFBFBF;
+        }
+        .colData {
+            border: 0.5pt solid black;
+            font-family: Arial;
+        }
+    </style>
+    <table border="0" cellpadding="0" cellspacing="0" style="font-size: 10pt; font-family: Arial;">
+        <tr height="79">
+            <td width="33"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td class="label">Date</td>
+            <td align="left">
+                <apex:outputText value="{0, date, dd'/'MM'/'yyyy}">
+                    <apex:param value="{!TODAY()}" /> 
+                </apex:outputText>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td class="label">Account Name</td>
+            <td>{!metricCon.acc.Name}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td class="label">Start date</td>
+            <td align="left"><apex:outputText value="{!metricCon.pmFromDatestr}" /></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td class="label">End date</td>
+            <td align="left"><apex:outputText value="{!metricCon.pmEndDatestr}" /></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td class="label">Location</td>
+            <td>{!metricCon.location}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr >
+        <tr height="16">
+            <td></td>
+            <td class="label">Display</td>
+            <td>{!metricCon.displayType}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr >
+        <tr height="16">
+            <td></td>
+            <td></td>
+            <!-- <td colspan="5" class="header1" style="vertical-align: middle; border-bottom: none; middle;border-right: none;" align="center">Ad Management</td> -->
+            <td colspan="4" class="header1" style="vertical-align: middle; border-bottom: none; middle;border-right: none;" align="center">Ad Management</td>
+            <!-- <td colspan="2" class="header1" style="vertical-align: middle; border-bottom: none; middle;border-right: none;" align="center">Ad Views</td> -->
+            <!-- <td colspan="6" class="header1" style="vertical-align: middle; border-bottom: none;" align="center">Reply Metrics</td> -->
+            <td colspan="2" class="header1" style="vertical-align: middle; border-bottom: none;" align="center">Reply Metrics</td>
+        </tr>
+        <tr height="35">
+            <td></td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">
+                <apex:outputText value="Date" rendered="{!metricCon.displayType == 'Month'}" />
+                <apex:outputText value="Quarter" rendered="{!metricCon.displayType == 'Quarter'}" />
+                <apex:outputText value="Year" rendered="{!metricCon.displayType == 'Year'}" />
+            </td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Live Ads</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Total Ads Posted</td>
+            <!-- <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Total Replies Per Ad</td> -->
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">New Ads Posted</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Ads Reposted</td>
+            <!-- <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Ad Views</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Views Per Ad</td> -->
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Email Replies</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Email Replies Per Ad</td>
+            <!-- <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Click to Call</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Click to Call per Ad</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">URL Clicks</td>
+            <td class="header2" style="vertical-align: middle;" align="center">URL Clicks Per Ad</td> -->
+        </tr >
+        <apex:repeat value="{!metricCon.listPMDto}" var="pm">
+        <tr height="16">
+            <td></td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="left">
+                <apex:outputText value="{!pm.pmDate}" rendered="{!metricCon.displayType == 'Month'}" /> 
+                <apex:outputText value="{!pm.pmQuarter}" rendered="{!metricCon.displayType == 'Quarter'}" />
+                <apex:outputText value="{!pm.pmYear}" rendered="{!metricCon.displayType == 'Year'}" />
+            </td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Live_ads}</td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Ads_posted}</td>
+            <!--- <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Total_Replies_per_ad_posted}</td> --->
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.New_ads_posted}</td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Reposted_Ads}</td>
+            <!--- <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Ad_views}</td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Views_per_ad}</td> --->
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Email_replies}</td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Email_replies_per_ad}</td>
+            <!--- <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Click_to_call}</td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.Click_to_call_per_ad}</td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">{!pm.URL_Clicks}</td>
+            <td class="colData" style="vertical-align: middle; border-top: none; " align="center">{!pm.URL_Clicks_per_ad}</td> --->
+        </tr>
+        </apex:repeat>
+        <tr height="35">
+            <td></td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Summary</td>
+            <apex:repeat value="{!metricCon.fieldNames}" var="fieldName" >
+                <td class="header2" style="vertical-align: middle; border-right: none;" align="center">{!metricCon.perMertsSummaryDto.PerformanceMartice[fieldName]}</td>
+            </apex:repeat>
+        </tr>
+    </table>
+</apex:page>

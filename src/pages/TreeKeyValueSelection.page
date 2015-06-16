@@ -1,0 +1,366 @@
+<apex:page sidebar="false" id="thePage"  controller="TreeKeyValueSelectionController" showHeader="false" >
+<head>
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.js')}"/>	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.custom.js')}"/>	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.cookie.js')}"/>	
+	<apex:stylesheet value="{!URLFOR($Resource.JqueryForTree, '/ui.dynatree.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.css')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.dynatree.js')}"/>	 	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.min.js')}"/>	
+	
+	<style>
+	
+		span.dynatree-empty, span.dynatree-vline, 
+		span.dynatree-connector, span.dynatree-expander, 
+		span.dynatree-icon, span.dynatree-checkbox, span.dynatree-radio, 
+		span.dynatree-drag-helper-img, #dynatree-drop-marker {
+			background-image: url("{!URLFOR($Resource.JqueryForTree, '/iconsvista.gif')}");
+		}		
+		.InputStyle {
+			width: 98%;
+			margin: 2px;
+			display: inline-block;
+			color: #999;
+		}
+		input,textarea {
+			margin: 0;
+			border-radius: 3px;
+            border: 1px solid #999999;
+            padding: 3px 5px;
+			vertical-align: middle;
+		}
+		 .ui-autocomplete-loading { 
+	        background: white url(/img/loading32.gif) right center no-repeat;
+	        background-size:15px 15px; 
+	    }  
+	    .buttons{
+	    	margin-left:  5px !important;
+	    }
+	    #salesforceSource_blurybackground{
+	    	position: fixed !important;
+	    }
+	    .buttonsWidth{
+	    	width: 180px !important;
+	    }
+	     body{
+	    	background-color: #d8e3ee;
+	    }
+	   
+	   .image{
+	   		height: 20px;
+		    width: 20px;
+		    vertical-align: middle;
+	   }
+	    .imageOr{
+	    		background:url("{!URLFOR($Resource.JqueryForTree, '/round.png')}"); 
+	    }
+	   .imageAnd{
+		   	background:url("{!URLFOR($Resource.JqueryForTree, '/unch.png')}"); 		   
+	   }
+	   .imageAndSelected{
+	   	 	background:url("{!URLFOR($Resource.JqueryForTree, '/unchClick.png')}"); 	
+	   }
+	    .imageOrSelected{
+	   	 	background:url("{!URLFOR($Resource.JqueryForTree, '/roundClick.png')}"); 	
+	   }
+	   div.imageOr:hover  {	
+	   		cursor: pointer;
+			background:url("{!URLFOR($Resource.JqueryForTree, '/roundOver.png')}"); 
+		}
+	   div.imageAnd:hover  {	
+	   		cursor: pointer;
+			background:url("{!URLFOR($Resource.JqueryForTree, '/outer.png')}"); 
+		}
+		
+		.dynatree-folder .dynatree-connector {
+			background-image: url("{!URLFOR($Resource.JqueryForTree, '/iconsvista.gif')}") !important;
+			background-position: 0px -80px;
+			cursor: pointer;
+		}
+		span.dynatree-connector {
+			background-image: none;
+		}
+	</style>
+	<script>		
+			//call when operator click
+			function operatorSelected(element ){				
+				var chkOrActive = "image imageOrSelected";
+				var chkAndActive= "image imageAndSelected";
+				disSelectedAllOperator();
+				element.className = element.id== 'chkAnd'? chkAndActive : chkOrActive ;
+			}
+			
+			function disSelectedAllOperator(){
+				var chkOrInActive = "image imageOr";
+				var chkAndInActive = "image imageAnd";
+				document.getElementById('chkAnd').className = chkAndInActive;
+				document.getElementById('chkOr').className = chkOrInActive;	
+				getListCheckNodeOrDeSelectNode(false);		
+			}
+			
+			 function isOperatorActive(opStatus){
+			 	var chkAndClassName = document.getElementById('chkAnd').className ;
+				var chkOrClassName = document.getElementById('chkOr').className;		
+				if( chkAndClassName.indexOf("Selected") != -1 ) return  opStatus ? opStatus : 'AND';					
+				if( chkOrClassName.indexOf("Selected") != -1 ) return  opStatus ? opStatus : 'OR';					
+				if( opStatus )return false;
+			 }
+			
+			function getListCheckNodeOrDeSelectNode(isGetList){
+				var lstSelectedNode = [];
+				$("#tree").dynatree("getRoot").visit(function(node){								    
+						if(node.isSelected()){
+							if( isGetList ){
+								lstSelectedNode.push(node);
+							}else{
+								node.select(false);
+							}
+						}						    	    
+				});
+				if( isGetList ) return lstSelectedNode;
+			}
+			function copyToTextBox(){
+				var keyValueSelected = document.getElementById('thePage:theForm:keyvalueSelected');	
+				var isOpActive = isOperatorActive( true);			
+				if( isOpActive && keyValueSelected.value ==''){
+					disSelectedAllOperator();					
+					return;				
+				}
+				if( isOpActive ){					
+					var val = keyValueSelected.value;
+					keyValueSelected.value = val + ' '+ isOperatorActive(false);
+					disSelectedAllOperator();
+					return ;
+				}				
+				var lstSelectedNode = getListCheckNodeOrDeSelectNode(true);				
+				var val ='(';
+				for(var i=0;i<lstSelectedNode.length;i++){
+					var node = lstSelectedNode[i];
+					var parentVal = decodeURI( node.getParent().data.treeValue );
+					if( lstSelectedNode.length == 1 || i == lstSelectedNode.length-1 ){
+						
+						val = val+ '(' + parentVal +'='+ node.data.treeValue +')';
+					}else{
+						val = val+ '(' + parentVal +'='+ node.data.treeValue +') OR' ;
+					}					
+					node.select(false);
+				}
+				val = val +')';
+				if( lstSelectedNode.length ==0 )val ='';
+				keyValueSelected.value = keyValueSelected.value +' '+ val;
+			}
+			
+			function setValueToParent(){								
+				var isSaveError = document.getElementById('thePage:theForm:isSaveError'); 
+				if(isSaveError.value == 'false'){
+					var tarText = document.getElementById('thePage:theForm:keyvalueSelected'); 
+					var targetId = document.getElementById('thePage:theForm:targetId'); 
+					var eleId = window.parent.document.getElementById('targetingId'); 
+					var eleText = window.parent.document.getElementById('keyvalueString');					
+					eleId.value =  targetId.value;
+					eleText.value = tarText.value;
+				}		
+			
+			
+			}
+			
+			function checkTargetingBeforeSave(){
+				var targeting = document.getElementById('thePage:theForm:targetId');
+				var eleId = window.parent.document.getElementById('targetingId'); 
+				if(targeting=='' && eleId.value !='none'){
+					targeting.value = eleId.value;
+				}
+				saveRecords();
+			}
+	</script>
+	
+</head>
+<body   style="margin-left: 5px;margin-right: 5px;">
+<apex:form id="theForm" >
+	<apex:inputHidden value="{!targetId}" id="targetId"/>
+	<apex:inputHidden value="{!isSaveError}" id="isSaveError"/>
+	<apex:inputHidden value="{!childPos}" id="childPos"/>
+	<apex:inputHidden value="{!selectedKeyValue}" id="selectedKeyValue"/>
+	<apex:inputHidden value="{!parrentKeyNode}" id="parrentKeyNode"/>	
+	<apex:actionFunction name="getChildKeyValue" action="{!getChildKeyValue}" rerender="theTreeContent,theMessages,jsonObject" status="status"/> 
+	<apex:actionFunction name="getMoreChildKeyValue" action="{!getMoreChildKeyValue}" rerender="theTreeContent,theMessages,jsonObject" status="status"/> 
+	<apex:actionFunction name="addKeyValue" action="{!addKeyValue}" rerender="theTreeContent,theMessages,jsonObject" status="status" onComplete="copyToTextBox();"/> 
+	<apex:actionFunction name="saveRecords" action="{!saveRecords}" rerender="theTreeContent,theMessages,isSaveError,targetId" onComplete="setValueToParent();"  status="status"/> 
+	
+ 	<apex:pageMessages id="theMessages"/>
+	 	<div >			              			 	   	  			  		  			
+			<input type="text" class="InputStyle" id="searchKeyValue" placeholder="KeyValue search" onkeydown="if (event.keyCode == 13){  addKeyValue();return false;}" />
+			<apex:commandButton value="Reset tree" action="{!resetTree}" rerender="theTreeContent,theMessages,jsonObject"  rendered="false" styleClass="buttons" status="status"/>
+		</div>
+		<table width="100%">
+			<tr>
+				<td valign="top">		
+						<apex:outputPanel id="theTreeContent" >		
+						  	<div id="tree" style="height: 400px;">
+						  		<ul id="treeData" style="display: none;">		
+						  			<li id="{!dtoKeyValue.treeId}" title="{!dtoKeyValue.treeName}" class="{!If (dtoKeyValue.isFolder ,'folder','')} " data="pos:{!dtoKeyValue.pos},expand:{!dtoKeyValue.isExpand},select:{!dtoKeyValue.isSelected},treeLv:{!dtoKeyValue.treeLv},hideCheckbox:{!dtoKeyValue.isHideCheckBox}">{!dtoKeyValue.treeName}
+						  				<ul>
+						  						<apex:repeat value="{!dtoKeyValue.lstChild}" var="keyLv2" >
+						  							<li id="{!keyLv2.treeId}" title="{!keyLv2.treeName}" class="{!If (keyLv2.isFolder ,'folder','')} " data="pos:{!keyLv2.pos},expand:{!keyLv2.isExpand},select:{!keyLv2.isSelected},treeLv:{!keyLv2.treeLv},hideCheckbox:{!keyLv2.isHideCheckBox},treeValue:'{!keyLv2.treeValue}'">{!keyLv2.treeName}
+														<ul>
+															<apex:repeat value="{!keyLv2.lstChild}" var="keyLv3" >
+																<li id="{!keyLv3.treeId}" title="{!keyLv3.treeName}" class="{!If (keyLv3.isFolder ,'folder','')} " data="pos:{!keyLv3.pos},expand:{!keyLv3.isExpand},select:{!keyLv3.isSelected},treeLv:{!keyLv3.treeLv},hideCheckbox:{!keyLv3.isHideCheckBox},parrentPos:{!keyLv2.pos},treeValue:'{!keyLv3.treeValue}'">{!keyLv3.treeName}
+																</li>
+															</apex:repeat>										
+														</ul>
+													</li>
+						  						</apex:repeat>
+						  				</ul>
+						  			</li>
+						  		</ul>
+						  	</div>
+						  	 <script type="text/javascript">
+							   $(function(){
+							        $("#tree").dynatree({
+							       		checkbox: true, // Show checkboxes.			       		
+									    onKeydown: function(node, event) {
+									        if( event.which == 32 ) {					        
+									          node.toggleSelect();
+									          return false;
+									        }
+									   },
+									   fx: { height: "toggle", duration: 200 },									   
+									   onClick:function(node,event){
+									   		if( node.getEventTargetType(event) == "title" && node.data.key !="AllKeyValue"  ){	
+									   			if( node.data.treeLv == 2) {					   				
+									   				if(node.data.key =='Show more'){
+									   					$('[id$=childPos]').val( node.data.parrentPos );
+									   					getMoreChildKeyValue();					   									   					
+									   				}else{
+									   					$('[id$=childPos]').val( node.data.pos );
+									   					getChildKeyValue();							   					
+									   				}	
+									   									   				  
+									   			}
+									   		}
+									   }
+									   
+							      });
+							       
+							    });
+				    		</script>
+						 </apex:outputPanel>
+		 		</td>
+	   			<td  valign="top" style="padding-left: 15px;">
+	   				<table height="420px;">
+	   					<tr>
+	   						<td valign="top">
+	   							<div style="background-color:#8ac; width: 140px;padding-top: 5px;padding-bottom: 10px;padding-left: 10px;padding-right: 10px;box-shadow: 1px 1px 5px #888888;border-radius: 3px;">
+	   								<div style="font-weight: bold;">Remarks/Action</div>
+	   								<div style="background: white;padding-bottom: 10px;padding-left: 10px;margin-top: 5px;padding-top:5px;box-shadow: 1px 1px 5px #888888;border-radius: 3px;">	   									
+	   									<table>
+	   										<tr>
+	   											<td><div class="image imageAnd"  id="chkAnd" onclick="operatorSelected(this);" ></div></td>
+	   											<td>= And </td>
+	   										</tr>
+	   										<tr>
+	   											<td><div class="image imageOr"  id="chkOr" onclick="operatorSelected(this);" ></div></td>
+	   											<td>= OR </td>
+	   										</tr>
+	   									</table> 
+	   									
+	   								</div>
+	   							</div>
+	   						</td>
+	   					</tr>
+	   					<tr>
+	   						<td valign="middle">
+	   							<div > <apex:commandButton value="Save" onclick="checkTargetingBeforeSave();return false;"   styleClass=" buttonsWidth" status="status"/></div>
+	   							<div style="margin-top:  10px;"><apex:commandButton rendered="{!Not(isShowCancel)}" value="Cancel" onclick="window.close();return false;"   styleClass=" buttonsWidth" /></div>
+	   						    <div style="margin-top:  10px; "><apex:commandButton value="Copy to Textbox" onclick="copyToTextBox();return false;"  styleClass=" buttonsWidth" /></div>
+	   							
+	   						</td>
+	   					</tr>
+	   					<tr>
+	   						<td valign="bottom">
+	   							<div style="font-weight: bold;padding-bottom: 10px;">Key Value String: </div>
+	   							<apex:inputTextarea id="keyvalueSelected" value="{!keyValueSelected}" style="width:250px;height:130px;"/><p/>
+	   						</td>
+	   					</tr>
+	   				
+	   				</table>
+	   				
+	   			</td>
+			</tr>
+		</table>
+		 <apex:actionStatus id="status">
+                <apex:facet name="start">
+                    <c:Load BackColor="#efefef" borderColor="#efefef" borderSize="3" height="50px" width="180px" Message="Please, wait..." messageStyle="color:darkred;font-size:10pt;font-family:arial;font-weight:bold;" imageUrl="/img/loading.gif"/>
+                </apex:facet>
+       </apex:actionStatus>
+</apex:form>
+</body>
+<script type="text/javascript">
+		
+     var $ = jQuery.noConflict();
+    jQuery(document).ready(function($) {
+	    	 
+	      var PLACEHOLDER = 'KeyValue search'; 
+		  var itemObjects;		  
+		  var queryTerm;  
+		  
+		  $('[id$=searchKeyValue]').autocomplete({
+			        minLength: 2,
+			        source: function(request, response) {
+			                    queryTerm = request.term; 
+			                    var val = '{!keyValueString}';
+			                   TreeKeyValueSelectionController.searchKeyValue(request.term,val, function(result, event){
+			                        if(event.type == 'exception') {
+			                              alert(event.message);
+			                        } else {			                        	
+			                             itemObjects = result;
+			                             response(itemObjects);
+			                        }
+			                    });
+			               },
+			        focus: function( event, ui ) {
+			                $('[id$=searchKeyValue]').val( ui.item.Key_Value_Name__c+'('+ui.item.Key_Value__c+')'  );
+			                return false;
+			                },
+			        select: function( event, ui ) {
+			                    $('[id$=searchKeyValue]').val( ui.item.Key_Value_Name__c+'('+ui.item.Key_Value__c+')' );	
+			                    $('[id$=selectedKeyValue]').val( ui.item.Id );	
+			                    $('[id$=parrentKeyNode]').val( ui.item.Node_ID__c );					                                       
+			                    //case pressing key enter
+			                    if(event.which==13){
+			                    	addKeyValue();
+			                    }
+			                    return false;
+			                },
+			})			     
+			.data( "autocomplete" )._renderItem = function( ul, item ) {
+		        var entry = "<a>" + item.Key_Value_Name__c +'('+ item.Key_Value__c +')' ;			       
+		        entry = entry + "</a>";
+		        entry = entry.replace(queryTerm, "<b>" + queryTerm + "</b>");
+		        return $( "<li></li>" )
+		            .data( "item.autocomplete", item )
+		            .append( entry )
+		            .appendTo( ul );
+		    };
+			        
+		    // Add or remove placeholder values
+		    $('[id$=searchKeyValue]').val(PLACEHOLDER);
+		    $('[id$=searchKeyValue]').on("focus",  function(event){
+		        $tgt = $(event.target);
+		        if($tgt.val() === PLACEHOLDER ){
+		            $tgt.val('');		           
+		        }
+		    });
+		    $('[id$=searchKeyValue]').on( "blur",  function(event){
+		        $tgt = $(event.target);
+		        if($tgt.val() === '' ){
+		            $tgt.val(PLACEHOLDER);			          
+		        }
+		    });
+	      
+      
+    });
+    
+    
+  </script>
+</apex:page>

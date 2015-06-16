@@ -1,0 +1,160 @@
+<!--  GTCRM-1341 Live Chat component to show duplicate contacts -->
+
+
+<apex:page StandardController="Case" extensions="caseContactcon">
+    <apex:stylesheet value="{!URLFOR($Resource.demoStyles)}"/>
+    <apex:includeScript value="/support/console/26.0/integration.js"/>
+    <script type="text/javascript">
+        function openSubtabs(url,tabTitle) {
+            var openSubtabsFunction=
+            function openSubtabsFunction(result) {
+                sforce.console.openSubtab(result.id,url,true,tabTitle,null,openSuccess,tabTitle);
+            }
+            sforce.console.getEnclosingPrimaryTabId(openSubtabsFunction);
+        }
+        var openSuccess = function openSuccess(result) {
+            //Report whether we succeeded in opening the subtab
+            if (result.success == false)
+                alert('Unable to open subtab');
+        };
+    </script>
+
+<div class="sbContainer" >
+
+<div class="sbPod">
+        <div class="sbPodHeading">
+            
+            <span class="subHead">
+              <apex:image style="vertical-align:bottom; margin-right:2px;"  value="{!$Resource.book}"  />  
+                Suggested Articles
+               
+           </span>
+        </div>
+       
+        <support:caseArticles id="suggestedarticles"
+            caseId="{!case.id}"
+            width="100%"
+            titlebarStyle="none"
+            mode="search"
+            defaultSearchType="keyword"
+            showAdvancedSearch="true"
+            title=""
+            searchButtonName="Search"
+            logSearch="true"
+            bodyHeight="200px"
+            attachToEmailEnabled="true"
+            searchFieldWidth="250px"
+            rendered="true"
+         />
+
+     </div>
+
+        
+    <div class="sbPod">
+        <div class="sbPodHeading">
+         <span class="subHead">
+            <apex:image style="vertical-align:bottom; margin-right:2px;"  value="{!$Resource.case}"  />
+            Cases
+            </span>
+            </div>
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="90px">Case ID</th>
+                <th>Case Subject</th>
+                <th width="90px">Status</th>
+                <th width="90px">Created</th>
+            </tr>
+             <apex:repeat value="{!contacts}" var="TC">
+            <apex:repeat value="{!TC.Cases}" var="c">
+                <tr>
+                    <td>
+                        <a href="javascript:openSubtabs('/{!c.id}','{!c.CaseNumber}');">
+                        <apex:outputField value="{!c.CaseNumber}" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="javascript:openSubtabs('/{!c.id}','{!c.CaseNumber}');">
+                        <apex:outputField value="{!c.subject}" />
+                        </a>
+                    </td>
+                    <td>
+                        <apex:outputField value="{!c.status}" />
+                    </td>
+                    <td>
+                        <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                            <apex:param value="{!c.CreatedDate}" />
+                        </apex:outputText>
+                    </td>
+                </tr>
+            </apex:repeat>
+             </apex:repeat>
+        </table>
+    </div>
+    <div class="sbPod">
+        <div class="sbPodHeading">
+         <span class="subHead">
+            <apex:image style="vertical-align:bottom; margin-right:2px;"  value="{!$Resource.case}"  />
+            Chats
+            </span>
+            </div>
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="90px">Chat ID</th>
+                <th width="90px">Status</th>
+                <th width="90px">Created</th>
+            </tr>
+           
+         
+            <apex:repeat value="{!lstTranscripts}" var="c">
+                <tr>
+                    <td>
+                        <a href="javascript:openSubtabs('/{!c.id}','{!c.Name}');">
+                        <apex:outputField value="{!c.Name}" />
+                        </a>
+                    </td>
+                    <td>
+                        <apex:outputField value="{!c.status}" />
+                    </td>
+                    <td>
+                        <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                            <apex:param value="{!c.CreatedDate}" />
+                        </apex:outputText>
+                    </td>
+                </tr>
+            </apex:repeat>
+            
+            
+        </table>
+    </div>
+    <div class="sbPod">
+        <div class="sbPodHeading">
+            
+            <span class="subHead">
+              <apex:image style="vertical-align:bottom; margin-right:2px;"  value="{!$Resource.infoicon}"  />  
+                Related Articles
+               
+           </span>
+        </div>
+       
+        <support:caseArticles id="processarticles"
+            caseId="{!case.id}"
+            width="100%"
+            titlebarStyle="none"
+            mode="attached"
+            defaultSearchType="keyword"
+            showAdvancedSearch="false"
+            title=""
+            insertLinkToEmail="true"
+            searchButtonName="Search"
+            logSearch="true"
+            bodyHeight="auto"
+            attachToEmailEnabled="true"
+            searchFieldWidth="250px"
+            rendered="true"
+         />
+
+     </div>
+    
+    
+</div>
+</apex:page>

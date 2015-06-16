@@ -1,0 +1,89 @@
+<!---
+
+GTCRM-222 - Automate client reporting for AdSales
+
+Change log:
+- 
+
+--->
+
+<apex:page id="mainPage" controller="ExcelReportEmail"> 
+    <apex:pageMessages />
+    
+    <head>
+        <style type="text/css">
+            .blockRequired {
+                background-color: #CC0000; 
+                bottom: 1px;
+                left: -4px; 
+                position: absolute;
+                top: 1px;
+                width: 3px;
+            }
+            .requiredInput {
+                height: 100%;
+                position: relative;
+            }       
+        </style>
+        <script>
+            function checkToEmail(id){
+                var email = document.getElementById(id).value;
+                if (email=='') {
+                    alert('To: address is empty...!');
+                    return;
+                }
+                sendMail();
+            }
+        </script>
+    </head>
+
+    <apex:form id="form">
+        <apex:actionfunction name="sendMail" Action="{!sendMail}"/> 
+        <apex:SectionHeader title="{!$Label.excel_email_head_opp}" subtitle="{!$Label.excel_email_head_advert}"/>
+        <apex:PageBlock id="PageBlock" mode="edit">           
+            <apex:PageBlockSection id="PageBlockSection" title="{!$Label.excel_email_compose}" columns="1" >             
+                <apex:outputPanel id="Panel" >
+                    <table width="100%"> 
+                        
+                        <tr><td width ="10%" align="right"><apex:outputText value="{!$Label.excel_email_to}"></apex:outputText></td><td width ="1%"></td>
+                            <td width="70%" align="left">
+                                <div class="requiredInput"><div class="blockRequired"></div><apex:inputText id="toEmail" style="width:100%" value="{!toAddress}"/></div>     
+                            </td><td width ="19%"></td>  
+                        </tr>
+                       
+                        <tr><td align="right"><apex:outputText value="{!$Label.excel_email_cc}"></apex:outputText></td><td></td>
+                            <td align="left">
+                                <apex:inputText style="width:100%" value="{!ccAddress}"/>           
+                            </td> <td align="left"><apex:outputText value="{!$Label.excel_email_note_seperater}"/></td>
+                        </tr>
+                          
+                        <tr><td align="right" ><apex:outputLabel value="{!$Label.excel_email_subject}"/></td><td></td> 
+                            <td align="left"><apex:inputText style="width:100%" value="{!subject}"/>  
+                            </td>  
+                        </tr> 
+                        
+                         <tr><td><br/> </td></tr>
+                        <tr><td align="right"><apex:outputLabel value="{!$Label.excel_email_body}"/></td><td></td>
+                            <td align="left">
+                                <apex:inputTextArea richtext="true" style="width:500px;" rows="30" value="{!bodyEmail}"></apex:inputTextArea> 
+                            </td>
+                         </tr> 
+                         <tr><td></td><td></td>
+                             <td align="center">
+<!--                             {!$Label.excel_email_att_file_name}-->
+                                <apex:outputLink value="/apex/ExcelReport?OppID={!oppID}">{!$Label.excel_email_attachment} <b>{!attName}</b></apex:outputLink>
+                             </td>
+                            
+                         </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:PageBlockSection>
+           
+            <apex:PageBlockButtons >
+                <apex:commandButton value="{!$Label.excel_email_btn_send}" action="{!sendMail}"/>
+<!--                <apex:commandButton value="{$Label.OptionList_Field}" onclick="checkToEmail('{!$Component.mainPage:form:PageBlock:PageBlockSection:toEmail}')"/>-->
+                <apex:commandButton value="{!$Label.excel_email_btn_back}" action="{!back}"/>
+            </apex:PageBlockButtons>
+        </apex:PageBlock> 
+    </apex:form>
+</apex:page>

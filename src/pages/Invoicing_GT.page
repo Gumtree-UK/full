@@ -1,0 +1,183 @@
+<apex:page controller="FiqasUIBatchInvoiceInsert_GT" extensions="PaginationExt_GT" title="Invoicing" sidebar="false"> 
+<html>
+  <style type="text/css">
+    .dateFormat{
+        visibility:hidden;
+    }
+  </style>
+</html>
+<div class="bPageTitle">
+        <div class="ptBody secondaryPalette">
+            <div class="content">
+            <apex:image id="theImage" value="/s.gif" styleClass="pageTitleIcon"/>
+            <apex:outputPanel >
+            <h2 class="pageType"><apex:outputText value="Abillity Web"/></h2>
+            <h1 class="pageDescription"><apex:outputText value="Invoices to send"/></h1>
+            </apex:outputPanel>
+            </div> 
+        </div> 
+    </div>
+  <apex:form >
+    <apex:outputPanel id="jspanel"> 
+      <script>  
+      function onControllerReturn() {
+          alert('{!message}') ;
+      }
+      </script>
+    </apex:outputPanel>
+    <apex:pageMessages id="msgs"/>
+    <apex:pageBlock id="pageBlock">
+    
+      <apex:pageBlockSection collapsible="false" columns="6" >
+        <apex:pageblockSectionItem >
+          <apex:outputLabel value="Customer Type:" for="CT" />
+          <apex:selectList value="{!CT}" size="1" id="CT">
+            <apex:selectOptions value="{!CTs}" />
+            <apex:actionSupport event="onchange" 
+                    action="{!resetPageNumber}"
+                    rerender="Paymentmethod,InvTable, pageBlock,numDiv1,numDiv2,header1" 
+                    status="status"/>
+          </apex:selectList>
+        </apex:pageblockSectionItem>
+        <!--TH  02-05-2014  -->
+        <apex:pageblockSectionItem >
+          <apex:outputLabel value="Payment Method:" for="PM" />
+          <apex:selectList value="{!PM}" size="1" id="Paymentmethod">
+            <apex:selectOptions value="{!PMs}" />
+            <apex:actionSupport event="onchange" 
+                    action="{!resetPageNumber}"
+                    rerender="Frequency,InvTable, pageBlock,numDiv1,numDiv2,header1" 
+                    status="status"/>
+          </apex:selectList>
+        </apex:pageblockSectionItem>
+        
+        <apex:pageblockSectionItem >
+          <apex:outputLabel value="Billable Frequency:" 
+              style="white-space: nowrap" for="Frequency" />
+          <apex:selectList value="{!Frequency}" size="1" id="Frequency">
+            <apex:selectOptions value="{!Frequencies}" />
+            <apex:actionSupport event="onchange" 
+                    action="{!resetPageNumber}"
+                    rerender="Period,InvTable,pageBlock,numDiv1,numDiv2,header1" 
+                    status="status"/>
+          </apex:selectList>
+        </apex:pageblockSectionItem>
+        <apex:pageblockSectionItem >
+          <apex:outputLabel value="Period:" for="Period" />
+          <apex:selectList value="{!Period}" size="1" id="Period">
+            <apex:selectOptions value="{!Periods}" />
+            <apex:actionSupport event="onchange" 
+                    action="{!resetPageNumber}"
+                    rerender="pageBlock,numDiv1,numDiv2,InvTable,header1"  
+                    status="status"/>
+          </apex:selectList>
+        </apex:pageblockSectionItem> 
+        <apex:inputField value="{!DateRange.from_Date__c}"  id="from_Date" > 
+        <script>document.getElementById('{!$Component.from_Date}').disabled = {!disableDateRange}; </script>
+        <apex:actionSupport event="onchange" action="{!setDateRange}" rerender="pageBlock,header1" status="status"/>
+        </apex:inputField>
+        <apex:inputField value="{!DateRange.until_Date__c}" id="until_Date">  
+        <script>document.getElementById('{!$Component.until_Date}').disabled = {!disableDateRange}; </script> 
+        <apex:actionSupport event="onchange" action="{!setDateRange}" rerender="pageBlock,header1" status="status"/>
+        </apex:inputField>
+      </apex:pageBlockSection>
+
+    <div align="right" id="numDiv1" >
+    <br/>
+    <font size="1pt">Page #:&nbsp;<apex:outputLabel value="{!PageNumber}" />&nbsp;out of&nbsp; <apex:outputLabel value="{!totalPageNumber}" />&nbsp;&nbsp;&nbsp;&nbsp;</font> 
+      <apex:commandButton value="Previous"   action="{!previousBtnClick}"  disabled="{!previousButtonEnabled}"
+                reRender="pageBlock,numDiv1,numDiv2,msgs,InvTable" status="status"></apex:commandButton>
+      <apex:commandButton value="Next" action="{!nextBtnClick}"  disabled="{!nextButtonDisabled}"
+                reRender="pageBlock,numDiv1,numDiv2,msgs,InvTable" status="status"></apex:commandButton>
+    </div>
+
+    <div style="position: relative;">
+      <apex:actionstatus id="status">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                           height: 100%;opacity:0.65;width:100%;"> 
+            <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+              <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+              <span class="waitingDescription">Loading...</span>
+            </div>
+          </div>
+        </apex:facet>
+      </apex:actionstatus>
+      
+      <apex:pageBlockSection id="InvTable" columns="1" 
+        title="Invoices for {!dateStart} - {!dateEnd} with billable frequency '{!Frequency}'. Number of Invoice lines: {!InvCount}. Invoice lines per page: {!pageSize}." >
+        <apex:PageBlockTable value="{!InvoicesList}" var="inv" id="inv" columns="12" width="100%">
+          <apex:column >
+                        <apex:facet name="header">
+                            <apex:inputCheckbox onclick="checkAll(this)" />
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!inv.Selected__c}" id="selectLine1"  />
+          </apex:column>
+          <apex:column value="{!inv.Account_Number_Fiqas__c}" width="5%" headerValue="Account Number"/>        
+          <apex:column value="{!inv.Account__c}" width="15%" headerValue="Account Name"/>
+         <!--  <apex:column value="{!inv.Revenue_Schedule2__c}" width="15%" headerValue="RS"/> -->
+          <apex:column value="{!inv.Opportunity__c}" width="18%" headerValue="Opportunity Name"/>
+          <apex:column value="{!inv.Fiqas_Invoice_Description__c}" width="100%" headerValue="Invoice Description" rendered="{!ShowCol}"/>
+          <apex:column value="{!inv.Invoice_Quantity__c}" width="5%" headerValue="Quantity"/>
+          <apex:column value="{!inv.Sales_Price__c}"  width="5%" headerValue="Sales price"/>
+          <apex:column value="{!inv.InvoiceLineExtra2__c}"  headerValue="V/C" rendered="{!DDShowCol}"/>
+          <apex:column value="{!inv.Invoice_Amount__c}"  width="5%" headerValue="Amount"/>
+          <apex:column value="{!inv.Fiqas_VAT_Percentage__c}"  width="5%" headerValue="VAT"/>
+          <apex:column value="{!inv.BillingCountry__c}"  width="5%" headerValue="Country"/>
+          <apex:column value="{!inv.InvoiceExtra1__c}"  headerValue="Account Holder Name" /><!-- rendered="{!DDShowCol}" -->
+          <apex:column value="{!inv.InvoiceExtra2__c}"  headerValue="Bank Country" rendered="{!DDShowCol}"/>
+          <apex:column value="{!inv.InvoiceExtra3__c}"  headerValue="BIC SWIFT Code" rendered="{!DDShowCol}"/>
+          <apex:column value="{!inv.InvoiceExtra4__c}"  headerValue="IBAN Number" rendered="{!DDShowCol}"/>
+        </apex:PageBlockTable>
+      </apex:pageBlockSection>
+      </div>  
+      <apex:pageBlockButtons >
+        <apex:commandButton onclick="confirmAllInsert();"  value="Send Invoices" rendered="{!ShowCol}" rerender="msgs"/>
+        <apex:commandButton onclick="confirmInsert();"  value="Send Selected" rendered="{!ShowCol}" rerender="msgs"/>
+      </apex:pageBlockButtons>
+      <apex:actionFunction name="confirmedAllInsert" oncomplete="onControllerReturn()" action="{!InvAllInsert}" rerender="InvTable,jspanel" status="status"/>
+      <apex:actionFunction name="confirmedInsert" oncomplete="onControllerReturn()" action="{!InvSelectedInsert}" rerender="InvTable,jspanel" status="status"/>
+      <apex:actionFunction name="cancelInsert" oncomplete="onControllerReturn()" action="{!InvInsertCancel}" rerender="jspanel" status="status"/> 
+      
+      <div align="right" id="numDiv2" >
+        <br /> 
+        <font size="1pt">Page #:&nbsp;<apex:outputLabel value="{!PageNumber}" />&nbsp;out of&nbsp; <apex:outputLabel value="{!totalPageNumber}" />&nbsp;&nbsp;&nbsp;&nbsp;</font> 
+        <apex:commandButton value="Previous"   action="{!previousBtnClick}"  disabled="{!previousButtonEnabled}"
+                reRender="pageBlock,numDiv1,numDiv2,msgs,InvTable" status="status"></apex:commandButton>
+        <apex:commandButton value="Next" action="{!nextBtnClick}"  disabled="{!nextButtonDisabled}"
+                reRender="pageBlock,numDiv1,numDiv2,msgs,InvTable" status="status"></apex:commandButton>
+      </div>  
+    </apex:pageBlock>
+   </apex:form>   
+   
+ <script>
+    function confirmAllInsert() {
+      if (confirm("Are you sure you want to send invoices?")) {
+      confirmedAllInsert();
+      } 
+      else {
+        cancelInsert();
+      }
+    }
+    
+    function confirmInsert() {
+      if (confirm("Are you sure you want to send selected invoices?")) {
+      confirmedInsert();
+      } 
+      else {
+        cancelInsert();
+      }
+    }
+    
+    function checkAll(cb)
+    {
+      var inputElem = document.getElementsByTagName("input");
+      for(var i=0;i<inputElem.length;i++)
+      {
+        if(inputElem[i].id.indexOf("selectLine1")!=-1)
+          inputElem[i].checked = cb.checked;
+      }
+    }
+    
+</script>  
+</apex:page>

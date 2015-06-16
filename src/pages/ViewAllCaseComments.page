@@ -1,0 +1,10 @@
+<apex:page controller="ViewAllCaseComments" sidebar="false" showheader="false" tabStyle="Case">
+ <apex:pageBlock >
+        <h1 class="mainTitle">Case Comments</h1><br/><br/>
+        <apex:PageBlockTable value="{!Comments}" var="c" id="comments" width="250px">
+          <apex:column value="{!c.CreatedDate}" headerValue="Date"/>
+          <apex:column value="{!c.CommentBody}" headerValue="Comments"/>
+          <apex:column value="{!c.CreatedById}" headerValue="Created By"/>
+        </apex:PageBlockTable>
+ </apex:pageBlock>      
+</apex:page>

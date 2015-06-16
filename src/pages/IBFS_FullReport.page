@@ -1,0 +1,18 @@
+<!-- GTCRM-2012 - IBFS Reporting GT -> SF Account Level --->
+<!--- https://ibfsui.gumtree.com/reports/account/3873/2015-05-11 --->
+
+<apex:page showHeader="false" standardcontroller="IBFS_Report__c">
+   <IFRAME height="500px" width="100%" 
+       src="https://ibfsui.gumtree.com/reports/account/
+       {!IBFS_Report__c.Account__r.AccountNumber}
+       /2015-05-12">
+   </IFRAME>
+   
+   
+   <!-- <apex:iframe height="500px" width="100%" src="https://ibfsui.gumtree.com/reports/account/
+       {!IBFS_Report__c.Account__r.AccountNumber}
+       /{!IBFS_Report__c.Format__c}">
+    </apex:iframe>
+   --->
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

@@ -1,0 +1,114 @@
+<apex:page standardController="Invoices__c"  extensions="FiqasResendInvoice" recordSetVar="c" id="page" action="{!checkCondition}">
+<apex:form id="form" >
+        <apex:pageMessages />
+        
+        <apex:sectionHeader title="Resend Invoice" subtitle="{!invoice.Account__r.Name}" />
+       
+        <apex:pageBlock title="" mode="edit" id="pageBlock" >
+            <apex:pageBlockButtons >
+            	<apex:commandButton value="Send" onclick="ValidateEmail();" rerender="form"/>
+                <apex:commandButton value="Back"  action="{!cancel}"/>                
+            </apex:pageBlockButtons>
+            
+            <script>
+                // Custom Lookup Contact email
+            
+            	function getWindowFeature(){
+                    var width =700;
+                    var height = 430;
+                    var left = Number((screen.availWidth/2) - (width/2));
+                    var top = Number((screen.availHeight/2) - (height/2));
+                    return "width=" + width + ", height=" + height + ", status=no, menubar=no, resizable=no, scrollbars=no, toolbar=no, location=no, directories=no, left=" + left + ", top=" + top + ", screenX=" + left + ", screenY=" + top;
+            	}
+                function openCenteredWindow(comId){
+                       try{                           
+                            comId = comId.replace('_lkwgt', '');
+        
+                            var win = window.open("/apex/CustomLookupContactEmail?comId="+comId+"&accId={!accId}", this.target, getWindowFeature());
+                            win.focus();
+                       }catch(e){
+                        	alert(e);
+                       }
+                       return false;
+                }
+            
+            	function changeContact(){
+                    changeContactName();
+                }
+                
+                
+                function ValidateEmail(){  
+                
+                	var inputText=document.getElementById('{!$Component.page.form.pageBlock.section.blockTable.inputEmail}');
+                	var contact=document.getElementById('{!$Component.page.form.pageBlock.section:blockTable.contactEmail}');                   	
+                   	
+					var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
+					
+					var email=inputText;					
+					if(contact != null){
+						email = contact;
+					}
+					
+					if(email.value.match(mailformat)){   
+						resendMail();
+						return true;
+					}
+					
+					else{  
+						alert("You have entered an invalid email address!");
+					}  
+				}  
+                
+                function cleasEmail(){
+                	var contact=document.getElementById('{!$Component.page.form.pageBlock.section:blockTable.contactEmail}');
+                	contact.value="";
+                }
+                
+			</script>
+            
+            
+            <apex:actionFunction name="changeContactName" action="{!showContactEmail}" rerender="blockTable"/>
+            <apex:actionFunction name="resendMail" action="{!resend}"/>
+            <apex:outputPanel rendered="{!NOT(isError)}">                
+                <!-- Section Search Contact -->
+            	<apex:pageBlockSection title="Search Contact" columns="1" id="section">
+                    
+                    <apex:pageBlockTable value="{!null}" var="block" id="blockTable">
+                       
+                    	<apex:column headerValue="Type">
+                            <apex:facet name="footer">
+	                            <apex:outputPanel >
+		                        	<apex:selectList value="{!selectType}" size="1">
+					                	<apex:selectOptions value="{!getListOption}"/> 
+		                                <apex:actionSupport event="onchange" action="{!selectChangeType}" rerender="blockTable" status="wait"/>
+					                </apex:selectList>
+					                <apex:actionStatus id="wait" startText="Please wait..."/>	
+					            </apex:outputPanel>		               
+                            </apex:facet>  
+                              
+                        </apex:column> 
+          
+                        <apex:column headerValue="Recipient">                        
+                       		<apex:facet name="footer">
+	                        	<apex:outputPanel >		                            
+		                            <apex:inputField id="inputnp" value="{!Invoice.Contact__c}" onchange="changeContactName();" onclick=" return openCenteredWindow(this.id);"  rendered="{!isContact}" style="width: 80%" onkeyup="cleasEmail();"/>								
+		                            <apex:inputText value="{!freeOrFinanceEmail}" disabled="{!NOT(isFreeEmail)}" rendered="{!NOT(isContact)}" id="inputEmail" style="width: 100%"/>
+	                            </apex:outputPanel> 
+                            </apex:facet>                            
+                        </apex:column>
+                        
+                        <apex:column headerValue="Email" id="email">
+                            <apex:facet name="footer">
+                                <apex:inputText value="{!contactEmail}" rendered="{!isShowEmail}" id="contactEmail" disabled="true" style="width: 100%"/>                                
+                            </apex:facet>
+                        </apex:column>
+                        
+                    </apex:pageBlockTable>     
+                </apex:pageBlockSection>            
+            </apex:outputPanel>
+            
+
+  			
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

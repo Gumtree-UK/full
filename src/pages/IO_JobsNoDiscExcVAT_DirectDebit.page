@@ -1,0 +1,423 @@
+<apex:page standardController="Opportunity" extensions="IOSortOrderExtension" showHeader="false" renderas="pdf">
+<head>
+<style type="text/css" media="print,screen"> 
+   body { font-family: Arial Unicode MS; font-size: 12px } 
+   bold { font-family: Arial Unicode MS; font-size: 12px; font-weight:bold;} 
+   #s10 { font-family: Arial Unicode MS; font-size: 9px;}
+</style>
+</head>
+<body>
+<div style="page-break-after:always;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" id="table1">
+<tr>
+   <td>
+       <img src='{!URLFOR($Resource.GumtreeMediaLogo)}' title="logo" />
+   </td>
+   <td align="left">{!$Organization.Name}<br/>
+       {!$Organization.Street}, {!$Organization.State}<br/>
+       {!$Organization.PostalCode}, {!$Organization.Country}<br/>
+       
+   </td>
+   <td align="right">
+       <b>ADVERTISING INSERTION ORDER # {!Opportunity.IOnumber__c}</b><br/>
+   <br/>
+   </td> 
+</tr>
+
+</table>
+<br/>
+<table border="0" bordercolor="#000000" width="100%">
+   <tr>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica"><b>Campaign Contact</b></font>
+       </td>
+       <td width="30%">
+       
+       </td>
+       <td width="20%">
+       <font face="Tahoma, Arial, Helvetica"><b>Gumtree Contact</b></font>
+       </td>
+       <td width="30%">
+       
+       </td>
+   </tr>
+   <tr>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica">Name:</font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.FirstName} {!Opportunity.Primary_Contact__r.LastName}</font>
+       </td>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica">Name:</font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.FirstName} {!Opportunity.Owner.LastName}</font>
+       </td>
+   </tr>
+       <tr>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica">Company:</font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Account.Name}</font>
+       </td>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica">Email:</font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.Email}</font>
+       </td>
+   </tr>
+       <tr>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica">Email:</font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Email}</font>
+       </td>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica">Phone:</font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.Phone}</font>
+       </td>
+   </tr>
+       <tr>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica">Phone:</font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Phone}</font>
+       </td>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica"></font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica"></font>
+       </td>
+   </tr>
+   <tr>
+       <td width="20%">
+           <font face="Tahoma, Arial, Helvetica">Billing Address:</font>
+       </td>
+       <td width="30%">
+           <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Account.BillingStreet}<br/>{!Opportunity.Primary_Contact__r.Account.BillingCity}, {!Opportunity.Primary_Contact__r.Account.BillingCountry}, {!Opportunity.Primary_Contact__r.Account.BillingPostalCode}<br/>{!Opportunity.Primary_Contact__r.Account.Finance_Contact__r.Email}</font>
+       </td>
+   </tr>
+</table>
+<br/>
+<hr color="#F58021"/>
+<p><b></b></p>
+<table border="0" width="100%" id="table4">
+<tr>
+      <td bgcolor="#b2d241" bordercolor="#000000" align="center" width="23%"><font face="Tahoma, Arial, Helvetica" color="5c7908" size="2"><b>PRODUCT</b></font></td>
+      <td bgcolor="#b2d241" bordercolor="#000000" align="center" width="11%"><font face="Tahoma, Arial, Helvetica" color="5c7908" size="2"><b>START DATE</b></font></td>
+      <td bgcolor="#b2d241" bordercolor="#000000" align="center" width="11%"><font face="Tahoma, Arial, Helvetica" color="5c7908" size="2"><b>EXPIRY DATE</b></font></td>
+      <td bgcolor="#b2d241" bordercolor="#000000" align="center" width="11%"><font face="Tahoma, Arial, Helvetica" color="5c7908" size="2"><b>QUANTITY</b></font></td>
+      <td bgcolor="#b2d241" bordercolor="#000000" align="center" width="9%"><font face="Tahoma, Arial, Helvetica" color="5c7908" size="2"><b>PRICE</b></font></td>
+      <td bgcolor="#b2d241" bordercolor="#000000" align="center" width="15%"><font face="Tahoma, Arial, Helvetica" color="5c7908" size="2"><b>TOTAL</b></font></td>    
+</tr>
+    <apex:repeat var="oli" value="{!sortrecord}">
+<tr>
+            <td align="left" bordercolor="#000000" width="23%"><font face="Tahoma, Arial, Helvetica">{!oli.PricebookEntry.Name}</font></td>
+            <td align="center" bordercolor="#000000" width="11%"><font face="Tahoma, Arial, Helvetica">{!day(oli.from_Date__c)}-{!month(oli.from_Date__c)}-{!year(oli.from_Date__c)}</font></td>
+            <td align="center" bordercolor="#000000" width="11%"><font face="Tahoma, Arial, Helvetica">{!day(oli.until_Date__c)}-{!month(oli.until_Date__c)}-{!year(oli.until_Date__c)}</font></td>
+            <td align="center" bordercolor="#000000" width="11%"><font face="Tahoma, Arial, Helvetica"><apex:outputText value="{0, number, ###,###,###,###}"><apex:param value="{!oli.Quantity}"/></apex:outputText></font></td>
+            <td align="center" bordercolor="#000000" width="9%"><font face="Tahoma, Arial, Helvetica"><apex:outputField value="{!oli.Sales_Price_Net_Net_Net__c}"></apex:outputField></font></td>
+            <td align="right" bordercolor="#000000" width="15%"><font face="Tahoma, Arial, Helvetica"><apex:OutputField value="{!oli.Net_Net_Net__c}"/></font></td>
+</tr>
+         <tr>
+             <td bgcolor="#E8E8E8" bordercolor="#000000" colspan="6" align="left"><font face="Tahoma, Arial, Helvetica">{!oli.Description}</font></td>
+         </tr>
+      </apex:repeat>       
+     <tr>
+      <td bgcolor="#ffffff" align="left" colspan="3"></td>
+        <td bgcolor="#F58021" align="right" colspan="2">
+            <font face="Tahoma, Arial, Helvetica" color="#FFFFFF" size="2"><b>TOTAL:</b></font></td>
+                <td bgcolor="#F58021" align="right" colspan="1">
+                    <font face="Tahoma, Arial, Helvetica" color="#FFFFFF" size="2"><apex:outputField value="{!Opportunity.Net_Net__c}"/></font>
+                </td>
+     </tr> 
+      <tr>
+      <td bgcolor="#ffffff" align="left" colspan="3">
+        <font face="Tahoma, Arial, Helvetica" color="000000"><b>Additional Notes</b></font><br/><br/>
+       {!Opportunity.Description}   <br/>
+       <br/>
+      </td>
+      
+      </tr>
+    
+</table>
+<hr color="#F58021"/>
+<br/>
+<p><b>Terms and Conditions</b></p>
+<table border="0" width="100%" id="table3">
+<tr>
+       <td width="70%">
+            <ul>
+                1. The account holder will pay for the committed purchase in full whether or not it is used.<br/>
+                2. These credits are to be used in the area's above and the area's above only.<br/>
+                3. Any adverts posted outside of these designated area's will be charged in full separately.
+            </ul>
+       </td>
+       <td width="30%" align="right">
+             Payment Terms: 30 days<br/>
+             Payment Method: {!Opportunity.Payment_Method__c}<br/>
+             Billing Frequency: {!Opportunity.BillingFrequency__c} 
+      </td>
+</tr>
+<tr>
+    <td height="30">
+    </td>
+</tr>
+</table>
+<table width="100%" id="table5">
+<tr>
+  <td width="50%"><b>Signed for and on behalf of {!Opportunity.Account.Name}</b></td>
+</tr>
+<tr>
+  <td width="50%">&nbsp;</td>
+</tr>
+<tr>
+  <td width="50%">Signature: {{_es_signer_signature}}</td>
+</tr>
+<tr>
+  <td width="50%">Name: {{_es_signer_fullname}}</td>
+</tr>
+<tr>
+  <td width="50%">Title: {{*_es_signer_title}}</td>
+</tr>
+<tr>
+  <td width="50%">Date: {{_es_signer_date}}</td>
+</tr>
+<tr>
+  <td width="50%">P/O {{_es_signer_po}} (if required)</td>
+ </tr>
+</table>
+</div>
+<div style="page-break-after:always;">
+<table width="100%">
+   <tr>
+       <td width="100%" height="20" bgcolor="#b2d241"></td>
+   </tr>
+</table>
+<br/>
+<table>
+   <tr valign="top">
+       <td width="48%">
+           <div id="s10">
+               <b>Standard Advertising Terms and Conditions</b><br/>
+               <b>1 Parties</b><br/>
+                   The parties are: (a) {!$Organization.Name} (company number: 3934849), a company incorporated in England, whose principal place of business is {!$Organization.Street}, {!$Organization.State}, {!$Organization.PostalCode} {!$Organization.Country} ("<b>Gumtree</b>"); and (b) the Company as detailed in the Gumtree Insertion Order Form ("<b>Company</b>").<br/>                  
+               <b>2 Agreement</b><br/>
+                   2.1 These terms and conditions; the Gumtree.com website Terms and Conditions, and the Gumtree.com Privacy Policy shall form this agreement ("Agreement"). <br/>
+                   2.2 Company's use of Company's Gumtree account shall be subject to this Agreement.<br/>
+                   2.3 Notwithstanding Gumtree's acceptance of the Gumtree Insertion Order Form or display of any impressions, Gumtree may remove or refuse to publish or link to any material which in its sole discretion is considered defamatory, misleading, abusive, unlawful, inappropriate or otherwise in breach of this Agreement, promotes competitive services to those provided by Gumtree or its affiliated companies or does not comply with Gumtree's technical requirements.<br/>
+                   2.4. Where applicable, Gumtree may restrict or discontinue the delivery of any advertisements or other communications to any or all users containing advertisements or promotions featuring Company: (a) if Gumtree is satisfied in its reasonable judgement that to send such material to users may expose Gumtree or Company to the risk of sanctions under applicable laws; or (b) if any individual user has opted out or otherwise indicated to Gumtree that he or she does not want to receive any advertisements or promotions for services provided by any company other than Gumtree or its affiliated companies.<br/>
+               <b>3 Term</b><br/>
+                   3.1 This Agreement shall be deemed to have commenced on the later of the dates inserted by the signatories below ("<b>Start Date</b>") and shall continue in force until the expiry date of the package determined by time period specified in the Gumtree Insertion Order Form ("<b>End Date</b>"). The term of the Agreement shall be from the Start Date to the End Date ("<b>Term</b>"). <br/>
+               <b>4 Fees and Payment</b><br/>
+                   4.1 In consideration for posting advertisements on the Gumtree.com website ("<b>Site</b>"), Company shall pay Gumtree the fees product that Company wishes to post on the Site as detailed in the Gumtree Insertion Order Form ("<b>Fee</b>"). <br/>
+                   4.2 Gumtree shall issue Company {!Opportunity.BillingFrequency__c} invoice payable via {!Opportunity.Payment_Method__c} ("<b>Gumtree Invoice</b>"). <br/>
+                   4.3 If Company wishes to post advertisements over and above Company's package allowance, Gumtree shall invoice Company for such additional advertising, and Company shall pay the full cost of such advertising. <br/>
+                   4.4 Company shall pay all Gumtree Invoices within 30 days of receipt. <br/>
+               <b>5 Warranties </b><br/>
+                   5.1 Each party to this Agreement represents and warrants and undertakes to the other that it has, and shall retain throughout the Term, all right, title and authority to enter into, and perform all of its obligations under this Agreement. <br/>
+                   5.2 Company represents, warrants and undertakes throughout the Term that Company (a) complies with, and shall continue to comply with, all laws and regulations as may be applicable to Company posting job advertisements on the Site; and (b) complies with, and shall continue to comply all applicable Data Protection laws and regulations including but not limited to the EU Data Protection Directive 95/46/EC, The Data Protection Act 1998, The Privacy and Electronic Communications (EC Directive) Regulations 2003 and any other applicable data protection legislation. <br/>
+               <b>6 Indemnities  </b><br/>
+                   6.1 Company shall indemnify Gumtree (and its employees, directors and agents) against any liability, damage, expense, claim or cost (including reasonable legal fees and costs) suffered by Gumtree arising from any: (a) breach of warranties in clause 5; or (b) breach of clause 11 (Confidentiality). <br/>
+               <b>7 Limitation of Liability</b><br/>
+                   7.1 Nothing in this Agreement shall exclude or limit liability for death or personal injury resulting from the negligence of either party or their servants, agents or employees. <br/>
+                   7.2 With the exception of: (a) clause 7.1 above; (b) Company's obligations to pay Gumtree under clause 4 (Fees and Payment); and (c) the indemnities in clause 6 (Indemnities), the liability of either party in contract, tort, negligence, pre-contract or other representations or otherwise arising out of this Agreement or the performance of its obligations under this Agreement shall be limited in aggregate to the total amount payable under the Agreement as specified in clause 4. 
+           </div>  
+       </td>
+       <td width="4%"></td>
+       <td width="48%">
+           <div id="s10">
+               <b>8 Licences and Intellectual Property </b><br/>
+                8.1 Company grants to Gumtree a non-exclusive, royalty-free, world-wide licence to use, reproduce and display the Company logo, content, code and material provided by or on behalf of the Company ("<b>Company Materials</b>") on the Site and in any Gumtree marketing materials in the form provided by Company, save for any formatting changes necessary for display on the Site or other agreed changes. 8.2 Except as otherwise provided in this Agreement, as between Gumtree and Company: (i) Gumtree retains all right, title and interest in and to all intellectual property rights in or associated with the Site, and all Gumtree services and (ii) Company retains all rights, title and interest in and to all intellectual property rights in or associated with the Company Materials. <br/>
+               <b>9. Termination </b><br/>
+                   9.1 This Agreement shall terminate automatically on the End Date specified in the Gumtree Insertion Order Form or as otherwise specified in the Gumtree Insertion Order Form. Gumtree shall be entitled to immediately terminate this Agreement by notice in writing and remove any advertisements from its site without notice in the event it deems, in its sole discretion, that it is likely to incur liability as a result of any act or omission or breach of this Agreement by the Company. If Gumtree terminates this Agreement pursuant to this clause any monies then already paid to Gumtree pursuant to this Agreement shall be non refundable. Either party may terminate this Agreement immediately by notice in writing to the other if the other party: (a) is in material breach of the Agreement and, in the case of a breach capable of remedy, fails to remedy the breach within 15 days of receipt of written notice giving full details of the breach and of the steps required to remedy it; or (b) passes a resolution for winding up (otherwise than for the purposes of a solvent amalgamation or reconstruction) or a court makes an order to that effect; or (c) becomes or is declared insolvent or convenes a meeting of or makes or proposes to make any arrangement or composition with its creditors; or (d) has a liquidator, receiver, administrator, administrative receiver, manager, trustee or similar officer appointed over any of its assets; or (e) ceases, or threatens to cease, to carry on business or (f) the other party suffers or there occurs in relation to that party any event which in the reasonable opinion of the non-defaulting party is analogous to any of the events referred to in sub-clauses (b) to (e) in any part of the world. Any termination of this Agreement for any reason shall be without prejudice to Company's obligations pursuant to clause 5 and 6. <br/>
+               <b>10 Consequences of Termination </b><br/>
+                10.1 Any termination of this Agreement shall not affect any accrued rights or liabilities of either party nor shall it affect the status of any provision of this Agreement which is expressly or by implication intended to come into or continue in force on or after such termination. Clauses 4 (Fees and Payment), 5 (Warranties), 6 (Indemnities), 7 (Limitation of Liability), 10 (Consequences of Termination), 11 (Confidentiality), and 12 (General) shall continue to have effect after the end of the Term. <br/>                    
+               <b>11 Confidentiality </b><br/>
+                   11.1 Each of the parties shall not disclose to any person any information, whether in written or any other form, disclosed by or on behalf of one party ("<b>Disclosing Party</b>") to the other party ("<b>Receiving Party</b>") in the course of the discussions leading up to or the entering into or during the performance of this Agreement and which is identified as confidential or is clearly by its nature confidential including, but not limited to, the Works provided by Company under this Agreement and all personal data relating to Gumtree's users as well as any other information internal to Gumtree or any Gumtree subsidiary, holding or parent company (and any of their subsidiaries) ("<b>Confidential Information</b>") except insofar as: (a) is required by a person employed or engaged by the Receiving Party in connection with the proper performance of this Agreement (but only to the extent that any person to whom the information is disclosed needs to know the same for the performance of their duties and provided the Receiving Party shall be obliged to procure that all such persons are aware of the obligation of confidentiality and undertake to comply with it); or (b) is required to be disclosed by law (provided that the party disclosing the information shall notify the other party of the information to be disclosed and of the circumstances in which the disclosure is alleged to be required as early as reasonably possible before such disclosure shall be made and takes all reasonable action to avoid and limit such disclosure). <br/>
+                11.2 Any disclosure of Confidential Information shall be in confidence, shall only be to the extent that any persons to whom the information is disclosed need to know the same for the performance of their duties and the Receiving Party shall procure that all such persons are aware of the obligation of confidentiality and undertake to comply with it. <br/>               
+                <br/>
+           </div>                  
+       </td>
+   </tr>
+</table>
+<table width="100%">
+   <td width="100%" height="20" bgcolor="#b2d241" align="right">
+            <font color="#000000" align="right" size="1">© Copyright 2000-{!YEAR(TODAY())} Gumtree.com. All rights reserved</font>
+    </td>
+</table>
+</div>
+
+<table width="100%">
+   <tr>
+        <td width="100%" height="20" bgcolor="#b2d241"></td>
+   </tr>
+</table>
+<br/>
+<table>
+<tr valign="top">
+       <td align="left" width="48%">
+           <div id="s10">
+               <b>11 Confidentiality cont.</b><br/>
+                   11.3 Each of the parties shall use the Confidential Information solely in connection with the performance of this Agreement and not otherwise for its own benefit or the benefit of any third party. <br/>
+                11.4 Confidential Information does not include information which: (a) is generally available to the public otherwise than as a direct or indirect result of disclosure by the Receiving Party or a person employed or engaged by the Receiving Party contrary to their respective obligations of confidentiality; or (b) is made available or becomes available to the Receiving Party otherwise than under this Agreement and free of any restrictions as to its use or disclosure. <br/>
+                11.5 Without prejudice to any other rights or remedies that the Disclosing Party may have, the Receiving Party agrees that if the Confidential Information is used or disclosed other than in accordance with the terms of this Agreement, the Disclosing Party shall, without proof of special damage, be entitled to an injunction, specific performance or other equitable relief for any threatened or actual breach of the provisions of this clause, in addition to any damages or other remedy to which it may be entitled. <br/>
+                11.6 Company shall not disclose to Gumtree, or bring onto Gumtree's premises, or induce Gumtree to use, any third party confidential information. <br/>
+                11.7 This clause shall continue in force for a period of five years from the termination or expiry of this Agreement howsoever caused. 
+               <b>12 General </b><br/>
+                   12.1 If a party is prevented from performing any or all of its obligations of this Agreement by any act, event, omission or condition beyond a party's control (a "Force Majeure Event"), the affected party shall give written notice to the other party within two (2) business days of the occurrence of the Force Majeure Event and the affected party shall be excused from such performance during, but not longer than, the continuance of such Force Majeure Event. Each party shall bear their own costs arising from the Force Majeure Event and shall take all reasonable steps to find ways to perform their obligations despite the Force Majeure Event. If the Force Majeure Event continues for more than thirty (30) consecutive days, the other party may immediately terminate this Agreement on giving written notice to the affected party. <br/>
+                12.2 This Agreement (including any documents referred to) (the "<b>Contractual Documents</b>") contains the entire agreement between the parties relating to the subject matter covered in the Contractual Documents and supersedes any previous agreements, arrangements, undertakings, negotiations, discussions or proposals, written or oral, between the parties in relation to such matters. No oral explanation or oral information given by any party shall alter the interpretation of the Contractual Documents. Each party confirms that, in agreeing to enter into the Contractual Documents, it has not relied on any statement, representation, warranty, understanding, undertaking, promise or assurance (whether negligently or innocently made) of any person save insofar as the same has expressly been made in the Contractual Documents and agrees that it shall have no remedy in respect of any misrepresentation which has not become a term of the Contractual Documents except that this Clause shall not apply in respect of any fraudulent or negligent misrepresentation whether or not such has become a term of the Contractual Documents. <br/>
+                12.3 Nothing in this Agreement shall be construed as creating a partnership or joint venture of any kind between the parties or as constituting or authorising either party as the agent of the other party for any purpose whatsoever. Neither party shall have the authority or power to bind the other, or to contract in the name of, or hold itself out as, or create a liability against the other in any way or for any purpose. <br/>
+                12.4 Neither party shall assign (including by way of a charge or declaration of trust) sub-license or deal in any way with this Agreement or any of its rights under this Agreement, without the prior written consent of the other party, such consent not be unreasonably withheld or delayed, provided that each party shall have the right to assign this Agreement to a subsidiary, holding or parent company (and any of their subsidiaries) of that party on prior written notice to the other party. <br/>
+                12.5 Except as expressly set out in this Agreement, a person who is not a party to this Agreement has no right to rely upon or enforce any term of this Agreement. <br/>
+                12.6 The validity, construction and performance of this Agreement (and any claim, dispute or matter arising under or in connection with it or its enforceability) shall be governed by and interpreted in accordance with the laws of England and Wales. Each party irrevocably agrees to the exclusive jurisdiction of the English courts over any claim, dispute or matter arising under or in connection with this Agreement or its enforceability or the legal relationships established by this Agreement. <br/>
+                
+           </div>
+       </td>
+       <td width="4%"></td>
+       <td width="48%">
+           <div id="s10">
+               <b>General cont.</b><br/>
+                12.7 Neither party shall advertise or publicly announce, communicate or circulate the existence or terms of this Agreement or any association with the other party without the prior written consent of the other party. <br/>
+                12.8 Any notice given under this Agreement shall be in writing in English and served by hand, fax, prepaid recorded or special delivery post or prepaid international recorded airmail. In the case of Gumtree, notices shall be given to its Financial Director at the address specified in the Agreement. In the case of Company, notice shall be sent to the address referred to in this Agreement. Any such notice shall be deemed to have been served at the time of delivery. The parties shall notify each other of changes in addresses for service during the Term of this Agreement. <br/>
+                12.9 If any clause of this Agreement is found by any court or administrative body of competent jurisdiction to be invalid or unenforceable, such invalidity or unenforceability shall not affect the other provisions of this Agreement which shall remain in full force and effect. <br/>
+                12.10 The failure to exercise or delay in exercising a right or remedy under this Agreement shall not constitute a waiver of the right or remedy or a waiver of any other rights or remedies and no single or partial exercise of any right or remedy under this Agreement shall prevent any further exercise of the right or remedy or the exercise of any other right or remedy. The rights and remedies contained in this Agreement are cumulative and not exclusive of any rights or remedies provided by law. <br/>
+                12.11 No modification or variation of this Agreement shall be valid if made by email and shall otherwise only be valid if in writing and signed for or on behalf of each of the parties.<br/>
+                12.12 Company shall execute or cause to be executed all such other documents and do or cause to be done all such further acts and things (consistent with the terms of this Agreement) as Gumtree may from time to time reasonably require.<br/>
+                12.13 This Agreement may be signed in duplicate, each of which, when signed, shall be original, and all the duplicates together shall constitute the same Agreement. Gumtree.com Limited, 5 New Street Square,EC4A 3TW, GB - Registered in England No.3934849 VAT no 752209936<br/>
+                <b>I have read, understood and agree to the Gumtree standard terms and conditions above: {{_es_signer_initials}}</b> <br/> 
+           </div>
+       </td>
+   </tr>
+</table>
+<br/>
+
+<table width="100%">
+   <tr>
+        <td width="100%" height="20" bgcolor="#b2d241" align="right">
+            <font color="#000000" align="right" size="1">© Copyright 2000-{!YEAR(TODAY())} Gumtree.com. All rights reserved</font>
+        </td>
+   </tr>
+</table>
+
+<div style="page-break-after:always;">
+                  
+      </div><br/>
+            <table width="100%" columns="2">
+    <tr>
+        <td width="50%" align="left"><img src='{!URLFOR($Resource.GumtreeMediaLogo)}' title="logo" /></td>
+        <td width="50%" align="right"><img  src='{!URLFOR($Resource.DirectDebit)}' style="right;" title="DD" /></td>
+                
+    </tr>  
+</table>
+<br/>
+ <table width="100%">
+    <tr valign="top">
+       <td align="left" width="50%">
+           <div id="">
+                              
+            {!$Organization.Name}<br/>
+           {!$Organization.Street}, {!$Organization.State}<br/>
+             {!$Organization.PostalCode}, {!$Organization.Country}<br/>
+             Phone: 01482 660 504<br/>
+             Email: accounts@gumtree.com<br/><br/>
+                   
+                Name(s) of account holder(s)<br/>
+                {{*Ttl1_es_:signer:BankAccountHoldersname}}<br/>
+                <br/>
+                Bank/building Society Account Number<br/>
+                {{*Ttl2_es_:signer:string(char=num,maxlen=10)}}
+                <br/>
+                Bank sort code<br/>
+               {{*Ttl3_es_:signer:string(char=num,maxlen=6)}}<br/>
+                <b>Name and full postal address of your bank or building society</b><br/>
+                <br/>
+                To: The Manager<br/>
+                Name:{{*Ttl4_es_:signer:bank_name}}<br/>
+               Address<br/>
+               Street:{{*Ttl5_es_:signer:bank_street}}<br/><br/>
+               City:&nbsp;&nbsp;{{*Ttl6_es_:signer:bank_city_br}}<br/><br/>
+               Postal Code:{{*Ttl7_es_:signer:post_c}}
+                <br/><br/>
+                Reference:<br/>
+               {!Opportunity.Mandate_Reference__c}<br/>
+       </div>
+       </td>
+       <td width="4%"></td>
+       <td align="left" width="50%">
+           <div id="">
+               <b>Instruction to your bank or building society to pay by Direct Debit</b><br/>
+               <b> Service User Number </b><br/>
+                 <img src='{!URLFOR($Resource.DirectDebit_ServiceUserNumber)}' title="SUN" /><br/><br/>
+                  <div id="border">
+                      <b>For {!$Organization.Name} Official Use Only.</b><br/>
+                      This is not part of the instruction to your bank or building society.The amounts, which represent current subscription rates, are to be debited monthly.
+                  </div>
+                  <br/>
+                  <b>Instruction to your Bank or Building Society</b><br/><br/>
+                  Please pay {!$Organization.Name} Direct Debits from the account detailed in this Instruction subject to the safeguards assured by the Direct Debit Guarantee. I understand that this Instruction may remain with {!$Organization.Name} and, if so, details will be passed electronically to my bank/building society.<br/>
+                  Signature(s)<br/>
+                 {{_es_signer_signature}}<br/>
+                  Date<br/>
+                  {{_es_signer_date}}<br/>  
+                  {{*[]}}Please review the Direct Debit details above and make any amendments necessary. Please confirm that the account you have provided is in your name and that you are the only signatory required to authorise direct debit. 
+            </div>
+       </td>
+   </tr>
+   
+</table>
+
+<hr style="border-top: dashed 2px #000" />
+
+<table width="100%" bgcolor="#dddddd">
+
+<tr>
+<td><br/>
+
+ <table width="100%" columns="1">
+        <tr colspan="2">
+            <td width="70%" align="center">
+                Banks and building societies may not accept Direct Debit Instructions for some types of account<br/><br/>
+                This guarantee should be detached and retained by the payer.
+            </td>
+        </tr>
+  </table>
+
+  <table width="100%" align="center" columns="2" style="background-color:#ffffff; margin-bottom:20px; border:solid; border-color:#999;" >
+     <tr>
+        <td width="100%" align="center">
+           <p> <font size="16"> The Direct Debit Guarantee</font></p>
+        </td>
+        <td width="30%" align="right">
+            <img  src='{!URLFOR($Resource.Directdebit)}' title="DirectDebit" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <ul>
+                <li>This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits</li>
+                <li>If there are any changes to the amount, date or frequency of your Direct Debit {!$Organization.Name} will notify you <b>10</b> working days in advance of your account being debited or as otherwise agreed. If you request {!$Organization.Name} to collect a payment, confirmation of the amount and date will be given to you at the time of the request.</li>
+                <li>If an error is made in the payment of your Direct Debit, by {!$Organization.Name} or your bank or building society, you are entitled to a full and immediate refund of the amount paid from your bank or building society</li>
+                <li>If you receive a refund you are not entitled to, you must pay it back when {!$Organization.Name} asks you to</li>
+                <li>You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please also notify us.</li>
+            </ul>
+        </td>
+    </tr>
+    
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+
+</apex:page>

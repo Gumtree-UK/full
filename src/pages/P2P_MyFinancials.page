@@ -1,0 +1,988 @@
+<apex:page standardStylesheets="false" action="{!receiveInvoices}" showHeader="false" sidebar="false" Controller="P2P_MyFinancialsController" title="My Gumtree | Gumtree.com">
+  <html>
+  <head>
+      
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scaladable=no"/>
+    <link rel="icon" type="image/png" href="{!$Resource.FavouriteSiteIcon}" />
+    <script src="{!URLFOR('/soap/ajax/25.0/connection.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR('/soap/ajax/25.0/apex.js')}" type="text/javascript"></script>
+    <script>sforce.connection.sessionId = '{!$Api.Session_ID}'; </script>
+    <style>
+       
+        .nextButton {
+            float: left;
+        }
+        .invListSizeChange{float: left;}
+        .pc_col img, .pcTitleItem img{
+            margin-right: 5px;
+        }
+        
+        .Current{
+            color: #F7941E;
+            font-weight: 600; 
+        }
+        .Overdue{
+            color: #EF4136;
+            font-weight: 600;
+        }
+        .Paid{
+            color: #7BB74B;
+        }
+        .sCurrent{
+            background-color: #F7941E;
+            border-radius: 3px;
+            color: #fff;
+            padding: 2px 5px;
+            text-transform: uppercase;
+            /* 16-12-14 */
+            float: left;
+            text-align: center;
+            line-height: 18px;
+            width: 100%;
+        }
+        .exportStatement{
+            float: right;
+            margin-left: 15px;
+            margin-bottom: 3px;
+            margin-top: 4px;
+        }
+        .sOverdue{
+            background-color: #EF4136;
+            border-radius: 3px;
+            color: #fff;
+            padding: 2px 5px;
+            text-transform: uppercase;
+            /*11/12/2014*/
+            text-align:center;
+            float:left;
+            line-height: 18px;
+            width: 100%;
+        }
+        .sPaid{
+            background-color: #7BB74B;
+            border-radius: 3px;
+            color: #fff;
+            padding: 2px 5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            text-align:center;
+            float:left;
+            line-height: 18px;
+            width: 100%;
+        }
+        .sAwaiting{
+            background-color: grey;
+            border-radius: 3px;
+            color: #fff;
+            padding: 2px 5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            text-align:center;
+            float:left;
+            line-height: 18px;
+            width: 100%;
+        }
+        .sWritten{
+            background-color: grey;
+            border-radius: 3px;
+            color: #fff;
+            padding: 2px 5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            text-align:center;
+            float:left;
+            line-height: 18px;
+            width: 100%;
+        }
+        .sRowPaid{background-color: #F1F2F2;}
+        .sCredit{
+            background-color: #7BB74B;
+            border-radius: 3px;
+            color: #fff;
+            padding: 2px 5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            text-align:center;
+            float:left;
+            line-height: 18px;
+            width: 100%;
+        }
+        
+        .vbox-title{
+            font-size: 30px !important;
+            font-weight: 600;
+        }
+        .textCheckAll{
+            background: none repeat scroll 0 0 transparent;
+            border: medium none;
+            color: #2a5db0;
+            padding-left: 0;
+            padding-right: 12px;
+            padding-top: 0;
+        }
+        .textCheckAll:HOVER{
+            text-decoration: underline;
+        }
+        .btnCheckAll{
+            display: none;
+        }
+        
+        .disableMe{
+              pointer-events: none;
+              cursor: default;
+        }
+        .wrapDescription{
+            text-align: right;
+        }
+        .totalSelectedAmountDue{
+            float: none;
+        }
+        .wrapDescription .titleSpan{
+            float: left;
+        }
+        .filterBy select {
+            text-indent: inherit;
+        }
+        .prevNextLinks{
+            display: inline-block;
+            padding-right: 65px;
+            position: relative;
+            text-align: right;
+        }
+       
+        .wrapFilter{
+            width: 100%;
+        }
+        
+        .iSmallSpacingBottom{
+            margin-bottom: 5px;
+        }
+        /* 16-12-14 to set line-height of paragraph to 18px */
+        .wrap3HeightLightBlock {
+            line-height: 18px;
+            min-height: 160px;
+        }
+        .removeBorderBottom{
+            border-bottom: 0;
+        }
+        .contactGumtree1{
+            float: left;
+            width: 60%;
+        }
+        .contactGumtree2{
+            float: right;
+            width: 40%;
+        }
+        .contactDayAWeek{
+            white-space: nowrap;
+        }
+        .wCol4{
+            padding-right: inherit;
+        }
+        
+        /*Overrided by Bunhor @30-Apr15 */
+        .wCol2 {
+          width: 15%;
+        }
+        .wCol4 {
+          width: 15%;
+        }
+        .wCol5 {
+          width: 15%;
+        }
+        .wCol7 {
+          width: 16%;
+        }
+        /*Overrided by Bunhor @30-Apr15 */
+        
+        @media (max-width: 1023px){
+            .contactDayAWeek{
+                white-space: inherit;
+            }
+        }
+        @media (max-width: 991px){
+            .height3{
+                min-height: inherit;
+            }
+            .contactGumtree1{
+                float: left;
+                width: 68%;
+            }
+            .contactGumtree2{
+                float: right;
+                width: 32%;
+            }
+            .contactDayAWeek{
+                white-space: nowrap;
+            }
+        }
+        @media (max-width: 767px){
+            .height1,
+            .height2{
+                min-height: inherit;
+            }
+        }
+        @media (max-width: 608px){
+            .wrapFilter table:first-child{
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            .hideFilter{display: none;}
+            .wrapFilterAction span span:last-child span select{
+                width: 100%;
+            }
+            .exportStatement{
+                width: 50%;
+                margin-left: 3%;
+            }
+            .wrapFilterAction{
+                width: 100%;
+            }
+            .wrapFilterAction span span:last-child span{
+                width: 47%; 
+            }
+            .wrapFilter table:first-child td:last-child{
+                text-align: right;
+            }
+            .wrapFilterAction {
+                margin: 6px auto;
+            }
+        }
+        @media (max-width: 480px){
+        
+            .exportStatement{
+                float: right;
+                width: 50%;
+                margin-left: 2%;
+                min-width: 130px;
+            }
+            .wrapFilterAction span span:last-child span{
+                width: 48%;
+            }
+            .wrapDescription {
+                text-align: left;
+            }
+            .wrapDescription img{
+                margin-top: 10px;
+            }
+            .totalSelectedAmountDue{
+                position: relative;
+                top: -5px;
+            }
+            .wrapDescription .titleSpan {
+                width: 80%;
+            }
+            .contactGumtree1{
+                width: 60%;
+            }
+            .contactGumtree2{
+                width: 40%;
+            }
+        }
+        
+        @media (max-width: 479px){
+            .exportStatement{
+                float: right;
+                width: 48%;
+                /*margin-left: 10px;*/
+                min-width: 105px;
+                white-space: nowrap;
+                margin-left: 0;
+            }
+            .wrapFilterAction{
+                padding: 0;
+                width: 100%;
+            }
+            .textCheckAll{
+                display: none;
+            }
+            .btnCheckAll{
+                display: block;
+            }
+            .imageInfoCheckAll{
+                display: none;
+            }
+            .wCol2{
+                width: 43%;
+            }
+            .filteby-to-left {
+                float: left !important;
+            }
+            
+            
+        }
+        @media (max-width: 400px){
+            .exportStatement{
+                padding-left: 5px;
+                padding-right: 5px;
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 350px){
+            .contactDayAWeek{
+                white-space: inherit;
+            }
+            .visitOurSite{
+                position: absolute; 
+            }
+        }
+        .tRow:last-child{
+            border-bottom: 0;
+        }
+        .rmPaddingBottom{
+            padding-bottom: 0;
+        }
+        
+    </style>
+    <script>
+        function doRequestInvoiceCopy(invoiceName){
+            var invoiceBodyAsUrl = sforce.apex.execute(
+                "P2P_MyFinancialsController",
+                "wsRequestPDFBody",
+                {invNo : invoiceName});
+            if(invoiceBodyAsUrl != '') window.open(invoiceBodyAsUrl, '_blank');
+        }
+    </script>
+    
+    
+      
+    
+    <script>
+              var dataLayer = [{"p": {"t": "MyAdsProFinancials","lng": "EN-GB", "pl": "SFDC", "v": "2015-02-25 v1.00"}, 
+                                "u": {"at": "Pro", "li": true },   
+                                "d": {"ua": "{!UA}" }
+                              }];
+    
+    <!-- GTM Pt1 -->
+                     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                     j.async=true;
+                     j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;
+                     f.parentNode.insertBefore(j,f);
+                     })(window,document,'script','dataLayer','GTM-FF7Z');
+              </script>
+     <!-- End GTM Pt1 -->
+
+  </head>
+  
+     <!-- GTM Pt2 -->
+        <noscript>
+            <iframe src="//www.googletagmanager.com/ns.html?id=GTM-FF7Z" height="0" width="0" style="display:none;visibility:hidden">
+            </iframe>
+        </noscript>
+     <!-- End GTM Pt2 -->
+
+
+  <apex:composition template="P2P_Template">
+      <apex:define name="body" >
+          <body id="comp" class="financials">
+            <!-- 2015-01-02 - Feedback tab integrated with Clicktools by Steve Paul -->
+            <div class="feedback" id="feedback">
+               <!--- hard code Q1 for testing - replace with {!acc.Id} --->
+               <a href="http://supportsurvey.gumtree.com/go?iv=18xfknvyio31q&q1={!acc.id}&q2=&q3=Financials&q4=Web">Feedback</a>
+            </div>
+            
+            <apex:form >
+            <apex:actionFunction name="loadInvoice" action="{!loadInvoice}" reRender="invoicelist"/>
+            <div class="container wrapContentBg">
+               <apex:outputPanel id="msgSysPanel" rendered="{!msgErr.size!=0}">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- 11-Dec-2014 add 'padding-right: 10px;' to rigth aligne, remove padding rigth -->
+                        <div class="accountTitle" style="float: left; width: 100%; padding-right: 10px;">
+                            <div class="col-md-5 col-xs-12 col-sm-5" style="padding-left: 0;">
+                                <img class="imageSignal" src="{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/signal-icon.png')}"/> <h1 style="color: #009BDF;">Update</h1> <!-- <h1 style="color: #FF0000;">Financial Update</h1> -->
+                            </div>
+                            <div class="col-md-7 col-xs-12 col-sm-7 padding-zero remove-padding-right">
+                               <apex:repeat value="{!msgErr}" var="msg">
+                                 <span style="margin-top: 3px; font-size: 15px; display: block; line-height: 18px;">  
+                                   <apex:outputText value="{!msg.MessageText__c}" escape="false" /> 
+                                 </span>
+                               </apex:repeat>
+            
+                             
+                            </div>
+                         </div>
+                    </div>
+                </div>
+               </apex:outputPanel> 
+                <div class="row">    
+                    <div class="col-md-4 col-xs-12 col-sm-6">
+                        <div class="wrap3HeightLightBlock height1">
+                            <h2>Credit &amp; Payment Summary</h2>
+                            <div class="HeightLightBlockCol1">    
+                                <Label class="iSmallSpacingBottom semiBoldLabel">Current Debt</Label>
+                                <span class="clear profileData25px"><apex:outputField value="{!acc.Current_Debt_Fiqas__c}"/></span>
+                                
+                            <div class="spacing10px"></div>
+                            </div> 
+                            
+                            <div class="HeightLightBlockCol2"> 
+                                <Label class="iSmallSpacingBottom semiBoldLabel">Outstanding Debt</Label>
+                                <span class="clear profileData25px" style="color: #EF4136;">
+                                    <apex:outputField value="{!acc.Outstanding_Debt_Fiqas__c}"/>
+                                </span>
+                                
+                               <div class="spacing10px"></div>
+                                
+                                <Label class="iSmallSpacingBottom semiBoldLabel">Balance</Label>
+                                <span class="clear profileData25px"><apex:outputField value="{!acc.Balance__c}" /></span>
+                            </div>  
+                            
+                         </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-xs-12 col-sm-6 paytotalMobile">
+                        <div class="wrapDescription" style="margin-top:10px;">
+                            <apex:outputPanel id="filterStatus1">
+                                <apex:image value="{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/triangle-info-icon.png')}" rendered="{!isInvoiceHaveOverdue}" style="float: left; margin-right: 15px;" />
+                                <span style="color: #fff;" class="titleSpan iTitleSpan">
+                                    <apex:outputText value="{!IF(ISNULL(filterStatus), 'All', filterStatus)}" rendered="{!filterStatus != 'Current & Overdue & Partially Paid'}"/> 
+                                    <apex:outputText value="Outstanding" rendered="{!filterStatus == 'Current & Overdue & Partially Paid'}"/> 
+                                    Invoices
+                                </span>
+                            </apex:outputPanel>
+                             
+                            
+                            <apex:outputPanel id="totalAmount1">
+                                <span style="float: none;" class="totalSelectedAmountDue"><apex:outputField value="{!totalSelectedAmountDue.Invoice_Amount__c}"/></span>
+                                
+                                <a class="tAmountDue setRight btnOrange" data-title="Payment" data-type="iframe" href="{!URLFOR('/apex/P2P_MyFinancialsPayment')}?selInv={!jsonSelInv}&id={!acc.id}">
+                                    Pay total now
+                                </a>
+
+                            </apex:outputPanel>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-xs-12 col-sm-6">
+                        <div class="wrap3HeightLightBlock height2">
+                            <h2>Pay now via BACS</h2>
+                            <div class="HeightLightBlockCol1"> 
+                                <Label class="iSmallSpacingBottom semiBoldLabel">Sort Code</Label>
+                                <span class="profileData25px"><apex:outputText value="30-16-35"/></span>
+                            </div>
+                            <div class="HeightLightBlockCol2"> 
+                                
+                                <Label class="iSmallSpacingBottom semiBoldLabel">Account number</Label>
+                                <span class="clear profileData25px"><apex:outputText value="23921027"/></span>
+                            </div>
+                            
+                            <div class="spacing10px"></div>
+                            <div style="clear: both;"><apex:outputText value="Bank of America - 5 Canada Square, London"/></div>
+                            <div style="clear: both;"><apex:outputText value="Please state your invoice number as a reference"/></div>
+                         </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-xs-12 col-sm-12">
+                        <div class="wrap3HeightLightBlock height3">
+                            <div class="contactGumtree1">
+                                <div class="HeightLightBlockCol1" style="width:100%;">
+                                    <h2>Contact Gumtree</h2>
+                                    <Label class="iSmallSpacingBottom semiBoldLabel">Phone</Label> 
+                                    <span class="profileData25px" style="padding-bottom:10px;padding-right:10px;">
+                                        01482 660 504
+                                    </span>
+                                    <div class="spacing10px"></div>
+                                    <apex:outputText styleClass="contactDayAWeek" value="8am - 5pm, 5 days a week." style="padding-right:10px; word-break: normal; word-wrap: break-word;" />
+                                    <span class="visitOurSite" style="white-space:nowrap;">Visit our
+                                    <!-- <a href="{!URLFOR('/apex/P2P_MySupport')}?id={!acc.Id}">Support section</a></span> -->
+                                    <a href="{!URLFOR('/apex/P2P_MySupport')}">Support section</a></span>
+                                </div>
+                            </div>
+                            <div class="contactGumtree2">
+                                 <apex:image style="float:right;" height="100px" value="{!URLFOR($Resource.P2P_Icons, '/Image-Financials.png')}" />
+                            </div>   
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="wrapFilter">
+                            <apex:panelGrid columns="2" style="float:left;">
+                                <apex:inputText html-placeholder="Search Invoices" value="{!searchKey}"/>
+                                <button class="btnOrange btnSearch" onclick="loadInvoice(); return false;">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </apex:panelGrid>
+                            
+                            <div class="wrapFilterAction">
+                                <a class="exportStatement btnGrey" href="{!SitePrefix}/apex/P2P_ExportStatementFilter?acctid={!acc.Id}" target="_blank">Export Statement</a>
+                                <apex:actionStatus id="invStatusChange">
+                                    <apex:facet name="start">
+                                        <img src="/img/loading.gif" style="float:right;margin-top:10px;" />
+                                    </apex:facet>
+                                    <apex:facet name="stop">
+                                        <apex:outputPanel style="float:right;margin-top:4px;display:relative;" styleClass="filterBy, filteby-to-left">
+                                            <span class="hideFilter">Filter by : &nbsp;&nbsp;</span>
+                                            <apex:selectList value="{!filterStatus}" size="1">
+                                                <apex:selectOptions value="{!filterStatusOptions}"/>
+                                                <apex:actionSupport event="onchange" action="{!filterChange}" reRender="invoicelist, filterStatus, filterStatus1, totalAmount, totalAmount1, tAmountDue, tAmountDue1" status="invStatusChange"/>
+                                            </apex:selectList>
+                                         </apex:outputPanel>
+                                    </apex:facet>
+                                </apex:actionStatus>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="wrapDescription">
+                            <apex:outputPanel id="filterStatus">
+                                <apex:image value="{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/triangle-info-icon.png')}" rendered="{!isInvoiceHaveOverdue}" style="float: left; margin-right: 15px;" />
+                                <span style="color: #fff;" class="titleSpan iTitleSpan">
+                                    <apex:outputText value="{!IF(ISNULL(filterStatus), 'All', filterStatus)}" rendered="{!filterStatus != 'Current & Overdue & Partially Paid'}"/> 
+                                    <apex:outputText value="Outstanding" rendered="{!filterStatus == 'Current & Overdue & Partially Paid'}"/> 
+                                    Invoices
+                                </span>
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel id="totalAmount">
+                                <span style="float: none;" class="totalSelectedAmountDue"><apex:outputField value="{!totalSelectedAmountDue.Invoice_Amount__c}"/></span>
+                            
+                                <a class="tAmountDue setRight btnOrange" data-title="Payment" data-type="iframe" href="{!URLFOR('/apex/P2P_MyFinancialsPayment')}?selInv={!jsonSelInv}&id={!acc.id}">
+                                    Pay total now
+                                </a>
+                            
+                            </apex:outputPanel>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <apex:pageBlock id="invoicelist">
+                            <apex:pageMessages />
+                           
+                            <div class="wrapTableList rmPaddingBottom">
+                                <div class="tRow doubleTBorder">
+                                    <div class="pc_first_col nowrapText wCol1">
+                                        <apex:actionStatus id="groupCheckStatus">
+                                            <apex:facet name="start">
+                                                <img src="/img/loading.gif" /> 
+                                            </apex:facet>
+                                            <apex:facet name="stop">
+                                                <apex:panelGrid columns="3">
+                                                    <apex:commandButton styleClass="btnCheckAll" image="{!URLFOR($Resource.P2P_Resources, IF(isGroupCheck,'gumtree-icons/checkbox-32x32.png','gumtree-icons/unchecked-32x32.png'))}" action="{!groupCheckChange}" status="groupCheckStatus" oncomplete="changePayTotal();" rerender="invoicelist, totalAmount, totalAmount1, tAmountDue, tAmountDue1, script" />
+                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column1}"></span>
+                                                    <apex:commandButton styleClass="textCheckAll" value="Select" action="{!groupCheckChange}" status="groupCheckStatus" oncomplete="changePayTotal();" rerender="invoicelist, totalAmount, totalAmount1, tAmountDue, tAmountDue1, script" />
+                                                </apex:panelGrid>
+                                            </apex:facet>
+                                        </apex:actionStatus> 
+                                    </div>
+                                    <div class="pc_col wCol2">
+                                        <apex:panelGrid columns="2">
+                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column2}"></span>
+                                            <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Name','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                Invoice Copy
+                                                <apex:param name="pName" value="Name" assignTo="{!sortByField}"/>
+                                            </apex:commandLink>
+                                        </apex:panelGrid>
+                                    </div>
+                                    
+                                    <div class="pc_col wCol3">
+                                        <apex:panelGrid columns="2">
+                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column3}"></span>
+                                            <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Invoice_Date__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                Invoice Date
+                                                <apex:param name="pInvoice_Date__c" value="Invoice_Date__c" assignTo="{!sortByField}"/>
+                                            </apex:commandLink>
+                                        </apex:panelGrid>
+                                    </div>
+                                                    
+                                    <div class="pc_col wCol4">
+                                        <apex:panelGrid columns="2">
+                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column4}"></span>
+                                            <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Period__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                Invoice Period
+                                                <apex:param name="pPeriod__c" value="Period__c" assignTo="{!sortByField}"/>
+                                            </apex:commandLink>
+                                        </apex:panelGrid>
+                                    </div>
+                                    <div class="pc_col wCol5">
+                                        <apex:panelGrid columns="2">
+                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column5}"></span>
+                                            <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Payment_Due_Date__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                Payment Due
+                                                <apex:param name="pPayment_Due_Date__c" value="Payment_Due_Date__c" assignTo="{!sortByField}"/>
+                                            </apex:commandLink>
+                                        </apex:panelGrid>
+                                    </div>
+                                    <div class="pc_col wCol6">
+                                        <apex:panelGrid columns="2">
+                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column6}"></span>
+                                            <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Amount_due__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                Amount
+                                                <apex:param name="pAmount_due__c" value="Amount_due__c" assignTo="{!sortByField}"/>
+                                            </apex:commandLink>
+                                        </apex:panelGrid>
+                                    </div>
+                                    
+                                    <div class="pc_col wCol7">
+                                        <apex:panelGrid columns="2">
+                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column7}"></span>
+                                            <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Invoice_Status__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                Status
+                                                <apex:param name="pInvoice_Status__c" value="Invoice_Status__c" assignTo="{!sortByField}"/>
+                                            </apex:commandLink>
+                                        </apex:panelGrid>
+                                    </div>
+                                    
+                                    <div class="pc_last_col hideMe show767 show479">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                               <apex:variable var="lastIndexFinancial" value="{!0}" />
+                               <apex:repeat value="{!invList}" var="inv" rendered="{!invList.size>0}" >
+                                    
+                                    <div class="tRow aTBorder {!IF(lastIndexFinancial == invList.size,'removeBorderBottom','')} {!IF(CONTAINS('Paid in Full;Credit Note',inv.Invoice_Status__c),'sRowPaid','')}">
+                                        <div class="pc_first_col wCol1">
+                                            <apex:inputHidden value="{!mapSelectedInv[inv.Id]}" id="chkPayment" />
+                                            <apex:actionStatus id="choosePaymentStatus">
+                                                <apex:facet name="start">
+                                                    <img src="/img/loading.gif" /> 
+                                                </apex:facet>
+                                                <apex:facet name="stop">
+                                                    <apex:commandButton action="{!onSelectPayment}" reRender="tAmountDue, totalAmount, totalAmount1, tAmountDue1, choosePaymentStatus, script" status="choosePaymentStatus"  
+                                                    image="{!URLFOR($Resource.P2P_Resources, IF(mapSelectedInv[inv.Id],'gumtree-icons/checkbox-32x32.png', IF(CONTAINS('Paid in Full;Written Off;Credit Note;Awaiting Settlement',inv.Invoice_Status__c),'gumtree-icons/disableme-32x32.png','gumtree-icons/unchecked-32x32.png')))}"
+                                                    styleClass="{!IF(mapSelectedInv[inv.Id],'checkbox-checked',IF(CONTAINS('Paid in Full;Written Off;Credit;Awaiting Settlement',inv.Invoice_Status__c),'disableMe','checkbox-unchecked'))}" 
+                                                    onclick="checkboxChange(this,'{!$Component.chkPayment}');" oncomplete="changePayTotal();"/>
+                                                </apex:facet>
+                                            </apex:actionStatus> 
+                                        </div>
+                                        <div class="pc_col wCol2">
+                                            <apex:actionStatus id="downloadStatusUp">
+                                                <apex:facet name="start">
+                                                    <img src="/img/loading.gif" /> 
+                                                </apex:facet>
+                                                <apex:facet name="stop">
+                                                    <apex:commandLink onclick="doRequestInvoiceCopy('{!inv.Name}'); return false;" action="{!requestPDFBody}" reRender="invoicelist" status="downloadStatusUp" oncomplete="window.open('{!urldocPdf}', '_blank');" >
+                                                        <apex:param name="pInvNumber" value="{!inv.Name}" assignTo="{!invNumber}"/>
+                                                        <span style="color: #2A5DB0;">{!inv.Name}</span>
+                                                    </apex:commandLink>
+                                                </apex:facet>
+                                            </apex:actionStatus>
+                                        </div>
+                                        <div class="pc_col wCol3"><apex:outputField value="{!inv.Invoice_Date__c}"/></div>
+                                        <div class="pc_col wCol4"><apex:outputField value="{!inv.Period__c}"/></div>
+                                        
+                                        <apex:variable value="{!IF(NOT(inv.Invoice_Status__c=='Partially Paid'), inv.Invoice_Status__c,
+                                                IF(OR(inv.Age__c >= 30, inv.Payment_due_date__c < TODAY(), inv.Amount_due__c > 0), 'Overdue', 'Current'))}" 
+                                                var="statusClass" 
+                                        />
+                                                
+                                        <div class="pc_col wCol5"><apex:outputField value="{!inv.Payment_Due_Date__c}"/></div>
+                                        <div class="pc_col wCol6">
+                                            <span class="{!statusClass}">
+                                                <apex:outputField value="{!inv.Amount_Due__c}" rendered="{!AND(inv.Invoice_Status__c!='Paid in Full',inv.Invoice_Status__c!='Credit Note')}" />
+                                                <apex:outputField value="{!inv.Invoice_Amount__c}" rendered="{!OR(inv.Invoice_Status__c=='Paid in Full', inv.Invoice_Status__c=='Credit Note')}" />
+                                            </span>
+                                        </div>
+                                        <div class="pc_col wCol7" style="padding: 10px 10px 15px 0;">
+                                            <span class="s{!statusClass}">
+                                                <apex:outputField value="{!inv.Invoice_Status__c}"/>
+                                            </span>
+                                        </div>
+                                        <div class="pc_last_col inActive hideMe show767 show479">&nbsp;</div>
+                                        
+                                        <!-- More Show -->
+                                        <div class="pc_more_item">
+                                            <div class="pcTitleItem m7 hideMe">
+                                                <apex:panelGrid columns="2">
+                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column7}"></span>
+                                                    <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Invoice_Status__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                    Status
+                                                    <apex:param name="pInvoice_Status__c" value="Invoice_Status__c" assignTo="{!sortByField}"/>
+                                                    </apex:commandLink>
+                                                </apex:panelGrid>
+                                            </div>
+                                            <div class="pcValueItem m7 hideMe" style="padding: 10px 10px 10px 0;">
+                                                <span class="s{!statusClass}">
+                                                    <apex:outputField value="{!inv.Invoice_Status__c}"/>
+                                                </span>
+                                            </div>
+        
+                                            <div class="pcTitleItem m5 hideMe">
+                                                <apex:panelGrid columns="2">
+                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column4}"></span>
+                                                    <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Period__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                    Invoice Period
+                                                    <apex:param name="pPeriod__c" value="Period__c" assignTo="{!sortByField}"/>
+                                                    </apex:commandLink>
+                                                </apex:panelGrid>
+                                            </div>
+                                            <div class="pcValueItem m5 hideMe">
+                                                <apex:outputField value="{!inv.Period__c}"/>
+                                            </div>
+        
+                                            <div class="pcTitleItem m3 hideMe">
+                                                <apex:panelGrid columns="2">
+                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column3}"></span>
+                                                    <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Invoice_Date__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                    Invoice Date
+                                                    <apex:param name="pInvoice_Date__c" value="Invoice_Date__c" assignTo="{!sortByField}"/>
+                                                    </apex:commandLink>
+                                                </apex:panelGrid>
+                                            </div>
+                                            <div class="pcValueItem m3 hideMe">
+                                                <apex:outputField value="{!inv.Invoice_Date__c}"/>
+                                            </div>
+        
+                                            <div class="pcTitleItem m4 hideMe">
+                                                <apex:panelGrid columns="2">
+                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Column5}"></span>
+                                                    <apex:commandLink action="{!sortInvoice}" reRender="invoicelist" status="" styleClass="{!IF(sortByField!='Payment_Due_Date__c','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                        Payment Date
+                                                        <apex:param name="pPayment_Due_Date__c" value="Payment_Due_Date__c" assignTo="{!sortByField}"/>
+                                                    </apex:commandLink>
+                                                </apex:panelGrid>
+                                            </div>
+                                            <div class="pcValueItem m4 hideMe">
+                                                <apex:outputField value="{!inv.Payment_Due_Date__c}"/>
+                                            </div>
+        
+        
+                                        </div>
+                                    </div>
+                                    <apex:variable var="lastIndexFinancial" value="{!lastIndexFinancial + 1}" />
+                                </apex:repeat>
+                                
+                                <script>
+                                    $(document).ready(function(){
+                                        $('.disableMe').each(function(){
+                                            $(this).removeAttr('onclick');
+                                        });
+                                        $('.disableMe').off().on('click',function(){return false;});
+                                        
+                                        $('[data-toggle="tooltip"]').bind({
+                                            mouseover : function(){
+                                                var title = $(this).attr('title');
+                                                var data_title = $(this).attr('data-title');
+                                                $(this).attr('title','');
+                                                if(!data_title){
+                                                    data_title = title;
+                                                    $(this).attr('data-title',title);
+                                                }
+                                                helperDialog.show($(this).get(0), data_title);
+                                            },
+                                            mouseout : function(){
+                                                helperDialog.hide();
+                                            }
+                                        });
+                                    });
+                                </script>
+                            </div>
+                            <apex:outputText rendered="{!invList.size > 0}">
+                                    <script>$('.listViewport').css('display','block');</script>
+                                    <div class="listViewport">
+                                        <div class="bottomNav">
+                                            <div class="paginator" style="padding-bottom:8px;">
+                                                <!--<span class="right">Page {!curPage}</span>&nbsp; -->
+                                                <div class="iWrapPagination">
+                                                    <div class="wrapShowPerPage">
+                                                        <div class="invListSizeChange">
+                                                            <apex:actionStatus id="invListSizeChange">
+                                                                <apex:facet name="start">
+                                                                    <img src="/img/loading.gif" /> 
+                                                                </apex:facet>
+                                                                <apex:facet name="stop">
+                                                                    <apex:outputPanel >
+                                                                        Showing : &nbsp;&nbsp;&nbsp;
+                                                                        <apex:outputPanel rendered="{!totalResultSize > listSize}">
+                                                                            <apex:selectList value="{!listSize}" size="1">
+                                                                                <apex:selectOptions value="{!listSizeOptions}"/>
+                                                                                <apex:actionSupport event="onchange" action="{!loadInvoice}" reRender="invoicelist" status="invListSizeChange"/>
+                                                                            </apex:selectList>
+                                                                            &nbsp;&nbsp;&nbsp;of
+                                                                        </apex:outputPanel>
+                                                                        {!totalRecords} invoice <apex:outputText rendered="{!totalRecords>1}" value="s" />
+                                                                    </apex:outputPanel>
+                                                                </apex:facet>
+                                                            </apex:actionStatus>
+                                                        </div>
+                                                     </div>
+                                                    <div class="wrapPaginationAction">
+                                                        <div class="prevNextLinks">
+                                                            <span class="prevNextLeft">
+                                                                <apex:commandLink action="{!goPreviousPage}" rendered="{!PrevRequired}" value="Previous" status="navigateStatus" reRender="invoicelist" styleClass="previousButton"><img src="/s.gif" class="prev" alt="Previous"/></apex:commandLink>
+                                                            </span>
+                                                            <apex:repeat value="{!pageNumList}" var="pnum">
+                                                                <apex:commandLink action="{!goToPage}" rendered="{!pageNumList.size>1}" value="{!pnum}" status="navigateStatus" reRender="invoicelist" styleClass="{!IF(pnum == curPage,'activePageNum','pageNum')}" onclick="if('{!pnum}' == '{!curPage}') return false;">
+                                                                    <apex:param name="ptoPage" assignTo="{!curPage}" value="{!pnum}"/>
+                                                                </apex:commandLink>
+                                                            </apex:repeat>
+                                                            
+                                                            &nbsp;&nbsp;&nbsp;
+                                                            <span class="prevNext">
+                                                                <apex:commandLink action="{!goNextPage}" rendered="{!NextRequired}" value="Next" status="navigateStatus" reRender="invoicelist" styleClass="nextButton"><img src="/s.gif" class="next" alt="Next"/></apex:commandLink>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="clearingBox"></div>
+                                        </div>
+                                    </div>
+                                </apex:outputText>
+                            <script>
+                                $('.inActive').off('click').on('click',function(){
+                                    var that = $(this);
+                                    var fadeActive = that.attr('class');
+                                    if(fadeActive.match(/open/gi)){
+                                        that.removeClass('open');
+                                    }else{
+                                        that.addClass('open');
+                                    }
+                                });
+                            </script>
+                        </apex:pageBlock>
+                    </div>
+                </div>
+            </div>
+            </apex:form>
+            
+            </body>
+            
+        </apex:define>
+    </apex:composition>
+      
+    
+    <apex:outputPanel id="script">
+    <script>
+        var height1 = 0;
+        var height2 = 0;
+        var height3 = 0;
+        var checkMaxHeight = 0;
+        var max = 0;
+        function setHeight(){
+            height1 = parseInt($('.height1').outerHeight());
+            height2 = parseInt($('.height2').outerHeight());
+            height3 = parseInt($('.height3').outerHeight());
+            if(max < height1){
+                max = height1;
+                checkMaxHeight = 1;
+            }
+            if(max < height2){
+                max = height2;
+                checkMaxHeight = 2;
+            }
+            if(max < height3){
+                max = height3;
+                checkMaxHeight = 3;
+            }
+        }
+        
+        function setAutoHeight(){
+            var percent1 =  parseInt($('.height1').closest('.col-xs-12').css('width')) / $('body').width() * 100;
+            var percent2 =  parseInt($('.height2').closest('.col-xs-12').css('width')) / $('body').width() * 100;
+            var percent3 =  parseInt($('.height3').closest('.col-xs-12').css('width')) / $('body').width() * 100;
+            if(checkMaxHeight == 1){
+                $('.height2').css('height',$('.height1').outerHeight()+'px');
+                $('.height3').css('height',$('.height1').outerHeight()+'px');
+            }else if(checkMaxHeight == 2){
+                $('.height1').css('height',$('.height2').outerHeight()+'px');
+                $('.height3').css('height',$('.height2').outerHeight()+'px');
+            }else if(checkMaxHeight == 3){
+                $('.height1').css('height',$('.height3').outerHeight()+'px');
+                $('.height2').css('height',$('.height3').outerHeight()+'px');
+            }
+            if(percent1==100){
+                $('.height1').css('height','auto');
+                $('.invListSizeChange').css({'float':'none','margin':'0 auto'});
+            }else{
+                $('.invListSizeChange').css('float','left');
+            }
+            if(percent2==100)$('.height2').css('height','auto');
+            if(percent3==100)$('.height3').css('height','auto');
+            $('.listViewport').css('display','block');
+        }
+      
+        $(document).ready(function(){
+            changePayTotal();
+            //setHeight();
+            setTimeout(function(){
+                //setAutoHeight();
+            },500);
+            
+            $(window).resize(function(){
+                //setAutoHeight();
+            });
+            //window.onorientationchange=setAutoHeight;
+        });
+        function checkboxChange(btnEle, chkPayment){
+            //16-12-14 change from checkbox.png to checkbox-32x32.png and from Resource.P2P_Icons to 
+            if(btnEle.src.indexOf("unchecked-32x32.png") != -1){
+                //btnEle.src = "{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/checkbox.png')}";
+                btnEle.src = "{!URLFOR($Resource.P2P_Resources, 'gumtree-icons/checkbox-32x32.png')}";
+                document.getElementById(chkPayment).value = true;
+            }else{
+                //btnEle.src = "{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/uncheckbox.png')}";
+                btnEle.src = "{!URLFOR($Resource.P2P_Resources, 'gumtree-icons/unchecked-32x32.png')}";
+                document.getElementById(chkPayment).value = false;
+            }
+        }    
+        
+        function changePayTotal(){
+            if ({!jsonSelInv}==""){
+                $('.tAmountDue').removeClass("btnOrange").addClass("btnGrey");
+            }else{
+                $('.tAmountDue').removeClass("btnGrey").addClass("btnOrange");
+            }
+            $('.tAmountDue').hover(function(){
+                    if($(this).hasClass("btnGrey")){
+                        $(this).text("Select invoices");
+                    }
+                },function(){
+                    if($(this).hasClass("btnGrey")){
+                        $(this).text("Pay total now");
+                    }
+            });
+            $('.tAmountDue').off('click').on('click',function(){
+                if ($(this).hasClass("btnGrey")) {
+                   return false;
+                }
+            });
+        }    
+    </script>
+    </apex:outputPanel>
+    <!-- ****Added by Kakada Khan 10-Oct-2014**** -->
+    <apex:outputPanel id="scrPayment">
+        <script>
+            //alert('Send {!totalSelectedAmountDue.Invoice_Amount__c} to Brain tree'); return false;
+            function showResult(exp){
+                if(exp == true){
+                    //alert('Successful paid');
+                }
+                else{
+                    //alert('Failed paid');
+                }
+            }
+            
+            function paymentForm(amount){          
+                if(amount >0){      
+                    var j$ = jQuery.noConflict();
+                    var iframe_url = '{!URLFOR("/apex/P2P_CreditCardLandingPage")}?ccregaccid={!acc.Id}&amount='+amount;
+                    var child_domain = iframe_url.substring(0, iframe_url.indexOf('/', 9));
+                    var parent_domain = window.location.protocol + '//' + window.location.host;
+                    var j$modalDialog = j$('<div id="opppopup"></div>')
+                    .html('<iframe id="iframeContentId" src="' + iframe_url + '" frameborder="0" height="100%" width="100%" marginheight="0" marginwidth="0" scrolling="no" />')
+                    .dialog({
+                    autoOpen: false,
+                    title: 'Payment',
+                    resizable: false,
+                    width: 768,
+                    height: 530,
+                    autoResize: true,
+                    modal: true,
+                    draggable: false
+                    });                 
+                    j$modalDialog.dialog('open');
+                }
+            }
+
+        </script>    
+    </apex:outputPanel>
+    
+  </html>
+</apex:page>

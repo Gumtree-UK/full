@@ -1,0 +1,9 @@
+<apex:page controller="ViewAllHistory" sidebar="false" showheader="false" tabStyle="Account">
+ <apex:pageBlock >
+        <h1 class="mainTitle">Activity History</h1><br/><br/>
+        <apex:PageBlockTable value="{!Tasks}" var="t" id="task" width="250px">
+          <apex:column value="{!t.Time_Date_Event__c}" headerValue="Date"/>
+          <apex:column value="{!t.Description}" headerValue="Comments"/>
+        </apex:PageBlockTable>
+ </apex:pageBlock>      
+</apex:page>

@@ -1,0 +1,154 @@
+<apex:page controller="KnowledgeController" showHeader="false" title="Public Knowledge Base" cache="true" expires="{!cacheMaxAge}" standardStylesheets="false">
+    <apex:composition template="{!$Site.Template}">
+    <apex:define name="content">
+ 
+       <apex:variable var="productUrlVar" value="{!productUrl}" />
+       <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+       <apex:variable var="cpt" value="{!0}" />
+       <apex:variable var="categoryDescriptionsVar" value="{!categoryDescriptions}" />
+       <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+                               
+    <div class="column grid_1">
+    <section class="manage-ads">
+    <hgroup class="space">
+    <h2>Need Help ?</h2>
+    </hgroup>
+
+
+    <div class="home-sections-menu features">
+      <a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Posting_an_ad&k=Example:%20'email%20alerts'">
+        <div id="basics">
+        
+            <article>
+            <h3>Gumtree basics</h3>
+            <p>
+                Getting started, how to post ad, account setting, how to edit your ad...
+            </p>
+            </article>
+           
+        </div>
+         </a>
+        <a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Ads_removed&k=Example:%20'email%20alerts'">
+        <div id="not-working">
+            <article>
+            <h3>Something not working?</h3>
+            <p>
+                Can’t log in, email confirmation, can’t post an ad, can’t reset password...
+            </p>
+            </article>
+        </div>
+        </a>
+        <a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Report_ads&k=Example:%20'email%20alerts'">
+        <div id="abuse">
+            <article>
+            <h3>Report abuse or violations</h3>
+            <p>
+                Have you seen something dodgy? We can help you with reporting ads...
+            </p>
+            </article>
+        </div>
+        </a>
+        
+        
+        <a href="{!$Site.CurrentSiteURL}KnowledgeFAQs?c=General">        
+         <div id="faq">
+            <article>
+            <h3>FAQs</h3>
+            <p>
+                How do I post an ad, Why is my ad still processing?, I can't find my ad...
+            </p>
+            </article>
+        </div>
+        </a>
+        
+        <a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Job_accounts&k=Example:%20'email%20alerts'">
+        <div id="business">
+            <article>
+            <h3>Business accounts</h3>
+            <p>
+                Job accounts, Housing accounts, Motors accounts, Display advertising, Sponsored links...
+            </p>
+            </article>
+        </div>
+         </a>
+        
+        
+        <a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Safety_advice">
+        <div id="safety">
+            <article>
+            <h3>Safety advice </h3>
+            <p>
+                Safety advice, Reporting a safety issue, Safety@Gumtree
+            </p>
+            </article>
+        </div>
+        </a>
+               
+    </div>
+     
+      <!--<c:contactOptions />
+    
+    
+    --></section>
+</p>
+</div>
+<div class="column grid_2">
+<section class="manage-ads">
+
+<c:contactPhone />
+
+<div class="roundedbox darkgray search">
+         <apex:form id="searchBox2"> 
+                                                        
+                                             <div class="search-input">
+                                                 <apex:inputText style="color:#CCCCCC;" styleClass="fld" value="{!currentKeyword}"  size="25" onblur="setsearchtext(this);" onclick="clearsearchtext(this);" onfocus="clearsearchtext(this);" onkeypress="return submitEnter2(event);" />
+                                             </div>
+                                             <apex:actionFunction name="searchJs" action="{!doSearch}" />
+                                             <apex:commandButton action="{!doSearch}" onclick="return updateCategoryField2(event)" id="searchButton" styleClass="secondary button" value="search" />
+                                         </apex:form>  
+    </div>
+<div class="roundedbox brightgray faqs">
+    <h3>Top 10 FAQs</h3>
+    <ol>
+        
+        
+        
+        
+       
+                                               <knowledge:articleList articleVar="article"
+                                                   articleTypes="FAQ__kav"
+                                                   categories="{!categoryGroupNameVar}:{!rootCategoryName}"
+                                                   sortBy="mostViewed"
+                                                   pageSize="10"
+                                               >
+                                                   
+                                                  <li>
+                                                
+                                                  <a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a></li>
+                                                  
+                                               </knowledge:articleList>
+                                         
+        
+        
+        
+        
+    </ol>
+</div>
+</section>
+</div>
+                                
+                                
+                                
+                                     
+                                                            
+                           
+
+    </apex:define>
+    </apex:composition>
+     <!-- START Salesforce Live Agent Deployment Code: MUST BE PLACED DIRECTLY ABOVE THE CLOSING </BODY> TAG and AFTER/OUTSIDE ALL HTML -->
+<script type="text/javascript">
+/*var __ALC_Deployment = 9926;
+document.write(unescape("%3Cscript src='"+document.location.protocol+"//depot.liveagentforsalesforce.com/app/js/lt.js' type='text/javascript'%3E%3C/script%3E"));
+*/</script>
+<!-- END Salesforce Live Agent Deployment Code -->
+</apex:page>

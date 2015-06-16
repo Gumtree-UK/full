@@ -1,0 +1,221 @@
+<apex:page standardcontroller="Opportunity" extensions="LineChartOpportunityPageController"   id="thePage" showheader="true" sidebar="false">
+    
+    <head>         
+         <!-- Jquery plugin -->   
+        <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugin, 'jquery-ui.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugin, 'classic.css')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugin, 'jquery-1.9.1.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugin, 'jquery-ui.js')}"/>      
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugin, 'jquery.mousewheel.min.js')}"/>   
+         <apex:includeScript value="{!URLFOR($Resource.JqueryPlugin, 'jQAllRangeSliders-min.js')}"/>        
+          <!--Google chart  -->         
+         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+          <script type="text/javascript">
+                //for google chart                  
+                 google.load('visualization', '1', {'packages':['corechart']});
+                 var lstChart=[],tabIndex = 0;   
+                                    
+                $( document ).ready(function(){
+                    //for tab   
+                    $( "#tabs" ).tabs();                     
+                     
+                     //check if no Data
+                     if( {!isNoData} == false){                      
+                    
+                             //first slider
+                              $("#dateSlider" ).dateRangeSlider( 
+                                        {   bounds:{ min: new Date( "{!mapDate['#dateSlider_Min']} " ),
+                                                             max: new Date( "{!mapDate['#dateSlider_Max']} ") }, 
+                                                    
+                                            defaultValues: { min: new Date( '{!mapDate['#dateSlider_Min']}'),
+                                                                     max: new Date( '{!mapDate['#dateSlider_Max']}') },
+                                              formatter:function(val){
+                                               
+                                                 return val.getDate() + "-" + (val.getMonth() + 1) + "-" + val.getFullYear();
+                                              }                      
+                                            
+                                            
+                            });                         
+                            
+                            $("#dateSlider").on("valuesChanged",  function(e, data){
+                                                    sliderChanged( data.values.min, data.values.max);
+                            });         
+                     
+                            //Init all child slider             
+                            <apex:repeat value="{!lstTabs}" var="slider">      
+                                var slideId = "#dateSlider_{!slider.pos}" ;
+                                     
+                                        //initailize slider
+                                        $(slideId ).dateRangeSlider({
+                                                    bounds:{ min: new Date( "{!mapDate['#dateSlider_' & TEXT( slider.pos) &'_Min']}" ),
+                                                             max: new Date( "{!mapDate['#dateSlider_' & TEXT( slider.pos  ) &'_Max']}") },                                                  
+                                                    defaultValues: { min: new Date( '{!mapDate['#dateSlider_' & TEXT (slider.pos ) &'_Min']}'),
+                                                                     max: new Date( '{!mapDate['#dateSlider_' & TEXT (slider.pos ) &'_Max']}') },
+                                                  formatter:function(val){
+                                               
+                                                        return val.getDate() + "-" + (val.getMonth() + 1) + "-" + val.getFullYear();
+                                                    }                                       
+                                                    
+                                                        
+                                            });
+                                            
+                                            
+                                            $(slideId).on("valuesChanged",  function(e, data){
+                                                sliderChanged( data.values.min, data.values.max);
+                                            });                         
+                                
+                            
+                                </apex:repeat>  
+                         }  
+                         
+                         //Action for change size of window
+                         $(window).resize(function(){                          
+                              ChartResize();
+                        });             
+                });  
+                
+                //for chnage width of div
+                function ChartResize(){
+                     var slideId = tabIndex == 0 ? '#dateSlider' : '#dateSlider_'+tabIndex ;                               
+                     var data = $(slideId).dateRangeSlider("values");                             
+                    sliderChanged( data.min, data.max);
+                
+                }
+                
+                //for change Line chart
+                 function sliderChanged( valMin, valMax){
+                        
+                            var minDate = valMin;
+                            var maxDate =  valMax;
+                                             
+                            var chart = lstChart[tabIndex]; 
+                            var chartTitle = ''; 
+                            var data = getDataColumn();  
+                                                                
+                            if( tabIndex == 0){ 
+                                chartTitle = 'Summary';                                                 
+                                <apex:repeat value="{!lstFirstTab}" var="items">
+                                     var tmpDate = new Date( '{!items.dayForJavaScript}');                                                                  
+                                     if( tmpDate >= minDate && tmpDate <= maxDate){                                                                                                         
+                                       data.addRow([  '{!items.dayLabel}' ,{!items.netExp}, {!items.netDel},  {!items.valOSI}]);
+                                     }                                  
+                                 </apex:repeat>                             
+                            }else{
+                                                     
+                                <apex:repeat value="{!lstTabs}" var="tabs"> 
+                                    if({!tabs.pos} == tabIndex  ){
+                                        chartTitle = '{!tabs.proName} ';
+                                        <apex:repeat value="{!mapchildProduct[tabs.name]}" var="childPro"> 
+                                                var tmpDate1 = new Date('{!childPro.dayForJavaScript}');
+                                                if( tmpDate1 >= minDate && tmpDate1 <= maxDate){        
+                                                      data.addRow([  '{!childPro.dayLabel}'  , {!childPro.netExp} ,   {!childPro.netDel}  , {!childPro.valOSI} ]);
+                                                }    
+                                                                        
+                                      </apex:repeat>                                                              
+                                    }
+                                 </apex:repeat> 
+                                                
+                            }
+                            var option = getOptions( chartTitle );                  
+                            chart.clearChart(); 
+                            chart.draw(data, option  ); 
+                              
+                    }
+                
+                //for tabIndex
+                function tabClick(pos , sliderId){ 
+                     // Calling this method forces the slider to update itself
+                    // and display correctly                        
+                    $(sliderId).dateRangeSlider('resize');                                  
+                    tabIndex = pos;
+                    ChartResize();
+                }  
+        </script>
+       
+    </head>
+    
+    <body>
+     <div id="tabs">         
+             <ul>
+                <li title="Summary" onclick="tabClick( 0 , '#dateSlider');" > <a href="#detail_div">Summary</a></li>
+                <!-- child product  -->
+                <apex:repeat value="{!lstTabs}" var="tab">
+                    <li title="{!tab.description}"  onclick="tabClick( {!tab.pos}, '#dateSlider_{!tab.pos}' );" > <a href="#Tab_{!tab.pos}">{!tab.label}</a></li>
+                 </apex:repeat>
+            </ul>
+            <div id="detail_div" style="width: 97%; "   >
+                <div id="first_Tab" style="width: 93%;height: 300px;margin-bottom: 35px; " ></div>
+                <div id="dateSlider" style="width: 83%;margin-left:40px;"></div>
+            </div>
+            <!-- Div for contend child  -->
+            <apex:repeat value="{!lstTabs}" var="tab">
+                    <div id="Tab_{!tab.pos}"  style="width: 97%;" >
+                            <div id="TabChart_{!tab.pos}" style="width: 93%;height: 300px;margin-bottom: 35px; " ></div>
+                             <div id="dateSlider_{!tab.pos}" style="width: 83%;margin-left:40px;"></div>    
+                    </div>
+            </apex:repeat>
+            
+            
+     </div>
+      
+    
+        
+     <script>   
+            // for Line chart column header
+                function getDataColumn(){
+                        var data = new google.visualization.DataTable();
+                             data.addColumn({type: 'string', label: 'Date'});
+                             data.addColumn({type: 'number', label: 'Expected Amount'});
+                             data.addColumn({type: 'number', label: 'Delivered Amount'});  
+                             data.addColumn({type: 'number', label: 'OSI %'}); 
+                             
+                       return data;
+                
+                }  
+                //for get Option to chart
+                function getOptions( chartTitle ){ 
+                
+                    return { title: chartTitle , legend:{ position: 'top'} ,series:{2:{targetAxisIndex:1}},vAxes:[ { viewWindow: {min: 0 } },{ format:  '#\'%\'',   viewWindow: {min: 0 } }],  hAxis: {minValue: 0} };
+                }  
+                function drawVisualization() {
+                        try{           
+                                 var data = getDataColumn();                                
+                                 <apex:repeat value="{!lstFirstTab}" var="lineChart">                                                                
+                                        data.addRow([ '{!lineChart.dayLabel}' , {!lineChart.netExp},  {!lineChart.netDel} , {!lineChart.valOSI}]);                                
+                                 </apex:repeat>  
+                                 //Tab summary                                                                     
+                                var chartSumarry = new google.visualization.AreaChart(document.getElementById('first_Tab'));
+                                var option = getOptions( 'Summary' );
+                                    chartSumarry.draw( data , option  ); 
+                                 lstChart.push( chartSumarry );
+                                 
+                                 //child tab
+                                 <apex:repeat value="{!lstTabs}" var="childTab">
+                                            var  dataChild = getDataColumn();   
+                                            var optionChild = getOptions( '{!childTab.proName}'  );                     
+                                             <apex:repeat value="{!mapchildProduct[childTab.name]}" var="item">  
+                                                     dataChild.addRow([  '{!item.dayLabel}'  , {!item.netExp} ,   {!item.netDel} , {!item.valOSI}  ]);
+                                              </apex:repeat> 
+                                              
+                                             //resolve chat Error: container width is zero, expectiong a valid width
+                                              document.getElementById('Tab_'+{!childTab.pos}).style.display = 'block';                                                                      
+                                              var chartChild = new google.visualization.AreaChart(document.getElementById('TabChart_'+{!childTab.pos}));
+                                                  chartChild.draw(dataChild ,  optionChild );
+                                              lstChart.push( chartChild );                                            
+                                               document.getElementById('Tab_'+{!childTab.pos}).style.display = 'none'; 
+                                             
+                                </apex:repeat>
+                         
+                      }catch(e){
+                      
+                          alert('Chart Error: ' + e);
+                      }          
+                  }
+                
+                  google.setOnLoadCallback(drawVisualization);
+                  
+                  
+        </script>
+   </body>
+
+</apex:page>

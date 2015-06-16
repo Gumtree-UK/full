@@ -1,0 +1,5 @@
+<apex:page contentType="text/plain">
+   User-Agent: *
+   Allow: /
+   Sitemap: http://gumtree.force.com/media/mediaSitemap
+</apex:page>

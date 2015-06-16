@@ -1,0 +1,246 @@
+<apex:page controller="KnowledgeController" showHeader="false" title="Public Knowledge Base" cache="true" expires="{!cacheMaxAge}" id="thePage">
+                                                                                            
+ 
+  <style>
+    ul li{margin-left: 0px;}
+  </style>
+  
+   <apex:composition template="{!$Site.Template}"  >
+        <apex:define name="content" >  
+       
+       <apex:variable var="productUrlVar" value="{!productUrl}" />
+       <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+       <apex:variable var="cpt" value="{!0}" />
+       <apex:variable var="categoryDescriptionsVar" value="{!categoryDescriptions}" />
+       <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+       
+ <apex:form id="theForm" >      
+<section class="manage-ads">
+  
+    
+    <div class="column grid_1">
+            <article class="space" id="content-column">
+                    <hgroup>
+                        <h2>Contact Us</h2>
+                    </hgroup>
+                    <br/>
+                    <apex:outputText value="{!erMessage}" style="color:red;font-weight: bold;"/>
+                    <br/>
+                    <div class="page-content" id="contact">
+                            <div>  
+                                            <div class='fieldgroup' id="fld_topic">
+                                            <legend>
+                                                <h3>Select a topic</h3>
+                                            </legend>
+                                            <apex:inputField value="{!ca.Web2Case_Reason__c}">
+                                                 <apex:actionSupport action="{!test}" event="onchange" rerender="matchingTemplates,theForm" status="counterStatus" /> 
+                                                 <apex:actionStatus onstop="showhideSubject()" id="counterStatus"/>
+                                            </apex:inputField>
+                                        </div> 
+                                        
+                                                                        
+                                      
+                                        
+                                        <!--============= End Dropdow List yes/no/unsure Section ================= -->
+                    
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        <div class='fieldgroup' id="fld_subject">
+                                                <legend id="label">
+                                                    <h3>Subject</h3>
+                                                </legend>
+                                                <apex:inputField value="{!ca.Web2Case_SubReason__c}" id="subject" />
+                                               
+                                                     
+                                                
+                                         </div>
+                                        <apex:inputHidden value="{!isIgnoreSubject}" id="bindVar"/>
+                                        <script> 
+                                                         
+                                                function showhideSubject(){
+                                                    sel = document.getElementById('thePage:thePageLayout:theForm:subject');
+                                                    //alert(sel.length);
+                                                    if(sel.length==1 && sel.options[0].text=="--None--"){
+                                                      document.getElementById("fld_subject").style.display="none";
+                                                      document.getElementById("thePage:thePageLayout:theForm:bindVar").value="true";
+                                                    }else{
+                                                      document.getElementById("thePage:thePageLayout:theForm:bindVar").value="false";
+                                                      document.getElementById("fld_subject").style.display="";
+                                                    }
+                                                 }
+                                                 
+                                                 function clearText(box){
+                                                    if(box.value=="Example: 'I can’t find my ad'" ) {
+                                                        box.value="";
+                                                        box.style.color="black";
+                                                    }
+                                                    
+                                                 }
+                                                
+                                                        
+                                         </script>
+                                         
+                                         
+                                         
+                                           <!-- ===============Dropdow List yes/no/unsure Section 11/09/2014==============--> 
+                                        <apex:outputPanel rendered="{!isShowAnswer}" id="dropdown">
+                                             <div class='fieldgroup' id="fld_are_u_victim">                                                                                      
+                                                 <legend id="label">
+                                                     <h3>Are you a victim of fraud?</h3>
+                                                 </legend>
+                                                 <apex:selectList value="{!selectType}" size="1">
+                                                    <apex:actionSupport action="{!chengeType}" event="onchange" rerender="theForm"/>
+                                                    <apex:selectOptions value="{!Answer}"/>
+                                                 </apex:selectList>                                              
+                                             </div>
+                                         </apex:outputPanel>
+                                         
+                                          <apex:outputPanel id="matchingTemplates">
+                                          
+                                          </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!isSelectedNO}">
+                                            <div class='fieldgroup' id="fld_question">
+                                                <legend>
+                                                    <h3>Your question</h3>
+                                                </legend>
+                                                 <apex:inputText id="question" value="{!Subject}"  onclick="clearText(this);" style="color:#CCCCCC;"/>
+                                            </div>
+                                        </apex:outputPanel>
+                                        
+                                        
+                                        
+                                        <div class='fieldgroup' id="adref">
+                                            <apex:outputPanel rendered="{!isSelectedNO}">
+                                                <legend>
+                                                    <h3>Ad reference number</h3>
+                                                </legend>         
+                                             </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!NOT(isSelectedNO)}">
+                                                <legend>
+                                                    <h3>Do you have the ad id of the item/service?</h3>
+                                                </legend>    
+                                             </apex:outputPanel>                                                
+                                             <apex:inputText id="refnumber"  value="{!ad}"/>
+                                        </div>
+                                   
+                                       
+                                        <!-- =============== Start Section YES/Unsure 11/09/2014============== -->                                   
+                                        <apex:outputPanel rendered="{!NOT(isSelectedNO)}" id="myPanel">
+                                            <div class='fieldgroup' id="fld_Item">
+                                                 <legend id="label">
+                                                    <h3>What was the item you lost money on?</h3>
+                                                 </legend>
+                                                 <apex:inputField value="{!ca.Item__c}" style="height:60px;"/>
+                                             </div>
+                                             
+                                             <div class='fieldgroup' id="fld_AmountLost">
+                                                 <legend id="label">
+                                                    <h3>How much money do you pay over so far?</h3>
+                                                 </legend>
+                                                 <apex:inputField value="{!ca.Amount_lost__c}"/>
+                                             </div>
+                                             
+                                             <div class='fieldgroup' id="fld_Payment">
+                                                 <legend id="label">
+                                                    <h3>How did you pay?</h3>
+                                                 </legend>
+                                                 <apex:inputField value="{!ca.Payment_method__c}"/>
+                                             </div>
+                                             
+                                             <div class='fieldgroup' id="fld_postcode">
+                                                 <legend id="label">
+                                                    <h3>What is your postcode?</h3>
+                                                 </legend>
+                                                 <apex:inputField value="{!ca.Victim_Postcode__c}"/>
+                                             </div>                                   
+                                         </apex:outputPanel>
+                                        <!--============= End Section YES/Unsure =================  -->                                    
+                                        
+                                        
+                                        
+                                        <div class='fieldgroup' id="fld_comments">
+                                            <legend>
+                                                <h3>Further comments</h3>
+                                            </legend>
+                                             <apex:inputTextArea id="comments"  value="{!Comments}"/>
+                                        </div>
+                                         
+                                         <div class='fieldgroup' id="fld_email">
+                                             <legend>
+                                                <h3>Your email address</h3>
+                                            </legend>
+                                            <apex:inputText id="email" value="{!email}" />
+                                         </div>
+                                         
+                                         <div class='fieldgroup' id="fld_confirm_email">
+                                             <legend>
+                                                <h3>Confirm Email address</h3>
+                                            </legend>
+                                            <apex:inputText id="confirm_email" value="{!confirm_email}"/>
+                                         </div>
+                                          
+                                         <apex:outputText id="error"  value="{!errorMessage}" style="font-family:verdana, arial, sans-serif; vertical-align:middle; font-weight:bold; color:red; font-size:12px;"/>
+                                         
+                                         <apex:actionFunction action="{!doSaveCaseBis}" name="SubmitCase" rerender="theForm" status="submitStatus"/>                    
+                                         <div class='fieldgroup'>
+                                            <apex:actionStatus id="submitStatus">
+                                                <apex:facet name="start">
+                                                    <input type="button" value="Submit" class="btnDisabled" style="height: 26px;" name="submit-log-in" id="login_submit-log-in" onClick="return false;"/>
+                                                </apex:facet>
+                                                <apex:facet name="stop">
+                                                    <input type="button" value="Submit" class="button" name="submit-log-in" id="login_submit-log-in" onClick="SubmitCase();"/>
+                                                </apex:facet>
+                                            </apex:actionStatus>
+                                        </div>
+                            </div>
+                </div>
+            </article>
+     
+</div>
+ <div class="column grid_2"> 
+            <section class="manage-ads">
+                                <div class="roundedbox darkgray search">
+                                      
+                                                                                        
+                                             <div class="search-input">
+                                                 <apex:inputText style="color:#CCCCCC;" styleClass="fld" value="{!currentKeyword}"  size="25" onblur="setsearchtext(this);" onclick="clearsearchtext(this);" onfocus="clearsearchtext(this);" onkeypress="return submitEnter2(event);" />
+                                             </div>
+                                             <apex:actionFunction name="searchJs" action="{!doSearch}" />
+                                             <apex:commandButton action="{!doSearch}" onclick="return updateCategoryField2(event)" id="searchButton" styleClass="secondary button" value="search" />
+                                        
+                                    </div>
+                                    <div class="roundedbox brightgray faqs">
+                                        <h3>Top 10 FAQs</h3>
+                                         <br/>
+                                         <br/>
+                                         <ol>
+                                            <knowledge:articleList articleVar="article"
+                                                           articleTypes="FAQ__kav"
+                                                           categories="{!categoryGroupNameVar}:{!rootCategoryName}"
+                                                           sortBy="mostViewed"
+                                                           pageSize="10"
+                                                       >
+                                                <li>
+                                                          <a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a></li>
+                                                </knowledge:articleList>
+                                        </ol>
+                                    </div>
+                        </section>      
+                        </div>
+</section>
+</apex:form>
+
+<script>
+    //alert(' user ip: {!ipAddress}');
+  showhideSubject();
+</script>
+
+    </apex:define>
+    </apex:composition>   
+    
+
+
+</apex:page>

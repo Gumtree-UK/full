@@ -1,0 +1,13 @@
+<apex:page showHeader="false" cache="false" sidebar="false">
+
+  <script type="text/javascript">
+  //W: 626pxH: 602px
+  
+ window.onload = function()
+{
+    window.resizeTo(626,702);
+    window.location.replace("http://supportsurvey.gumtree.com/go?iv=o5748ptq31l44&q7=Live Chat");
+}
+    </script>
+    
+</apex:page>

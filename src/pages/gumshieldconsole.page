@@ -1,0 +1,5 @@
+<apex:page showHeader="false" standardcontroller="Case">
+  <!-- Begin Default Content REMOVE THIS -->
+  <IFRAME height="1000" src="https://gumshield.gumtree.com/gumshield" width="100%"></IFRAME>
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

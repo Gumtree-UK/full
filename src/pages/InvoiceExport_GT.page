@@ -1,0 +1,7 @@
+<apex:page controller="Invoice_Export_GT" cache="true" contentType="text/plain#{!LongDate}_invoice_data;charset=ISO-8859-1" showHeader="false">00000000~~~~~~~~~~~~~~~~~<apex:outputText value="{!NewLine}" />
+<apex:repeat var="inv" value="{!Invoices}">
+{!inv}
+</apex:repeat>
+99999999~~~~~~~~{!Invoices.size}~~{!totalAmount}~~~~~~ 
+</apex:page>
+<!--Recordtype, CustomerId,         ProductType,            ProductSubtype, ProductCode,            Reference,  Description,                        Unitlabel   , UnitCount , Unitprice ,   AmountIncl,                     AmountExcl,     VATAmount,          VatPercentage,      Amountpaid, startdate,                  enddate,                Indiv. Invoice  ,   Inv. Extra1 , Inv.Extra2, Inv.Extra3, Inv.Extra4, Inv.Extra5, InvLnExtra1   , InvLnExtra2   , InvLnExtra3   , InvLnExtra4   , InvLnExtra5-->

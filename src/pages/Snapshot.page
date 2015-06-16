@@ -1,0 +1,82 @@
+<apex:page showHeader="false" setup="false" sidebar="false">
+ <img id ="imgProgress" style="display:none" src="https://{!$CurrentPage.parameters.ins}.salesforce.com{!URLFOR($Resource.GTSnapshot_lib6,'updateProgress.gif')}"/>
+   <applet style="width:300px;height:100px;" codebase="https://{!$CurrentPage.parameters.ins}.salesforce.com/servlet/" 
+   archive="{!$Resource.GTSnapshot},
+   {!URLFOR($Resource.GTSnapshot_lib1,'apache-mime4j-0.6.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'bsh-1.3.0.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'cglib-nodep-2.1_3.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'commons-codec-1.9.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'commons-collections-3.2.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'commons-exec-1.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'commons-io-2.4.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'commons-jxpath-1.3.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'commons-lang3-3.2.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'commons-logging-1.1.3.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'cssparser-0.9.11.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'hamcrest-core-1.3.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'hamcrest-library-1.3.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'httpcore-4.3.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'httpmime-4.3.2.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'ini4j-0.5.2.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'jcommander-1.29.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'jetty-websocket-8.1.8.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'json-20080701.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'junit-dep-4.11.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'nekohtml-1.9.20.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'phantomjsdriver-1.1.0.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'protobuf-java-2.4.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'sac-1.3.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'serializer-2.7.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib1,'xml-apis-1.4.01.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib2,'htmlunit-core-js-2.14.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib2,'httpclient-4.3.2.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib2,'jna-3.4.0.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib2,'jna-platform-3.4.0.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib2,'netty-3.5.7.Final.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib2,'testng-6.8.5.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib2,'json-simple-1.1.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib3,'guava-15.0.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib3,'htmlunit-2.14.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib3,'xercesImpl-2.11.0.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib4,'selenium-java-2.43.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib5,'xalan-2.7.1.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib6,'jai_codec.jar')},
+   {!URLFOR($Resource.GTSnapshot_lib6,'jai_core.jar')}" 
+   CODE="com.gaea.gt.sc.GTSnapshotApplet.class" 
+   mayscript="true" scriptable="true">     
+     
+     <!-- Sample how to pass param to Applet -->
+      <param name="ins" value="{!$CurrentPage.parameters.ins}"/>
+      <param name="creativeIds" value="{!$CurrentPage.parameters.creativeIds}"/>
+      <param name="by" value="{!$CurrentPage.parameters.by}"/>
+      <param name="oppId" value="{!$CurrentPage.parameters.oppId}"/>
+      <param name="oliIds" value="{!$CurrentPage.parameters.oliIds}"/>
+      <param name="sid" value="{!$CurrentPage.parameters.sid}"/>
+      <param name="token" value="{!$CurrentPage.parameters.token}"/>
+      <param name="imageUrl" value="https://{!$CurrentPage.parameters.ins}.salesforce.com{!URLFOR($Resource.GTSnapshot_images1)}/"/>
+      <param name="progress_gif" value="https://{!$CurrentPage.parameters.ins}.salesforce.com{!URLFOR($Resource.GTSnapshot_lib6,'updateProgress.gif')}"/>
+      
+      <param name="progressbar" value="false"/>
+	  <param name="progresscolor" value="#000000"/>
+      
+    </applet>
+    
+    <div id="screenshotStatus"><h4></h4></div>
+        <script language="javascript">
+        
+    	function updateStatus(status)
+    	{
+    		document.getElementById("screenshotStatus").innerHTML="<h4>"+status+"</h4>";
+    	}
+		function showProgress()
+    	{
+			 
+    		document.getElementById("imgProgress").style.display="block";
+    	}
+    	function closeWindow()
+    	{
+    		self.close();
+    	}
+    </script>
+	
+</apex:page>

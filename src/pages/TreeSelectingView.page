@@ -1,0 +1,372 @@
+<apex:page sideBar="false" showheader="false" id="thePage">
+<head> 
+    
+    <style>
+        div {
+        display: block;
+    }
+    
+     .verticalTab .g-nav {
+        width: 120px;
+        margin-top: 30px;
+    }
+    .verticalTab>.g-nav {
+        float: left;
+        text-align: right;
+        border: 0;
+        padding: 0;
+        width: 100px;
+    }
+    .g-nav {
+        border-bottom: 2px solid #125488;
+        padding: 0 8px 10px;
+    }
+     .verticalTab .g-nav .tab-lnk {
+        -moz-border-radius-topright: 0;
+        -webkit-border-top-right-radius: 0;
+        margin: 0;
+        font-weight: normal;
+    }
+    .verticalTab .g-nav .tab-lnk {
+        background: #fff;
+        color: #37a;
+        cursor: pointer;
+        clear: both;
+        display: block;
+        font-weight: bold;
+        float: none;
+        margin: 0;
+        padding: 3px 8px;
+        position: relative;
+        -moz-border-radius-topleft: 2px;
+        -moz-border-radius-bottomleft: 2px;
+        -webkit-border-top-left-radius: 2px;
+        -webkit-border-bottom-left-radius: 2px;
+        -moz-border-radius-topright: 2px;
+        -moz-border-radius-bottomright: 2px;
+        -webkit-border-top-right-radius: 2px;
+        -webkit-border-bottom-right-radius: 2px;
+    }
+    .verticalTab .g-nav .tab-hover, .verticalTab .g-nav .tab-lnk:hover {
+        text-decoration: underline;
+    }
+    .tab-lnk {
+        background: #ddd;
+        color: #444;
+        cursor: pointer;
+        display: block;
+        float: left;
+        font-weight: bold;
+        margin: 0 2px;
+        padding: 5px 10px;
+        position: relative;
+        -moz-border-radius-topleft: 2px;
+        -moz-border-radius-topright: 2px;
+        -webkit-border-top-left-radius: 2px;
+        -webkit-border-top-right-radius: 2px;
+        -moz-border-radius-botom-left: 2px;
+        -moz-border-radius-bottom-right: 2px;
+        -webkit-border-bottom-left-radius: 2px;
+        -webkit-border-bottom-right-radius: 2px;
+    }
+    
+    
+     .verticalTab>.g-nav .tab-active {
+        font-weight: bold;
+    }
+    .verticalTab .g-nav .tab-active {
+        background: #8ac;
+        color: #fff;
+    }
+    .tab-active {
+        background: #125488;
+        color: #fff;
+    }
+    
+     .verticalTab>.g-content {      
+        border: 2px solid #89abcd;
+        border-bottom-width: 3px;
+        -moz-border-radius-topleft: 4px;
+        -moz-border-radius-bottomleft: 4px;
+        -webkit-border-top-left-radius: 4px;
+        -webkit-border-bottom-left-radius: 4px;
+        border-radius: 4px 0 0 4px;
+        
+    }
+    
+    .ContentPanel .frm-g-nav {
+        background: #8ac;
+        padding: 2px 0 0 2px;
+    }
+    .frm-g-nav {
+        padding: 0 8px 10px;
+    }
+    .ContentPanel .frm-g-nav .tab-active {
+        border-bottom: none;
+        color: black !important;
+        cursor: inherit;
+        font-weight: bold;
+        padding: 5px 10px 6px 10px;
+        text-decoration: none;
+        background: #d8e3ee;
+        background: -webkit-gradient(linear, left top, left bottom, from(#ecf2f7), to(#d8e3ee));
+    }
+    .ContentPanel .frm-g-nav .tab-lnk {
+        background: #b6cbe0;
+        border: 1px solid #8ac;
+        border-bottom: none;
+        color: #06c;
+        cursor: pointer;
+        display: block;
+        float: left;
+        font-size: 13px;
+        font-weight: normal;
+        margin: 0 2px;
+        padding: 5px 10px 4px;
+        background: -webkit-gradient(linear, left top, left bottom, from(#c0d2e4), to(#afc6dd));
+        -webkit-border-top-left-radius: 2px;
+        -webkit-border-top-right-radius: 2px;
+    }
+    
+    .ContentPanel .frm-g-nav .tab-lnk:HOVER {
+         background:#f5f7fc;
+        border:1px solid #93a4c2;
+        border-bottom:none;
+    }
+    .frm-g-nav .tab-active {
+        padding: 5px 10px 5px;
+        font-weight: bold;
+        background: #fff;
+        color: #333;
+    }
+    .frm-g-nav .tab-lnk {
+        background: #e5ecf9;
+        border: 1px solid #8ac;
+        border-bottom: none;
+        color: #333;
+        cursor: pointer;
+        display: block;
+        float: left;
+        font-weight: normal;
+        margin: 0 2px;
+        padding: 5px 10px 4px;
+        -moz-border-radius-topleft: 2px;
+        -moz-border-radius-topright: 2px;
+        -webkit-border-top-left-radius: 2px;
+        -webkit-border-top-right-radius: 2px;
+    }
+    
+    .ContentPanel {
+        overflow-x: hidden;
+    }   
+    .frm-g-nav {
+        ng: 0 8px 10px;
+    }
+    .frm-g-nav .tab-active {
+        padding: 5px 10px 5px;
+        font-weight: bold;
+        background: #fff;
+        color: #333;
+    }
+    
+    .frm-g-nav .tab-lnk {
+        background: #e5ecf9;
+        border: 1px solid #8ac;
+        border-bottom: none;
+        color: #333;
+        cursor: pointer;
+        display: block;
+        float: left;
+        font-weight: normal;
+        margin: 0 2px;
+        padding: 5px 10px 4px;
+        -moz-border-radius-topleft: 2px;
+        -moz-border-radius-topright: 2px;
+        -webkit-border-top-left-radius: 2px;
+        -webkit-border-top-right-radius: 2px;
+    }
+    
+    .ContentUIView {
+        padding: 4px 2px;
+        background: none repeat scroll 0 0 #d8e3ee;     
+    }
+    
+    
+    .InputStyle {
+        width: 98%;
+        margin: 2px;
+        display: inline-block;
+        color: #999;
+    }
+    
+    
+    input {
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+    }
+    
+    .frm-g-nav .tab-b1 {
+        border-top: 1px solid #8ac;
+        position: absolute;
+        top: 0;
+        width: 1px;
+        left: 0;
+    }
+    
+    .frm-g-nav .tab-active {
+        color: #000;
+        cursor: inherit;
+        font-weight: bold;
+    }
+    
+    .PagingListBox-scrollPanel {
+        height: 200px;
+    }
+    .PagingListBox-status {
+        background-color: #d8e3ee;
+        color: #555;
+        font-size: 11px;
+        padding: 5px;
+    }
+    .PagingListBox-item-count {
+        font-size: 11px;
+        color: #555;
+        padding-left: 2px;
+    }
+     .ContentPanel .frm-g-nav .tab-active {
+        background: #d8e3ee;
+        background: -webkit-gradient(linear, left top, left bottom, from(#ecf2f7), to(#d8e3ee));
+        background: -moz-linear-gradient(top, #ecf2f7, #d8e3ee);
+        border-bottom: none;
+        color: #000;
+        cursor: inherit;
+        font-weight: bold;
+        padding: 5px 10px 6px 10px;
+        text-decoration: none;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#ecf2f7,endColorStr=#d8e3ee);
+    }
+    
+    .tab-hover, .tab-lnk:hover {
+        background: #0e3f66;
+        color: #fff;
+        text-decoration: underline;
+    }
+    body{
+        overflow: hidden;
+    }
+</style>
+    <script>
+        var panelTab =["contentTab","keyValueTab","CountryTab", "DeviceTab", "ConnectionTab"];
+        var lstChildTab = ["ContentIframe","KeyValueIframe","CountryIframe", "DeviceIframe", "ConnectionIframe"];
+        function tabClick(tabElement){
+            var tabActive =  "tab-lnk tab-active";
+            var tabInActive =  "tab-lnk";   
+            var childId=''; 
+            for(var i=0;i<panelTab.length;i++){
+                var tabEle = document.getElementById( panelTab[i] );
+                tabEle.className = tabInActive;
+                if( panelTab[i] == tabElement.id ) childId = lstChildTab[i];
+            }
+            tabElement.className = tabActive;
+            openChildContentView( childId );
+        }
+    
+        function openChildContentView(childId){
+            for(var i=0;i<lstChildTab.length;i++){
+                var childPanel = document.getElementById(lstChildTab[i]);
+                childPanel.style.display ='none';
+            }
+            document.getElementById(childId).style.display ='inline';
+        }
+        
+        function setValueToParent(){
+            var winParent = window.opener;
+            var hidId = 'myPage:myForm:MyPageBlock:myRepeat6:{!$CurrentPage.parameters.pos}';
+            var targetingId = hidId + ':hidTargetId';
+            var tarText = hidId +':txaTarget_hid';
+            var tarDesc = hidId +':txaTarget';
+            
+            var keyValueId = hidId +':keyvalueString';
+            var cityDescId = 'myPage:myForm:MyPageBlock:myRepeat7:{!$CurrentPage.parameters.pos}:txaCities';
+            var countryId = 'myPage:myForm:MyPageBlock:myRepeat7:{!$CurrentPage.parameters.pos}:txaCountry';        
+            //from parent
+            var targeting= winParent.document.getElementById( targetingId );
+            var olIRich= winParent.document.getElementById( tarText );
+            var keyValueString = winParent.document.getElementById( keyValueId );   
+            var cityDes = winParent.document.getElementById( cityDescId );  
+            var countryDes = winParent.document.getElementById( countryId );    
+            var tarTextDesc =  winParent.document.getElementById( tarDesc );
+            
+            
+            targeting.value = document.getElementById( 'targetingId' ).value=='none' ? targeting.value : document.getElementById( 'targetingId' ).value;
+            olIRich.value = document.getElementById( 'targetingText' ).value == 'none' ? olIRich.value : document.getElementById( 'targetingText' ).value ;
+            tarTextDesc.value = document.getElementById( 'targetingText' ).value == 'none' ? tarTextDesc.value : document.getElementById( 'targetingText' ).value ;
+            keyValueString.value = document.getElementById( 'keyvalueString' ).value == 'none' ?  keyValueString.value : document.getElementById( 'keyvalueString' ).value ;
+            cityDes.value = document.getElementById( 'cityDescription' ).value == 'none' ?  cityDes.value : document.getElementById( 'cityDescription' ).value ;
+            countryDes.value = document.getElementById( 'countryDescription' ).value == 'none' ?  countryDes.value : document.getElementById( 'countryDescription' ).value ;
+            
+            window.close();
+        }
+</script>
+</head>
+<apex:form >
+<input type="hidden" id="targetingId" value="none"/>
+<input type="hidden" id="targetingText" value="none"/>
+<input type="hidden" id="keyvalueString" value="none"/>
+<input type="hidden" id="cityDescription" value="none"/>
+<input type="hidden" id="countryDescription" value="none"/>
+ <div class="verticalTab" >
+     <div class="g-content" id="UIContent">
+                <div class="ContentPanel"  >
+                    <div >
+                        <div class="frm-g-nav" id="navManager">
+                             <div class="tab-lnk  tab-active" id="contentTab" title=" Content" onclick="tabClick(this);">Content</div>
+                             <div class="tab-lnk" id="keyValueTab" title=" KeyValue" onclick="tabClick(this);">KeyValue</div>
+                             <div class="tab-lnk" id="CountryTab" title=" Geographies " onclick="tabClick(this);">Geographies</div> 
+                             <div class="tab-lnk" id="DeviceTab" title=" Device " onclick="tabClick(this);">Device</div>    
+                             <div class="tab-lnk" id="ConnectionTab" title=" Connection " onclick="tabClick(this);">Connection</div>                                                                                                                    
+                             <div class="gwt-HTML"> <br/></div>                  
+                        </div>
+                         <div class="g-content" id="targetingTab-ContentPanel-UIContent">
+                                <div >
+                                      <div class="ContentUIView"> 
+                                         <div style="display:none;">                                                                             
+                                            <input type="text" class="InputStyle" />
+                                        </div>
+                                        <div></div>
+                                        <div class="PagingListBox-scrollPanel" style="overflow-y: scroll; overflow-x: hidden; position: relative; zoom: 1;background-color: white; display: inline;">
+                                                <div id="ContentIframe" >                                               
+                                                    <iframe src="/apex/TargetingTreeSelection?proId={!$CurrentPage.parameters.proId}&targetId={!$CurrentPage.parameters.targetId}&itemId={!$CurrentPage.parameters.itemId}&froIfr={!$CurrentPage.parameters.froIfr}" width="100%" height="500px" frameborder="0" scrolling="no"></iframe>
+                                                </div>
+<!-- New KeyValue Tree                          <div id="KeyValueIframe" style="display:none;">                                                     
+                                                    <iframe src="/apex/targetingconfiguration?proId={!$CurrentPage.parameters.proId}&targetId={!$CurrentPage.parameters.targetId}&itemId={!$CurrentPage.parameters.itemId}&froIfr={!$CurrentPage.parameters.froIfr}" width="100%" height="500px" frameborder="0" scrolling="no"></iframe>                                    
+                                                </div>     
+-->
+                                                <div id="KeyValueIframe" style="display:none;">                                                     
+                                                    <iframe src="/apex/TreeKeyValueSelection?proId={!$CurrentPage.parameters.proId}&targetId={!$CurrentPage.parameters.targetId}&itemId={!$CurrentPage.parameters.itemId}&froIfr={!$CurrentPage.parameters.froIfr}" width="100%" height="500px" frameborder="0" scrolling="no"></iframe>                                    
+                                                </div> 
+                                                <div id="CountryIframe" style="display:none;">                                              
+                                                    <iframe src="/apex/TreeGeographySelecting?proId={!$CurrentPage.parameters.proId}&itemId={!$CurrentPage.parameters.itemId}&targetId={!$CurrentPage.parameters.targetId}&froIfr={!$CurrentPage.parameters.froIfr}" width="100%" height="500px" frameborder="0" scrolling="no"></iframe>
+                                                </div>  
+                                                <div id="DeviceIframe" style="display:none;">                                               
+                                                    <iframe src="/apex/TreeDeviceSelection?proId={!$CurrentPage.parameters.proId}&itemId={!$CurrentPage.parameters.itemId}&targetId={!$CurrentPage.parameters.targetId}&froIfr={!$CurrentPage.parameters.froIfr}" width="100%" height="500px" frameborder="0" scrolling="no"></iframe>
+                                                </div>  
+                                                <div id="ConnectionIframe" style="display:none;">                                               
+                                                    <iframe src="/apex/TreeConnectionSelection?itemId={!$CurrentPage.parameters.itemId}&targetId={!$CurrentPage.parameters.targetId}&froIfr={!$CurrentPage.parameters.froIfr}" width="100%" height="500px" frameborder="0" scrolling="no"></iframe>
+                                                </div>                                  
+                                        </div>
+                                        <div class="PagingListBox-status" style="text-align: center;" >
+                                            <span class="PagingListBox-item-count" id="targetingTab-itemCount">
+                                                      <apex:commandButton value="Done" onclick="setValueToParent();return false;"  style="width:140px;" />                                              
+                                            </span> 
+                                        </div>
+                                      </div>                                                
+                               </div>
+                         </div>
+                    </div>
+                </div>
+    </div>
+</div>
+</apex:form>
+</apex:page>

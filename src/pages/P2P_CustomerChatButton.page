@@ -1,0 +1,74 @@
+<apex:page standardStylesheets="false" showHeader="false" sidebar="false">
+    <html>
+      <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+            
+            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+            <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+            
+            <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+            
+            <link rel="stylesheet" href="{!URLFOR($Resource.P2P_Popup, 'venobox/venobox.css')}" type="text/css" media="screen" />
+            <script type="text/javascript" src="{!URLFOR($Resource.P2P_Popup, 'venobox/venobox.js')}"></script>
+            
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'css/bootstrap.min.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'css/font-awesome.min.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'css/custom_bootrap.css')}" />
+            <script src="{!URLFOR($Resource.P2P_Resources, 'js/bootstrap.min.js')}"></script>
+            <style>
+                .btn:active, .btn.active {
+                    background-image: none;
+                    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.125) inset;
+                    outline: 0 none;
+                }
+                .paddingBtn{
+                    padding-right: 10px;
+                    font-size: 22px;
+                  }
+                  .inputFullWidth{
+                    margin-top: 5px;
+                  }
+                .btnOrange.disable{
+                    background-color: #f4f4f4 !important;
+                    color: #d1d1d1 !important;
+                    border-color: #acacac !important;
+                }
+                @media (max-width: 450px){
+                    .btnOrange.disable{
+                        font-size: 13px;
+                        padding-left: 5px;
+                        padding-right: 5px;
+                    }
+                    .paddingBtn {
+                        font-size: 20px;
+                        padding-right: 4px;
+                        position: relative;
+                        top: 1px;
+                    }
+                }
+                body {
+                    background-color: transparent;
+                }
+            </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+            <script type='text/javascript' src='https://c.la2w2.salesforceliveagent.com/content/g/js/33.0/deployment.js'></script>
+            <script type='text/javascript'>
+                liveagent.init('https://d.la2w2.salesforceliveagent.com/chat', '572w0000000TQU9', '00D200000006AK6');
+            </script>
+            <span id="liveagent_button_online_573w0000000TQtn" style="display: none;" class="btnOrange setLeft inputFullWidth btnLiveChat" onclick="liveagent.startChat('573w0000000TQtn')"><i class="paddingBtn fa fa-comment"></i>Yes, chat now</span>
+            <span id="liveagent_button_offline_573w0000000TQtn" style="display: none; cursor: default;" class="btnOrange disable setLeft inputFullWidth btnLiveChat" onclick=""><i class="paddingBtn fa fa-comment"></i>Currently not available</span>
+            
+            
+            <script type="text/javascript">
+            if (!window._laq) { window._laq = []; }
+            window._laq.push(function(){liveagent.showWhenOnline('573w0000000TQtn', document.getElementById('liveagent_button_online_573w0000000TQtn'));
+            liveagent.showWhenOffline('573w0000000TQtn', document.getElementById('liveagent_button_offline_573w0000000TQtn'));
+            });</script>
+            </div>
+        </div>
+    </body>
+</html>
+</apex:page>

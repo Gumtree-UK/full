@@ -1,0 +1,317 @@
+<apex:page standardController="Opportunity" showHeader="false" renderas="pdf">
+<head>
+   <style type="text/css">
+    body { font-family: Arial Unicode MS; font-size: 12px;} 
+    #s10 { font-family: Arial Unicode MS; font-size: 9px;}
+    #s11 { font-family: Arial Unicode MS; font-size: 9px; font-color:red;}
+</style>
+</head>
+<body>
+        <div style="page-break-after:always;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" id="table1">
+<tr>
+    <td>
+        <img src='{!URLFOR($Resource.GumtreeMediaLogo)}' title="logo" />
+    </td>
+    <td align="left"><font face="Tahoma, Arial, Helvetica" size="3">{!$Organization.Name}<br/>
+        {!$Organization.Street}, {!$Organization.State}<br/>
+        {!$Organization.PostalCode}, {!$Organization.Country}<br/>
+        </font>
+    </td>
+    <td align="right"><font face="Tahoma, Arial, Helvetica" size="4"><b>MEDIA INSERTION ORDER # {!Opportunity.IOnumber__c}</b></font><br/>
+    <br/>
+
+    </td>
+</tr>
+
+</table>
+<br/>
+<hr/>
+<br/>
+<table border="0" bordercolor="#000000" width="100%">
+    <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica"><b>Campaign Contact</b></font>
+        </td>
+        <td width="30%">
+        
+        </td>
+        <td width="20%">
+        <font face="Tahoma, Arial, Helvetica"><b>Gumtree Contact</b></font>
+        </td>
+        <td width="30%">
+        
+        </td>
+    </tr>
+    <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Name:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.FirstName} {!Opportunity.Primary_Contact__r.LastName}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Name:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.FirstName} {!Opportunity.Owner.LastName}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Company:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Account.Name}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Email:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.Email}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Email:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Email}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Phone:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.Phone}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Phone:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Phone}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica"></font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica"></font>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Billing Address:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Account.BillingStreet}<br/>{!Opportunity.Primary_Contact__r.Account.BillingCity}, {!Opportunity.Primary_Contact__r.Account.BillingCountry}, {!Opportunity.Primary_Contact__r.Account.BillingPostalCode}</font>
+        </td>
+        <td width="20%">
+
+        </td>
+        <td width="30%">
+
+        </td>
+    </tr>
+</table>
+<br/>
+<hr/>
+</table>
+<p><font face="Tahoma, Arial, Helvetica">Deal: <b>{!Opportunity.Name}</font></b></p>
+<table border="0" width="100%" id="table4">
+
+<tr id="s10">
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>DEAL FEATURES</b></font></td>    
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>SITE</b></font></td>
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>UNLOCK QTY</b></font></td>
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>BUY LIMIT PER PERSON</b></font></td>
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>BUY LIMIT GIFTS</b></font></td>      
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>ORIGINAL PRICE</b></font></td>
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>SALES PRICE</b></font></td>
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>VENDOR COMMISSION</b></font></td>
+       <td bgcolor="#b2d241" align="center"><font face="Tahoma, Arial, Helvetica" color="#5c7908" size="2"><b>PRICE TO VENDOR</b></font></td>      
+</tr>
+
+<tr>
+       <apex:repeat value="{!Opportunity.OpportunityLineItems}" var="line">
+          <tr>
+             <td align="center" bgcolor="#dad9d8"><font face="Tahoma, Arial, Helvetica"><apex:outputText value="{!line.Deal_features__c}" escape="false" /></font></td>
+             <td align="center" bgcolor="#dad9d8"><font face="Tahoma, Arial, Helvetica"><apex:outputField value="{!line.Site_s__c}"/></font></td>
+             <td align="center" bgcolor="#dad9d8"><font face="Tahoma, Arial, Helvetica"><apex:outputText value="{0, number, ###,###,###,###}"><apex:param value="{!line.Buyers_needed_to_unlock__c}"/></apex:outputText></font></td>
+             <td align="center" bgcolor="#dad9d8"><font face="Tahoma, Arial, Helvetica"><apex:outputText value="{0, number, ###,###,###,###}"><apex:param value="{!line.Buy_limit_per_person__c}"/></apex:outputText></font></td>
+             <td align="center" bgcolor="#dad9d8"><font face="Tahoma, Arial, Helvetica"><apex:outputText value="{0, number, ###,###,###,###}"><apex:param value="{!line.Buy_limit_for_gifts__c}"/></apex:outputText></font></td>             
+             <td align="center" bgcolor="#dad9d8"><font face="Tahoma, Arial, Helvetica"><apex:outputField value="{!line.Original_Price__c}"/></font></td>
+             <td align="center" bgcolor="#dad9d8"><font face="Tahoma, Arial, Helvetica"><apex:outputField value="{!line.UnitPrice}"/></font></td>
+             <td align="center" bgcolor="#dad9d8"><font face="Tahoma, Arial, Helvetica"><apex:outputField value="{!line.Vendor_Commission__c}"/></font></td>
+             <td align="center" bgcolor="#F58021"><font face="Tahoma, Arial, Helvetica" color="#ffffff"><apex:outputField value="{!line.Sales_Price_Net_Net__c}"/></font></td>                       
+          </tr>
+       </apex:repeat>  
+</tr>
+</table>
+<br>
+<table border="0" width="100%" id="table4">
+    <tr>
+        <td width=35%">
+            <font face="Tahoma, Arial, Helvetica"><b>Additional Information</b><br/><br/>{!Opportunity.Description}</font>
+        </td>
+    </tr>
+</table>
+<br/>
+<hr color="ff0000"/>
+<br/>
+<table>
+    <tr>
+        <td width="100%" colspan="3">
+            <font face="Tahoma, Arial, Helvetica" align="center"><b>Payment Information</b></font><br/>
+            <br/>
+            <font face="Tahoma, Arial, Helvetica">In order for you to receive payment, the details below must be accurate, <u><b>if they are not 100% accurate then we will not be able to pay you</b></u>. if you have any questions please contact your account manager on {!Opportunity.Owner.Phone}.</font>
+            <br/><br/>
+        </td>
+    </tr>
+    <tr>   
+    <td width="45%" valign="top">
+            <font face="Tahoma, Arial, Helvetica">Bank account holder name: {{*_es_signer_bankholdname}}</font><br/>
+            <div id="s10">
+                <font face="Tahoma, Arial, Helvetica" size="1">This is the name of the payee on your account, it should be either the payee name of your bank account or the payee name of your company bank account like: </font>
+            </div>
+            <div id="s11">
+                <font face="Tahoma, Arial, Helvetica" color="red" size="1"><b>Mr. Joe Bloggs (payee) or Gumtree.com Ltd (company)</b></font><br/>
+            </div>
+            <br/>
+            <font face="Tahoma, Arial, Helvetica">Bank account number: {{*_es_signer_bankaccnumber}}</font><br/>
+            <div id="s11">
+                <font face="Tahoma, Arial, Helvetica" size="1">Your own bank account number can be found on your paper statement or on your online statement.</font>
+            </div>
+            <br/>
+        </td>       
+        <td width="10%"></td>
+        <td width="45%" valign="top">
+            <font face="Tahoma, Arial, Helvetica">IBAN: {{*_es_signer_bankIBAN}}</font> <br/>
+            <div id="s10">
+                <font face="Tahoma, Arial, Helvetica" size="1">Your own IBAN can be found on your paper statement or on your online statement. When an IBAN is used to make and receive online payments it should not contain blank spaces or the word "IBAN". The above IBAN should look like:</font>
+            </div>
+            <div id="s11">
+                <font face="Tahoma, Arial, Helvetica" color="red" size="1"><b>GB99RBOS12345612345678</b></font>
+            </div>
+            <br/>
+            <font face="Tahoma, Arial, Helvetica">BIC/SWIFT: {{*_es_signer_bankbicswift}} </font><br/>
+            <div id="s10">
+                <font face="Tahoma, Arial, Helvetica" size="1">An IBAN is always used in conjunction with a Bank Identifier Code, or BIC. The BIC is a standard identifier for banks internationally. A BIC consists of either 8 or 11 digits. Here is an example of the BIC:
+            </div>
+            <div id="s11">
+                <font face="Tahoma, Arial, Helvetica" color="red" size="1"><b>RBOSGB2L (8 digits) or RBOSGB2LXXX (11 digits)</b></font><br/>
+            </div>
+            <br/>
+        </td>
+    </tr>
+
+</table>
+<br/>
+<hr color="ff0000"/>
+<p><b><font face="Tahoma, Arial, Helvetica">Terms and Conditions</font></b></p>
+<table border="0" width="100%" id="table3">
+<tr id="s10">
+      <td width=100%">
+        <font face="Tahoma, Arial, Helvetica">
+            Vendor agrees that the Voucher offer will be honored for not less than twelve (12) months from date of the introduction of the offer and is subject to no other restrictions by the Vendor unless in accordance with section 3 below.  The Vendor has advised Gumtree Daily Deals that, in addition to the terms and conditions set forth in the then-current terms of use and privacy policy applicable to gumtree.com,gumtree.co.uk and gumtreedeals.com (the "Website"), the following terms and conditions (the "Voucher Terms and Conditions") are applicable to the Voucher (which Voucher Terms and Conditions shall be expressly included in the Voucher's contents) (e.g., "Cannot carry over balance"; or the details of any non-participating Vendor Stores (where "Vendor Stores" means any outlet(s) (including on-line, telephone and store location) from which retail purchases can otherwise be made with Vouchers))
+            <br/><br/>
+            It is the desire of the Vendor to offer Vouchers which can be redeemed for Vendor's goods and/or services at a discount, and which are offered to the public for purchase at the Website or through electronic transmission. It is expressly understood and agreed that Vouchers are activated only upon reaching an agreed-upon minimum number ("Deal Unlock Quantity") of purchases at an agreed upon discount.  Gumtree Daily Deals, through its contractor, TSTS Online Technologies Ltd. (the "Gumtree Contractor"), will sell Vendor's Voucher at the Website for up to a maximum of 72 hours from the time the Voucher is first offered at the Website.
+            <br/><br/>
+            Gumtree Daily Deals will collect the full amount of the Voucher and will, in accordance with the payment provisions hereof, remit  <apex:repeat value="{!Opportunity.OpportunityLineItems}" var="line"><apex:outputField value="{!line.Vendor_Commission__c}"/></apex:repeat> of the net collected amount (net of  charge-backs, refunds and any other adjustments), for each properly activated Voucher by the Gumtree Contractor, as operator of the Gumtree Daily Deals Site.  Gumtree Daily Deals will retain <apex:repeat value="{!Opportunity.OpportunityLineItems}" var="line"><apex:outputField value="{!line.Commission_Split__c}"/></apex:repeat> of the net amount collected as commission which is a gross amount including VAT payable by Vendor upon such commission.  Vendor is solely responsible for accounting for and payment of any applicable VAT related to the goods and/or services offered at the price paid for the Voucher by the customer.
+            <br/><br/>
+            This Vendor Agreement, together with the Terms and Conditions on the reverse, (collectively, this "Agreement") set forth the entire agreement and understanding between the parties as to the subject matter hereof and supersedes all prior discussions, agreements and understandings of any kind, and every nature between them.  This Agreement shall not be changed, modified or amended except in writing and signed by both parties.
+            <br/><br/>
+            This Agreement shall be agreed and binding upon both parties upon Vendor's signature below, which demonstrates acceptance of the terms and conditions of this Vendor Agreement and the commercial offer given by Gumtree Daily Deals.  Gumtree Daily Deals consents to electronic transmission (e-mail, fax or otherwise) as acceptable means to constitute a written acceptance of an authorized person for Vendor.
+        </font>
+      </td>
+</tr>
+</table>
+<p><font face="Tahoma, Arial, Helvetica"><b>Please read the standard advertising terms and conditions below and sign in the appropriate signature box.</b>
+<br/><br/><hr/>
+<br/>
+
+<table width="100%" id="table5">
+<tr>
+   <td width="50%"><b>Signed for and on behalf of {!$Organization.Name}</b></td>
+   <td width="50%"><b>Signed for and on behalf of {!Opportunity.Account.Name}</b></td>
+</tr>
+<tr>
+   <td width="50%">&nbsp;</td>
+   <td width="50%">&nbsp;</td>
+</tr>
+<tr>
+   <td width="50%">Signature: {{_es_sender_signature}}</td>
+   <td width="50%">Signature: {{_es_signer_signature}}</td>
+</tr>
+<tr>
+   <td width="50%">Name: {!$User.FirstName} {!$User.LastName}</td>
+   <td width="50%">Name: {{_es_signer_fullname}}</td>
+</tr>
+<tr>
+   <td width="50%">Title: {!$User.Title}</td>
+   <td width="50%">Title: {{*_es_signer_title}}</td>
+</tr>
+<tr>
+   <td width="50%">Date: {{_es_sender_date}}</td>
+   <td width="50%">Date: {{_es_signer_date}}</td>
+</tr>
+<tr>
+   <td width="50%"></td>
+   <td width="50%">P/O {{_es_signer_po}} (if required)</td>
+  </tr>
+</table>
+<br/>
+</div>
+<table>
+    <tr valign="top">
+        <td width="48%">
+            <div id="s10">
+                <b>Vendor Agreement Terms & Conditions</b><br/>
+                <b>1. Voucher Program</b><br/>
+                    1.1 <i>Voucher Sale.</i> Vendor authorizes Gumtree Daily Deals to offer, sell and distribute the Voucher (including through the Gumtree Contractor) on Vendor's behalf, as Vendor's agent, in accordance with this Agreement. Vouchers are offered on the Gumtree website by Vendor and the sale of Vouchers is between Vendor and purchasers and not Gumtree Daily Deals.  Vendor acknowledges that Gumtree Daily Deals may terminate the publication or promotion of the Voucher at any time without liability to Vendor or customers of Vendor. <br/>
+                    1.2 <i>Voucher Publication and Delivery.</i> Vouchers shall be published on the Website in accordance with this Agreement and in accordance with the general Website terms and conditions. The date (the "Release Date") on which Gumtree Daily Deals publishes the Voucher and offers it to its users will be determined by Gumtree Daily Deals. The Voucher shall be activated, which means capable of being used for purchases from the Vendor in accordance with the Voucher Terms and Conditions, only when the certain Deal Unlock Quantity has been met (the "Activation Date"). At the time that the Deal Unlock Quantity has been met, Gumtree Daily Deals will cause the electronic delivery of the Voucher to the customer.  Customer shall have seven (7) days, from when Gumtree Daily Deals deliver the Voucher, to cancel such Voucher for a full refund.  Once a Voucher is activated and delivered to the customer, Vendor shall be solely responsible for all customer service in connection with the Voucher and goods or services associated with the Voucher.  Vendor shall provide a customer service contact to assist in resolving customer disputes or addressing customer questions or problems relating to the Vouchers.  The Vendor agrees to hold harmless, indemnify and defend Gumtree Daily Deals and its affiliates against any complaints, claims, or liabilities arising from the customers of Vendor relating to the delivery or acceptance of a Voucher and/or arising from the goods and services and redemption of a Voucher.<br/>
+                    1.3 <i>Payment.</i> Gumtree Daily Deals will remit the amount due to the Vendor no more than twenty one (21) days after the Activation Date (if any).  If a Voucher has no activation then no monies are due to Vendor.  The amount due shall reflect the number of Vouchers sold at the Activation Date minus any Vouchers cancelled in accordance with clause 1.2 above.  Amounts retained (as set out in the Vendor Agreement) by Gumtree Daily Deals under this Agreement represent payment to Gumtree Daily Deals (inclusive of VAT) for the service of advertising and selling the Voucher on behalf of the Vendor.  The parties agree that all accounting calculations will be based on Gumtree Daily Deals' then-current accounting and database system, which will be presumed to be accurate and complete.  The parties further agree to work together in good faith to reconcile any accounting discrepancies.  Gumtree shall provide Vendor with a remittance setting out the number of Vouchers sold for each deal and a VAT invoice, marked paid, setting out the amount retained by Gumtree for payment plus VAT.<br/>
+                <b>2. Term and Termination</b><br/>
+                    This Agreement shall continue in effect for the longer of one (1) year following the Effective Date or the last date when a customer of Gumtree Daily Deals redeems a Voucher offered by Vendor from Gumtree Daily Deals.  Gumtree Daily Deals may terminate this Agreement by giving the Vendor written notice of such termination.  The expiration or termination of this Agreement shall not in any way affect the customers' usage of the Voucher or the Vendor's obligation for redemption of the Voucher.<br/>
+                <b>3. Vendor Representations, Warranties, Covenants and Indemnification.</b><br/>
+                    Vendor represents, warrants and covenants throughout the term of this Agreement that (a) Vendor has the power and authority to enter into this Agreement, to grant the rights granted herein and to perform its obligations hereunder; (b) upon Vouchers being activated and delivered by Gumtree Daily Deals, the associated goods and/or services shall be available immediately for redemption by customer; (c) each of the participating Vendor Stores will redeem the Vouchers;  (d) the Voucher Terms and Conditions comply with applicable law; (e) Vendor has the resource and capability to redeem, provide and properly perform the delivery of all goods and services associated with all Vouchers sold; and (f) Vendor complies, and will cause the participating Vendor Stores to comply, with the Vendor Terms and Conditions and applicable law and regulations.<br/>           
+                    Vendor further agrees to comply with then-current terms of use and privacy policy applicable to the Website. Vendor is responsible for all applicable VAT due on the redemption of its Voucher. Vendor shall pay any monies owed to any party, as well as all legal fees related to any action against, or determinations against, Gumtree Daily Deals related to any action to pursue Gumtree Daily Deals for payment of any taxes. Vendor acknowledges that Gumtree Daily Deals is relying on the information provided, including, without limitation, any trademark protected, copyright protected,              or other protected information, and financial information, by the Vendor and Vendor agrees to indemnify and hold Gumtree Daily Deals and its affiliates harmless against any damages, complaints, actions, or any other liabilities arising from Gumtree Daily Deals' or the Gumtree Contractor's use of or reliance upon Vendor-provided information in producing and selling the Vouchers. Vendor represents, warrants, and guarantees that all elements of text, graphics,
+            </div>  
+        </td>
+        <td width="4%"></td>
+        <td width="48%">
+            <div id="s10">
+                   <br/><br/>
+                 photos, designs, trademarks, source code or artwork furnished to Gumtree Daily Deals or the Gumtree Contractor for use in producing Vouchers or advertisements are owned or properly licensed by the Vendor, or that Vendor has permission from the lawful owner to use, and sub-license the use of, each of these elements and that none of these elements contain any content that (a) contrary to laws or applicable regulations, breaches the terms and conditions of the Website, is defamatory, trade libellous, unlawfully threatening or unlawfully harassing; (b) is obscene, harmful to minors or pornographic; (c) contains any viruses, trojan horses, worms, malware, time bombs, cancelbots or other computer programming routines that are intended to damage, detrimentally interfere with, surreptitiously intercept or expropriate any system, data or personal information; or (d) is false, misleading or inaccurate.  Vendor will hold harmless, indemnify and defend Gumtree Daily Deals, the Gumtree Contractor and their respective affiliates from any claim, liability, loss, damage, expense (including reasonable legal expense) arising from (i) the use of such elements, (ii) the quality, availability or acceptability of the Vendor's goods or services, and (iii) any misrepresentation of the nature of the Vendor's goods or services or their value as described in the Voucher.
+                     <br/>
+                <b>4. Confidentiality</b><br/>
+                   The terms of this Agreement are confidential, and each party agrees to not disclose the terms described herein to any party other than employees on a need-to-know basis. Any breach of this confidentiality provision by either party shall be considered a material breach of this Agreement. All information relating to either party's business operations which would reasonably be considered private or secret and not in the public domain shall be treated as confidential and not disclosed without the prior written consent of the disclosing party. <br/>
+                <b>5. Data Protection</b><br/>
+                   The parties acknowledge and agree that Gumtree Daily Deals will not share any information regarding Gumtree Daily Deals users with Vendor, other than information regarding Gumtree Daily Deals' users that Vendor requires in order to fulfill orders placed for Vouchers by Gumtree Daily Deals' users.  Subject to the foregoing, in Vendor's capacity selling Vouchers, Vendor may receive personally identifiable information regarding Gumtree Daily Deals' users ("User Data"). In the event that Vendor receives User Data, Vendor agree to (i) keep such information confidential and secure, and (ii) not sell, rent, lease or otherwise disclose such information to any other person or entity (including affiliates).<br/>
+                <b>6. Other Terms and Conditions</b><br/>
+                   Vendor shall work with the Gumtree Contractor to prepare and finalize the marketing collateral and package the Voucher for the Website and electronic communications.  Vendor grants Gumtree Daily Deals and the Gumtree Contractor the limited, non-exclusive, fully paid, royalty free, right and license to use the trade names, trademarks, graphic images, text and other content provided to Gumtree Daily Deals or the Gumtree Contractor by Vendor for the sole purpose of promoting and selling the Voucher.  Except as provided herein, neither party shall use the names, trademarks or logos, nor any adaptation or variation thereof, of the other party (or the other party's affiliate(s)) in any manner whatsoever, without the prior written consent of the other party in each instance. <br/>
+                   The parties are independent contractors. Nothing in this Agreement shall be construed to create a joint venture, partnership, or an agency relationship between the parties. Neither party has the authority to bind or commit the other party in any way other than the requirement to redeem the Vouchers under this Agreement. As between the parties, Gumtree Daily Deals retains the copyrights and ownership to any new technologies created as a result of carrying out its services to the Vendor under this Agreement, unless otherwise clearly stated within the context of this Agreement.  The Vendor will lawfully respect all intellectual property rights of Gumtree Daily Deals and shall not re-distribute, license, copy, lend, rent, re-use, reverse engineer, decompile, derive derivative works from or sell ownership of these new technologies to any other parties, unless otherwise clearly stated within the context of this Agreement or as authorized in writing by Gumtree Daily Deals.   <br/><br/>
+                <b>EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, NEITHER PARTY MAKES ANY REPRESENTATIONS, WARRANTIES OR CONDITIONS, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  VENDOR ACKNOWLEDGES THAT THE WEBSITE AND ELECTRONIC COMMUNICATIONS ARE PROVIDED "AS IS" AND "AS AVAILABLE" AND, WITHOUT LIMITING THE GENERALITY OF THE FOREGOING, GUMTREE DAILY DEALS DOES NOT WARRANT THE PERFORMANCE, UNINTERRUPTED USE OR OPERATION OF THE WEBSITE OR ELECTRONIC COMMUNICATIONS.  GUMTREE DAILY DEALS SHALL NOT BE LIABLE TO VENDOR IN CONTRACT, TORT (INCLUDING NEGLIGENCE), OR OTHERWISE, FOR ANY LOSS OR DAMAGE FOR LOSS OF BUSINESS, LOSS OF PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER INDIRECT OR CONSEQUENTIAL LOSS</b>
+            </div>                  
+        </td>
+    </tr>
+        <tr valign="top">
+        <td width="48%">
+            <div id="s10">
+            <b>(EVEN WHERE WE HAVE BEEN NOTIFIED BY YOU OF THE POSSIBILITY OF SUCH LOSS OR DAMAGE). NOTHING IN THIS AGREEMENT SHALL EXCLUDE OR LIMIT LIABILITY FOR DEATH OR PERSONAL INJURY RESULTING FROM THE NEGLIGENCE OF EITHER PARTY OR ITS SERVANTS, AGENTS OR EMPLOYEES NOR FOR FRAUD.  GUMTREE DAILY DEALS' LIABILITY IN CONTRACT, TORT, NEGLIGENCE, PRE-CONTRACT OR OTHER REPRESENTATIONS OR OTHERWISE ARISING OUT OF OR IN CONNECTION WITH THIS AGREEMENT OR THE PERFORMANCE OR OBSERVANCE OF ITS OBLIGATIONS UNDER THIS AGREEMENT, AND EVERY APPLICABLE PART OF IT SHALL BE LIMITED IN AGGREGATE TO THE TOTAL SUMS PAID IN RELATION TO THIS AGREEMENT IN THE 12 MONTHS IMMEDIATELY PRECEDING ANY CLAIM.</b><br/><br/>
+            This Agreement shall be governed by and construed in accordance with the laws of England and Wales and the parties submit to the exclusive jurisdiction of the courts of England and Wales.<br/><br/>
+            I have read, understood and agree to the Gumtree standard terms and conditions above: <b>{{_es_signer_initials}}</b>
+                
+            </div>  
+        </td>
+        <td width="4%"></td>
+        <td width="48%">
+            <div id="s10">
+    
+
+            </div>                  
+        </td>
+    </tr>
+</table>
+</body>
+</apex:page>

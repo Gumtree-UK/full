@@ -1,0 +1,14 @@
+<!---
+
+GTCRM-222 - Automate client reporting for AdSales
+
+Change log:
+- 
+
+--->
+
+<apex:page standardStylesheets="false" controller="ExcelReport" cache="true" contenttype="application/vnd.ms-excel#{!fileName}">
+<!--    {!$Label.excel_file_name}-->
+    {!xml}  
+     
+</apex:page>

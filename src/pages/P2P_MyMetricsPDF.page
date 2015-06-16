@@ -1,0 +1,301 @@
+<apex:page controller="P2P_MyMetricsPDFController" 
+           renderAs="pdf"
+           applyHtmlTag="false" 
+           showHeader="false" 
+           cache="true"
+           readOnly="true"
+           title="Gumtree Metrics">
+    <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+            <style type="text/css">  
+            
+                @page {
+                    size: A4 landscape;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #DEE2E2;
+                }
+                
+                .page-break {
+                    display:block;
+                    page-break-after:always;
+                }
+                
+                   .wrapChartSignal{
+                       border-bottom: 1px solid #cdcdcd;
+                       float: left;
+                       width: 100%;
+                       padding-bottom: 5px;
+                       overflow: hidden;
+                   }                                    
+                   .tab-content{
+                   
+                   }                   
+                   
+                   #sortable{
+                       float: left;
+                       padding: 0;
+                       width: 100%;
+                   }
+
+                   .wrapTitleChart{
+                        padding-right: 60px;
+                   }
+                   .titleBottom{
+                       float: left;
+                       clear: left;
+                       font-size: 18px;
+                   }
+                   .titleTop{
+                       float: left;
+                       font-size: 18px;
+                       margin-top: 15px;
+                   }
+                   .clearPadding{
+                       padding-left: 0;
+                       padding-right: 0;
+                   }
+                   
+                   .chartItem{
+                       background-color: #FFFFFF;
+                   }
+                   
+                   .wrapChartDescription{
+                       float: left;
+                       width: 100%;
+                   }
+                   .labelChartDescription{
+                       float: left;
+                       font-size:15px;
+                       <!-- font-weight: 600; -->
+                       margin-top: 10px;
+                       width: 100%;
+                   }
+                   .chartDescription{
+                       margin-top: 10px;
+                       font-size:12px;
+                       float: left;
+                       clear: left;
+                   }
+                  
+                   .container{
+                       min-width: 320px;
+                   }
+                .image{
+                    width: 100%;
+                    height: 100%;
+                }
+                
+                body{
+                    font-family: "SourceSansPro Regular", "Arial", sans-serif;
+                    padding: 0;
+                    margin: 0;
+                    background: #FFF !important;
+                }
+                #wrapper{
+                    margin:0 auto;
+                    width:1180px; 
+                }
+                .panel-left{
+                    float: left;
+                }
+                .panel-left h3{
+                    margin:0;
+                }
+                .panel-left h3 span{
+                    background: #93C656;
+                    padding: 0px 5px;
+                    font-size: 20px;
+                    border-radius: 3px;
+                    color: #FFF;
+                    margin-left: 8px;
+                }
+                
+                .panel-right{
+                    float: left;
+                    position: absolute;
+                    width: 100%;
+                }
+                .panel-right span{
+                    color: rgb(153, 153, 153);
+                    font-size: 18px;
+                }
+                .panel-right select{
+                    margin: 0px 0 0 35px;
+                }
+                
+                .top-menu{
+                    float: left;
+                    width: 100%;
+                }
+                
+                .hideActive{
+                    display: none;
+                }
+                                
+                li.dropdown ul li{
+                    color: #333333;
+                    font-size: 15px;
+                    padding: 5px 5px 5px 15px
+                }
+                .open{
+                    background-image: none;
+                }
+               
+                .clear-margin{
+                    margin: 0;
+                }
+                .navbar-default{
+                    background-color: transparent;
+                    border: none;
+                }
+                .navbar-default .navbar-nav > li > a {
+                    color: #fff;
+                }
+                .panel-right span{
+                    color: #fff;
+                }
+                .navbar-default .navbar-toggle .icon-bar{
+                    background-color: #fff;
+                    color: #fff;
+                    height: 4px;
+                    width: 30px;
+                }
+                
+                .navbar-default .navbar-toggle {
+                    border-color: #fff;
+                    border: 0;
+                }
+                .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus{
+                    background-color: transparent;
+                }
+                .navbar{
+                    margin-bottom: 0;
+                }
+                .navbar-collapse{
+                    border-top: 0;
+                    box-shadow: none;
+                }
+                .navCategory .navbar-nav{
+                    width: 100%;
+                }
+                .navCategory .navbar-default .navbar-toggle .icon-bar{
+                    background-color: #888;
+                }
+                .panelTitle{
+                    float: left;
+                } 
+                .search-box{
+                    float: left;
+                }
+                .navbar-nav > li > a{
+                    padding-left: 5px;
+                    padding-right: 5px;
+                 }
+                 .navbar-nav {
+                    margin: 0 0 7.5px;
+                }
+                
+                .head{
+                    position: relative;
+                    padding: 0;
+                    margin: 0;
+                    float: left;
+                    height: 60px;
+                    width: 100%;
+                    background: url({!URLFOR($Resource.P2P_Resources, 'header-icons/PDF-header.png')}) 100% 100% no-repeat;
+                }
+                
+                .logo{
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    width: 150px;
+                }
+                .container-fluid{
+                    padding: 1px 20px;
+                    color: #fff;
+                    font-weight:bold;
+                    font-size: 16px;
+                }
+                #sortable li{
+                       list-style: none;
+                       padding: 0;
+                       margin: 0;
+                       float: left;
+                       width: 370px;
+                }
+                .chartImage{height: 200px; width: 340px;}
+                    
+            </style>
+          </head>
+          
+          <body>
+            <div class="head">
+                <div class="panel-right" style="padding: 0px;">
+                   <div class="top-menu">
+                       <nav class="navbar navbar-default">
+                         <div class="container-fluid">
+                           
+                       
+                           <!-- Collect the nav links, forms, and other content for toggling -->
+                           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                             
+                             {!acc.Name}<br/>
+                             <div style="padding-top: 2px;font-size: 16px;">
+                                 as at
+                                 <apex:outputText value="{0, date, dd'/'MM'/'yyyy}">
+                                    <apex:param value="{!TODAY()}" /> 
+                                 </apex:outputText>
+                             </div>
+                            
+                           </div>
+                         </div>
+                       </nav>
+                   </div>
+               </div>
+             </div>                     
+             <div class="container wrapContentBg">                    
+                    <div class="row">
+                        <div>
+                            <div class="wrapTab">            
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="active" id="ads_dashboard">
+                                        <div class="wrapCharts">
+                                            <ul id="sortable">
+                                                <apex:repeat value="{!lstMDs}" var="md">
+                                                    <li class="chartItem removeFull">
+                                                        <div class="clearPadding">
+                                                            <div class="wrapTitleChart">                                                            
+                                                                <span class="titleTop">{!md.Chart_Title__c}</span>
+                                                                <span class="titleBottom">{!md.Timeframe__c}</span>
+                                                                <div class="wrapChartSignal">
+                                                                    <div class="chartImage">
+                                                                        <apex:image styleClass="image" value="/servlet/servlet.FileDownload?file={!md.Attachments[0].Id}" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="wrapChartDescription">
+                                                                    <span class="labelChartDescription">
+                                                                        Chart Description
+                                                                    </span>
+                                                                    <span class="chartDescription">
+                                                                        {!md.Chart_Description__c}
+                                                                    </span>
+                                                                </div>
+                                                            </div>                                                        
+                                                        </div>
+                                                    </li>
+                                                </apex:repeat>
+                                                
+                                            </ul>
+                                        </div>
+                                    </div>                              
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          </body>
+    </html>
+</apex:page>

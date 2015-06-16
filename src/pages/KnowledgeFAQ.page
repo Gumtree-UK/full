@@ -1,0 +1,43 @@
+<!---
+
+Change log;
+
+2014-06-16 - GTCRM-1015 - Embed Nickelled media into sidebar
+
+-->
+
+<apex:page standardController="FAQ__kav" title="{!FAQ__kav.Title}" showHeader="false" sidebar="false" standardStylesheets="false">
+     <apex:composition template="{!$Site.Template}">
+     	<apex:define name="content">
+			<section class="manage-ads">
+				<div class="column grid_1">
+		    		<article class="space">
+			    		<hgroup>
+			    			<table width="100%">
+			    				<tr>
+			    					<td><h2>{!FAQ__kav.Title}</h2></td>
+			    					<td align="right"></td>
+			    				</tr>
+			    			</table>
+		  				</hgroup>
+						<p class="space">
+						    <apex:outputField value="{!FAQ__kav.Description__c}"></apex:outputField>
+						</p>
+	    			</article>
+    				<div></div>
+    				<hr />
+    				<div align="right"><c:ArticleDeflectionBox knowledgeArticleId="{!FAQ__kav.Id}"/></div>
+				</div>
+				<div class="column grid_2">
+				    <div class="roundedbox darkgray search">
+				        <input name="" type="text" class="fld" />
+				        <input type="submit" value="Search" class="secondary button" />
+				    </div>
+				    <c:contactOptions2 />
+					<!-- <c:watchOurVideo />  -->
+					<c:watchOurHowtoGuide />
+				</div>
+			</section>
+		</apex:define>
+    </apex:composition>     
+</apex:page>

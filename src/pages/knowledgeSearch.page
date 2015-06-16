@@ -1,0 +1,128 @@
+<apex:page controller="KnowledgeController" showHeader="false" title="Public Knowledge Base" cache="true" expires="{!cacheMaxAge}" standardStylesheets="false" id="thePage">
+    <head>
+         
+        
+    </head>
+    <apex:composition template="{!$Site.Template}">
+    <apex:define name="content">
+ 
+
+       <apex:variable var="productUrlVar" value="{!productUrl}" />
+       <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+       <apex:variable var="cpt" value="{!0}" />
+       <apex:variable var="categoryDescriptionsVar" value="{!categoryDescriptions}" />
+       <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+
+                                <div class="column grid_1">
+    <section class="manage-ads">
+    <hgroup class="space">
+    <h2>Search Results For: {!currentKeywordVar}</h2>
+    </hgroup>
+                        
+                        <!--    <ul id="search-results">
+                                    <apex:variable var="anyDocument" value="false" />
+                                    <apex:variable var="hasMore" value="" />
+            
+                                    <knowledge:articleList articleVar="article"  hasMoreVar="hasMore"
+                                        pageSize="10"
+                                        pageNumber="{!currentPageNumber}"
+                                        keyword="{!currentKeyword}"
+                                        categories="{!categoryGroupNameVar}:{!currentCategory}"
+                                    >
+                                        <li class="pkbSearchResult"><a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a>
+                                                     <div class="pkbResultArticleAbstract">{!article.abstract}</div> 
+                                        
+                                        <apex:variable var="anyDocument" value="true" />
+                                    </knowledge:articleList>
+                                </ul>
+                                
+                                <c:knowledgePagination isNextAvailable="{!hasMore}" urlLink="{!searchUrl}" rendered="{!anyDocument!='false'}"/>
+                            --> 
+                             
+                           <apex:form id="theForm123">
+                                <ul id="search-results">
+                                
+                                <apex:repeat value="{!lstDisplayKnowLegde}" var="itemRec">
+                                    <li class="pkbSearchResult">
+                                        <a href="{!itemRec.urlKnowledge}">{!itemRec.knowlegdeArtical.Title}</a>
+                                        <div class="pkbResultArticleAbstract">{!itemRec.knowlegdeArtical.Summary}</div> 
+                                    </li>
+                                </apex:repeat>
+                                </ul>
+                                
+                               <div id="pagination-container">
+                               <div id="pagination">
+                                <apex:commandButton value="Previous" action="{!goPrevious}" styleClass="btn btnImp" rendered="{!currentIndexPage != 1}" rerender="theForm123"/>
+                                <apex:repeat value="{!lstOfPage}" var="item">
+                                    <apex:commandButton value="{!item}" action="{!gotoPage}" styleClass="{!IF(currentIndexPage == item, 'btn btnNormal', 'btn btnImp')}" disabled="{!currentIndexPage == item}" rerender="theForm123">
+                                        <apex:param name="currentPIndexPage" value="{!item}" assignTo="{!currentIndexPage}"/>
+                                    </apex:commandButton>
+                                </apex:repeat>
+                                
+                                <apex:commandButton value="Next" action="{!goNext}" styleClass="btn btnImp" rendered="{!hasNext}" rerender="theForm123"/>
+                                
+                                </div>
+                                 </div>
+                            </apex:form>
+                        
+    </section>
+</p>
+</div>
+<div class="column grid_2">
+<section class="manage-ads">
+<div class="roundedbox darkgray search">
+         <apex:form id="searchBox2"> 
+                                                        
+                                             <div class="search-input">
+                                                 <apex:inputText style="color:#CCCCCC;" styleClass="fld" value="{!currentKeyword}"  size="25" onblur="setsearchtext(this);" onclick="clearsearchtext(this);" onfocus="clearsearchtext(this);" onkeypress="return submitEnter2(event);" />
+                                             </div>
+                                             <apex:actionFunction name="searchJs" action="{!doSearch}" />
+                                             <apex:commandButton action="{!doSearch}" onclick="return updateCategoryField2(event)" id="searchButton" styleClass="secondary button" value="search" />
+                                         </apex:form>  
+    </div>
+<div class="roundedbox brightgray faqs">
+    <h3>Top 10 FAQs</h3>
+    <ol>
+        
+        
+        
+        
+       
+                                               <knowledge:articleList articleVar="article"
+                                                   articleTypes="FAQ__kav"
+                                                   categories="{!categoryGroupNameVar}:{!rootCategoryName}"
+                                                   sortBy="mostViewed"
+                                                   pageSize="10"
+                                               >
+                                                   
+                                                  <li>
+                                                
+                                                  <a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a></li>
+                                                  
+                                               </knowledge:articleList>
+                                         
+        
+        
+        
+        
+    </ol>
+</div>
+
+</section>
+</div>
+                                
+                                
+                                
+                                     
+                                                            
+                           
+
+    </apex:define>
+    </apex:composition>
+     <!-- START Salesforce Live Agent Deployment Code: MUST BE PLACED DIRECTLY ABOVE THE CLOSING </BODY> TAG and AFTER/OUTSIDE ALL HTML -->
+<script type="text/javascript">
+var __ALC_Deployment = 9926;
+document.write(unescape("%3Cscript src='"+document.location.protocol+"//depot.liveagentforsalesforce.com/app/js/lt.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<!-- END Salesforce Live Agent Deployment Code -->
+</apex:page>

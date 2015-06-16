@@ -1,0 +1,213 @@
+<!---
+2015-06-15 - GTCRM-1539 - HTML Homepage components deprecated
+Created by Steve Paul
+
+<th> = header in table
+<tr> = row in table
+<td> = column in table
+<strong> = bold text
+
+<a href="" target="_blank">insert link here</a>
+link text to specific URL 
+target = new tab
+URL = only enter report ID so that it is dynamic across SF instances
+
+--->
+
+<apex:page showheader="false" >
+<style>
+table.fancy {
+margin: 1em 1em 1em 0;
+background: #E3F3FF;
+border-collapse: collapse;
+vertical-align: middle;
+}
+table.fancy tr:hover {
+background: #CFEEF8 !important;
+
+}
+table.fancy th, table.fancy td {
+border: 1px silver solid;
+padding: 0.2em;
+background: #; 
+}
+table.fancy th {
+background: #1797C0;
+text-align: center;
+width: 150px;
+color: #ffffff;
+}
+table.fancy caption {
+margin-left: inherit;
+margin-right: inherit;
+}
+</style>
+
+<!--- Sales reports -->
+
+<table class="fancy" style="text-align:center;">
+    <tr>
+        <th>Sales</th>
+        <th>AdSales</th>
+        <th>Jobs</th>
+        <th>Property</th>
+        <th>Motors</th>        
+    </tr>
+    
+    <!--- START - Dashboards by all teams --->
+    <tr>
+        <td><strong>Overall</strong></td>
+        <td>All</td>
+        <td>All</td>
+        <td>All</td>        
+        <td>All</td>        
+    </tr>
+    <!--- END - Dashboards by all teams --->
+    
+    <!--- START - Dashboards by division --->
+    <tr>
+        <td><strong>Division</strong></td>
+        <td>Agency</td>
+        <td><a href="/01Z20000000lcd5" target="_blank">TSNB</a></td>
+        <td>TSNB</td>        
+        <td>TSNB</td>        
+    </tr>
+    <tr>
+        <td><strong></strong></td>
+        <td></td>
+        <td><a href="/01Z20000000lccb" target="_blank">TSAM</a></td>
+        <td>TSAM</td>        
+        <td>TSAM</td>        
+    </tr>
+    <tr>
+        <td><strong></strong></td>
+        <td></td>
+        <td>FSAM</td>
+        <td></td>        
+        <td>FSNB</td>        
+    </tr>
+    <tr>
+        <td><strong></strong></td>
+        <td></td>
+        <td>FSAA</td>
+        <td></td>        
+        <td></td>        
+    </tr>
+    <!--- END - Dashboards by division --->
+    
+    <!--- START - Dashboards by individual - link to folder of personal dashboards --->
+    <tr>
+        <td><strong>Individual</strong></td>
+        <td>Agency</td>
+        <td>TSNB</td>
+        <td>TSNB</td>        
+        <td>TSNB</td>        
+    </tr>
+    <tr>
+        <td><strong></strong></td>
+        <td></td>
+        <td>TSAM</td>
+        <td>TSAM</td>        
+        <td>TSAM</td>        
+    </tr>
+    <tr>
+        <td><strong></strong></td>
+        <td></td>
+        <td>FSAM</td>
+        <td></td>        
+        <td>FSNB</td>        
+    </tr>
+    <!--- START - Call times --->
+    <tr>
+        <td><strong>Call Times</strong></td>
+        <td>Agency</td>
+        <td>TSNB</td>
+        <td>TSNB</td>                
+        <td>TSNB</td>        
+    </tr>
+     <tr>
+        <td><strong></strong></td>
+        <td></td>
+        <td>TSAM</td>
+        <td>TSAM</td>                
+        <td>TSAM</td>        
+    </tr>
+     <tr>
+        <td><strong></strong></td>
+        <td></td>
+        <td>AL</td>
+        <td></td>                
+        <td>AL</td>        
+    </tr>
+    
+    <!--- END - Call times --->
+    
+    <!--- START - Other Dashboards --->
+    
+    <tr>
+        <td><strong>Activity vs Revenue</strong></td>
+        <td>All</td>
+        <td>All</td>
+        <td>All</td>                
+        <td>All</td>        
+    </tr>
+    <tr>
+        <td><strong>AOV / Yield</strong></td>
+        <td>All</td>
+        <td>All</td>
+        <td>All</td>                
+        <td>All</td>        
+    </tr>
+    <tr>
+        <td><strong>Discount Reporting</strong></td>
+        <td>All</td>
+        <td>All</td>
+        <td>All</td>                
+        <td>All</td>        
+    </tr>    
+    <tr>
+        <td><strong>Key accounts</strong></td>
+        <td>All</td>
+        <td>All</td>
+        <td>All</td>                
+        <td>All</td>        
+    </tr>
+    
+    <!--- END - Other Dashboards --->
+    
+</table>
+
+<!--- START - Non-sales reports --->
+<table class="fancy" style="text-align:center;">
+    <tr>
+        <th>AWF Management</th>
+        <th>AdSales</th>
+        <th>Jobs</th>
+        <th>Property</th>
+        <th>Motors</th>        
+    </tr>
+    <tr>
+        <td><strong>Salaries</strong></td>
+        <td>All</td>
+        <td>All</td>
+        <td>All</td>                
+        <td>All</td>           
+    </tr>
+    <tr>
+        <td><strong>Commission</strong></td>
+        <td>All</td>
+        <td>All</td>
+        <td>All</td>                
+        <td>All</td>        
+    </tr>
+    <tr>
+        <td><strong>Expenses</strong></td>
+        <td>All</td>
+        <td>All</td>
+        <td>All</td>                
+        <td>All</td>        
+    </tr>
+<!--- END - Non-sales reports --->
+   
+</table>
+</apex:page>

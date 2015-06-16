@@ -1,0 +1,312 @@
+<apex:page standardController="Opportunity" showHeader="false" renderas="pdf">
+  <div style="page-break-after:always;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" id="table1">
+<tr>
+    <td>
+        <img src='{!URLFOR($Resource.GumtreeMediaLogo)}' title="logo" />
+    </td>
+    <td align="left"><font face="Tahoma, Arial, Helvetica" size="3">{!$Organization.Name}<br/>
+        {!$Organization.Street}, {!$Organization.State}<br/>
+        {!$Organization.PostalCode}, {!$Organization.Country}<br/>
+
+        </font>
+    </td>
+    <td align="right"><font face="Tahoma, Arial, Helvetica" size="4"><b>ADVERTISING INSERTION ORDER # {!Opportunity.IOnumber__c}</b></font><br/>
+    <font face="Tahoma, Arial, Helvetica" size="2">Please e-Sign or sign and fax to 0208 605 3180</font><br/>
+    <br/>
+
+    </td>
+</tr>
+<hr/>
+</table>
+<br/>
+<table border="0" bordercolor="#000000" width="100%">
+    <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica"><b>Campaign Contact</b></font>
+        </td>
+        <td width="30%">
+        
+        </td>
+        <td width="20%">
+        <font face="Tahoma, Arial, Helvetica"><b>Gumtree Contact</b></font>
+        </td>
+        <td width="30%">
+        
+        </td>
+    </tr>
+    <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Name:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.FirstName} {!Opportunity.Primary_Contact__r.LastName}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Name:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.FirstName} {!Opportunity.Owner.LastName}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Company:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Account.Name}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Email:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.Email}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Email:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Email}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Phone:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Owner.Phone}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Phone:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Phone}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica"></font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica"></font>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Billing Address:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Primary_Contact__r.Account.BillingStreet}<br/>{!Opportunity.Primary_Contact__r.Account.BillingCity}, {!Opportunity.Primary_Contact__r.Account.BillingCountry}, {!Opportunity.Primary_Contact__r.Account.BillingPostalCode}</font>
+        </td>
+        <td width="20%">
+            <font face="Tahoma, Arial, Helvetica">Advertiser:</font>
+        </td>
+        <td width="30%">
+            <font face="Tahoma, Arial, Helvetica">{!Opportunity.Account.name}</font>
+        </td>
+    </tr>
+</table>
+<br/>
+<hr/>
+<p><b><font face="Tahoma, Arial, Helvetica">Campaign Details: {!Opportunity.Campaign_Name__c}</font></b></p>
+<table border="0" width="100%" id="table4">
+<tr>
+       <td bgcolor="#C0C0C0" border="" bordercolor="#000000" align="center"><font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>PRODUCT</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>START</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>END</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>QUANTITY</b></font></td>    
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>METRIC</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>GROSS RATE</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>SUBTOTAL</b></font></td>
+</tr>
+<tr>
+       <apex:repeat value="{!Opportunity.OpportunityLineItems}" var="line">
+          <tr>
+             <td align="center" bordercolor="#000000"><font face="Tahoma, Arial, Helvetica">{!line.PricebookEntry.Name}</font></td>
+             <td align="center" bordercolor="#000000"><font face="Tahoma, Arial, Helvetica">{!day(line.from_Date__c)}/{!month(line.from_Date__c)}/{!year(line.from_Date__c)}</font></td>
+             <td align="center" bordercolor="#000000"><font face="Tahoma, Arial, Helvetica">{!day(line.until_Date__c)}/{!month(line.until_Date__c)}/{!year(line.until_Date__c)}</font></td>
+             <td align="center" bordercolor="#000000"><font face="Tahoma, Arial, Helvetica"><apex:outputText value="{0, number, ###,###,###,###}"><apex:param value="{!line.Quantity}"/></apex:outputText></font></td>
+             <td align="center" bordercolor="#000000"><font face="Tahoma, Arial, Helvetica">{!line.Billing_Category__c}</font></td>
+             <td align="center" bordercolor="#000000"><font face="Tahoma, Arial, Helvetica"><apex:outputField value="{!line.Sales_Price_Target__c}"/></font></td>           
+             <td align="right" bordercolor="#000000"><apex:OutputField value="{!line.Netto_II__c}"/></td>
+          </tr>
+          <tr>
+          <td bgcolor="#E8E8E8" bordercolor="#000000" colspan="7" align="left"><font face="Tahoma, Arial, Helvetica">{!line.Description}</font></td>
+          </tr>
+       </apex:repeat>  
+</tr>
+<tr>
+       <td bgcolor="#ffffff" align="left" colspan="3"></td>
+       <td bgcolor="#COCOCO" align="right" colspan="3">
+       <font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>GROSS CAMPAIGN COST: </b></font></td>
+       <td bgcolor="#ffffff" align="right" colspan="1">
+       <font face="Tahoma, Arial, Helvetica" color="000000" size="2"><apex:outputField value="{!Opportunity.Gross_for_Ad_sales_echo_sign__c}"/></font></td></tr>
+       <tr>
+       <td bgcolor="#ffffff" align="left" colspan="3"></td>
+       <td bgcolor="#COCOCO" align="right" colspan="3">
+       <font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>DISCOUNT: </b></font></td>
+       <td bgcolor="#ffffff" align="right" colspan="1">
+       <font face="Tahoma, Arial, Helvetica" color="000000" size="2"><apex:outputField value="{!Opportunity.Total_Discount__c}"/></font></td>
+       </tr>
+        <tr>
+       <td bgcolor="#ffffff" align="left" colspan="3"></td>
+       <td bgcolor="#COCOCO" align="right" colspan="3">
+       <font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>NET CAMPAIGN COST: </b></font></td>
+       <td bgcolor="#ffffff" align="right" colspan="1">
+       <font face="Tahoma, Arial, Helvetica" color="000000" size="2"><apex:outputField value="{!Opportunity.Net_Net__c}"/></font></td>
+       <tr>
+       <td bgcolor="#ffffff" align="left" colspan="3">
+       <font face="Tahoma, Arial, Helvetica" color="000000"><b>Additional Notes</b></font></td>
+       <td bgcolor="#COCOCO" align="right" colspan="3">
+       <font face="Tahoma, Arial, Helvetica" color="000000" size="2"><b>TOTAL CAMPAIGN COST (inc VAT @ 20%): </b></font></td>
+       <td bgcolor="#ffffff" align="right" colspan="1">
+       <font face="Tahoma, Arial, Helvetica" color="000000" size="2"><apex:outputField value="{!Opportunity.Amount_Net_Net_Inc_VAT__c}"/></font></td>
+       </tr>
+    </tr>
+</table>
+<br/><td width="100%"><font face="Tahoma, Arial, Helvetica">{!Opportunity.Description}</font></td>
+</tr>
+<hr/>
+</table>
+<p><b><font face="Tahoma, Arial, Helvetica">Terms and Conditions</font></b></p>
+<table border="0" width="100%" id="table3">
+<tr>
+        <td width="70%"><font face="Tahoma, Arial, Helvetica">All materials and any changes must be delivered at least 3 business days in advance to<br/> <a href="mailto:adops@gumtree.com">adops@gumtree.com</a> quoting the I/O number above. Gumtree.com will not issue credit <br/>or make good due to late or incorrectly submitted banners and/or late or incomplete information.
+            </font>
+        </td>
+        <td width="30%" align="right"><font face="Tahoma, Arial, Helvetica">
+              Payment Terms: 30 days<br/>
+              Billing Frequency: {!Opportunity.BillingFrequency__c} 
+            </font>
+       </td>
+</tr>
+</table>
+<p><font face="Tahoma, Arial, Helvetica"><b>Other Information</b>
+<br><br>
+<ul>1. "CPC" shall mean payment by Advertiser on a cost per click basis.<br/>
+2. "CPM" shall mean payment by Advertiser on a cost per thousand impressions basis.<br/>
+3. "CPA" shall mean payment by Advertiser on a cost per acquisition basis in respect of each Gumtree user that enters the Gumtree Site via the creative type placements and targeting as set out in the Order Form above, and who goes on to purchase a product or service from the Advertiser's website within 30 days.</ul></font></p><br/>
+<p><font face="Tahoma, Arial, Helvetica"><b>Please read the advertising terms and conditions and sign in the appropriate signature box.</b>
+<br/><br/><hr/>
+<br/>
+<table width="100%" id="table5">
+<tr>
+   <td width="50%"><b>Signed for and on behalf of {!Opportunity.Account.Name}</b></td>
+</tr>
+<tr>
+   <td width="50%">&nbsp;</td>
+</tr>
+<tr>
+   <td width="50%">Signature: {{_es_signer_signature}}</td>
+</tr>
+<tr>
+   <td width="50%">Name: {{_es_signer_fullname}}</td>
+</tr>
+<tr>
+   <td width="50%">Title: {{*_es_signer_title}}</td>
+</tr>
+<tr>
+   <td width="50%">Date: {{_es_signer_date}}</td>
+</tr>
+<tr>
+   <td width="50%">P/O {{_es_signer_po}} (if required)</td>
+  </tr>
+</table>
+<br/>
+</div>
+<b><br/>Standard Advertising Terms and Conditions<br></b></font>
+<p><font face="Tahoma, Arial, Helvetica" font size="1">
+<b><u>1</u></b> Provided that Advertiser is in compliance with the provisions of this agreement, Gumtree.com Ltd. ("Gumtree") shall use commercially reasonable efforts to deliver the impressions set out on the Order Form but cannot warrant (i) the number of visitors to the Advertiser's site as a result, or (ii) the exact times at which the impressions will be delivered. Furthermore the precise quantities per placement are not guaranteed and over delivery of impressions of certain placements may be applied toward a deficit of other placements in order to attain the impressions set out on the Order Form. If Gumtree does not deliver the impressions set out on the Order Form in any month, Gumtree may over deliver impressions of certain placements in subsequent months in order to attain the aggregate impressions set out on the Order Form applicable for the Term. At the expiry of the Term, Gumtree shall not be obliged to deliver any further impressions regardless of actual delivery. The Advertiser shall deliver to Gumtree such technical and other materials as Gumtree may reasonably require from the Advertiser from time to time. 
+<br/><br/>
+<b><u>2</u></b> Once the Order Form is signed, it may not be cancelled except with the written consent of Gumtree subject to either party's right to terminate in clause 18. If cancellation is consented to, the Advertiser will be immediately liable to pay for all services then delivered and a cancellation fee equal to either (i) 50% of the cost of the impressions and the tenancy fee (if applicable) for the term of the agreement (or any remainder of such a period), or (ii) in the event no end date is specified 50% of the impressions to be delivered or the tenancy fee (if applicable) during the first three months of the agreement as specified on the Order Form.  Such a cancellation fee will be fully redeemable against any further order of impressions accepted by Gumtree within 6 months of the date of this agreement.
+<br/><br/>
+<b><u>3</u></b> Gumtree shall have the option to publish the advertisement, if the advertisement copy is supplied by Advertiser to Gumtree after the Publication Deadline. Advertiser shall pay Gumtree in full for all impressions or space ordered in the event of non-publication of any advertisement, due to failure to supply the specifications before the Publication Deadline.
+<br/><br/>
+<b><u>4</u></b> Notwithstanding Gumtree's acceptance and execution of the Order Form, Gumtree may remove or refuse to publish or link to any material which is in its sole discretion considered defamatory, misleading, abusive, unlawful, or otherwise inappropriate or that promotes competitive services. 
+<br/><br/>
+<b><u>5</u></b> Where applicable, Gumtree may restrict or discontinue the delivery of any emails or other communications to any or all users containing advertisements or promotions featuring Advertiser: (a) if Gumtree is satisfied in its reasonable judgement that to send such emails to users may expose Gumtree or Advertiser to the risk of sanctions under applicable laws or regulations, including laws relating to data protection; or (b) if any individual user has opted out or otherwise indicated to Gumtree that he or she does not want to receive any advertisements or promotions for services provided by any company other than Gumtree or its affiliated companies.
+<br/><br/>
+<b><u>6</u></b> Advertiser shall not solicit Gumtree's users as a result of their status as a Gumtree user. Moreover, Advertiser shall not sell, transfer or provide the other party's user information to any third party, for any purpose. Advertiser acknowledges and agrees not to use Gumtree's user information to target communications or to market products or services to Gumtree's users (nor facilitate the same on behalf of third parties). 
+<br/><br/>
+<b><u>7</u></b> Advertiser grants Gumtree a non-exclusive, royalty-free, world-wide licence to use, reproduce and display the Advertiser logo, content, code and material provided by or on behalf of the Advertiser ("Advertiser Materials") on the Gumtree Site and any Gumtree marketing materials in the form provided by Advertiser, save for any formatting changes necessary for display on the Gumtree Site or other agreed changes.
+<br/><br/>
+<b><u>8</u></b> Except as otherwise provided in this Agreement, as between Gumtree and Advertiser: (i) Gumtree retains all right, title and interest in and to all intellectual property rights embodied in or associated with the Gumtree Site, and all Gumtree services and (ii) Advertiser retains all rights, title and interest in and to all intellectual property rights embodied in or associated with the Advertiser Materials.
+<br/><br/>
+<b><u>9</u></b> The Advertiser shall indemnify (and keep fully indemnified) and hold Gumtree and its affiliated companies harmless against any claim, action, loss, damage or proceedings brought against Gumtree or its affiliated companies relating to (i) the Advertiser Materials, (ii) any content, claim or promise on the Advertiser's site, (iii) any complaints arising from Advertiser's customers regarding the goods and/or services supplied by Advertiser on Advertiser's site and (iv) any breach of a representation or warranty made by Advertiser in this agreement.
+<br/><br/>
+<b><u>10</u></b> Advertiser warrants and shall ensure that (i) the Advertiser Materials and (ii) all goods or services supplied by Advertiser on Advertiser's site: (i) will not infringe the rights of any third party; (ii) will not link to products or services that infringe the rights of any third party (including but not limited to unlawful and counterfeit items); (iii) will be up-to-date, true, correct and accurate; (iv) will not be misleading, deceptive, involve any misrepresentation, or imply or represent that any party has approval or sponsorship of another party that it does not have; (v) will not be defamatory; (vi) will not contain any virus, trojan horse, malicious code or any other damaging component(s); (vii) will not contain any information or content that is illegal, contrary to any industry code, indecent, obscene, threatening, harassing, discriminatory, in breach of confidentiality, or otherwise objectionable; and (viii) will not breach any laws or regulations (for example, if applicable, betting or gambling regulations and the related advertising laws), including those of the country(ies) of the Gumtree Site(s). Advertiser shall indemnify (and keep fully indemnified) and hold Gumtree and its affiliated companies harmless against any claim, action, loss, damage or proceedings brought against Gumtree or its affiliated companies arising from a breach of Advertiser's obligations under this clause. 
+<br/><br/>
+<b><u>11</u></b> Except as expressly provided in this agreement and to the extent permitted by law, no warranty, condition, undertaking or term expressed or implied is given or assumed by either party and all such warranties, conditions, undertakings, and terms are hereby excluded.  In particular, Advertiser acknowledges that Gumtree does not review content or information provided by users of the Gumtree Site and that Gumtree gives no warranty or undertaking in relation to the display of any such content or information, including in relation to any search results displayed on the Gumtree Site.
+<br/><br/>
+<b><u>12</u></b> Except in respect of death or personal injury caused by Gumtree's negligence, Gumtree shall not be liable to the Advertiser by reason of any representation (unless fraudulent), or any implied warranty, condition or other term, or any duty at common law, or under the express terms of this agreement, for loss of profit or for any indirect, special or consequential loss or damage, cost, expense or other claim of compensation whatsoever (whether caused by the negligence of Gumtree, its employees, agents or otherwise) arising from the services provided by Gumtree under this agreement and the entire liability of Gumtree in connection with this agreement shall not exceed the price of the services provided by Gumtree.
+<br/><br/>
+<b><u>13</u></b> If an agent represents the Advertiser by purchasing the impressions set out on the Order Form on behalf of Advertiser, (i) the agent represents and warrants to Gumtree that it is authorised to enter into this Agreement for and on behalf of the Advertiser; and (ii) the agent and Advertiser shall each be deemed to be a party to this agreement and shall be jointly and severally liable to Gumtree. The agent shall be solely responsible for making the Advertiser aware of this agreement or any subsequent amendments that may be agreed by the parties.
+<br/><br/>
+<b><u>14</u></b> In the event that the Order Form contains details of a CPA arrangement between the parties, Advertiser shall (a) for the duration of the agreement track the number of click throughs and impressions delivered by it as well as the number of acquisitions concluded on the Advertiser's website by Gumtree users and shall (b) on a monthly basis provide Gumtree accurate evidence of the same.
+<br/><br/>
+<b><u>15</u></b> Unless otherwise agreed in writing with Gumtree on the Order Form, all amounts due under this agreement exclude VAT and shall be payable within 30 days of the date of invoice which shall be issued at the end of the calendar month in which the first impression or tenancy is provided, and then on a monthly basis.  The invoice(s) shall relate to the impressions and services delivered up to the date indicated, the charges for which shall be calculated on a pro-rata basis.  Gumtree's statistics on click-through rates and impressions shall be the only statistics relevant for the calculation of any amounts due under this agreement.  Gumtree shall keep separate records of statistics relevant for the calculation of any amounts due under this agreement. For the purpose of confirming the accuracy of the statistics, Advertiser will have the right to appoint an independent third party auditor from a recognised firm of accountants to audit and inspect copies of all such statistics, provided that Advertiser gives Gumtree at least 10 days' prior written notice. Any information revealed during such audits shall be deemed to be confidential. In the event that any audit reveals an under delivery of ten percent or more of the impressions to be delivered by Gumtree set out on the Order Form, Gumtree will over deliver impressions after expiry of the Term in order to attain the aggregate impressions set out on the Order Form applicable for the Term, in accordance with Clause 1. All payment shall be made in the currency as specified and used in the invoice. Gumtree shall be entitled to charge the Advertiser interest on overdue amounts from the due date up to the date of actual payment, at the rate of 2% per annum above the base rate of Bank of America.
+<br/><br/>
+<b><u>16</u></b> Advertiser shall keep separate accounts and records giving correct and adequate records for the purpose of calculating CPA payments under this Agreement and shall provide Gumtree or its appointed auditor with copies of all such accounts and records as soon as practicable following Gumtree's request. Gumtree shall have the right to audit Advertiser's accounts and records as detailed in this clause 16. In the event that any audit by Gumtree reveals an underpayment of five percent or more of the amounts due to Gumtree hereunder, Advertiser shall within 30 days following the audit pay to Gumtree the amount of such underpayment together with interest on such underpayment at the at the rate of 2% per annum above the base rate of Barclays Bank plc. Any information revealed during such audits shall be deemed to be confidential.
+<br/><br/>
+<b><u>17</u></b> Advertiser confirms that it has a valid VAT ID number. Advertiser indemnifies Gumtree for any costs incurred due to Advertiser's provision of an incorrect VAT number. Gumtree may invoice Advertiser for any VAT payable, if applicable.
+<br/><br/>
+<b><u>18</u></b> This agreement shall terminate automatically on the end date specified on the Order Form or as otherwise specified in the Order Form. Gumtree shall be entitled to immediately terminate this agreement by notice in writing and remove any advertisements from its site in the event it deems, in its sole discretion, that it is likely to incur liability as a result of any act or omission of the Advertiser. Either party may terminate this agreement in the event that (i) the other party becomes insolvent or is subject to liquidation, administration or any such similar procedure in any jurisdiction or (ii) the other party commits a material breach of any of its obligations hereunder and fails to remedy such breach within 14 days of receipt of written notice setting forth such breach. If Gumtree terminates this agreement pursuant to this clause any monies then already paid to Gumtree pursuant to this agreement shall be non refundable. Any termination of this agreement for any reason shall be without prejudice to the Advertiser's obligations pursuant to clause 6 and 7.
+<br/><br/>
+<b><u>19</u></b> Gumtree shall not be liable to the Advertiser nor deemed to be in breach of this agreement due to any delay in performing, or failure to perform, any of Gumtree's obligations under this agreement if the delay or failure was due to any cause beyond Gumtree's reasonable control including without limitation any act of God, explosion, flood, tempest, fire or accident; war or threat of war, terrorism, insurrection, sabotage, civil disturbance; acts, restrictions, regulations, regulations, bye-laws, prohibitions or measures of any kind on the party of any governmental, parliamentary or local authority; strikes, lock-outs or other industrial actions or trade disputes; or telecommunication, internet or power failure.
+<br/><br/>
+<b><u>20</u></b> If any provision of this agreement is held by a court or other competent authority to be invalid or unenforceable in whole or in part the validity of the other provisions of the agreement and the remainder of the provision in question shall not be affected.  No failure or delay by Gumtree in exercising any of its right shall be deemed a waiver of that right, and no waiver by Gumtree of any breach of the agreement by the Advertiser shall be considered a waiver of any subsequent breach of the same or any other provision.
+<br/><br/>
+<b><u>21</u></b> This agreement together with together with the Order Form contains the entire agreement between the parties relating to the subject matter covered and supersedes any previous agreements, arrangements, undertakings or proposals, written or oral, between the parties in relation to such matters.  No oral explanation or oral information given by any party shall alter the interpretation of this Agreement. Each party confirms that, in agreeing to enter into this Agreement, it has not relied on any representation save insofar as the same has expressly been made a representation in this Agreement and agrees that it shall have no remedy in respect of any misrepresentation which has not become a term of this Agreement save that this clause shall not apply in respect of any fraudulent misrepresentation whether or not such has become a term of this Agreement.  No amendment to this agreement shall be binding on the parties unless made in writing and signed by a duly authorised representative of each of the parties. A person who is not a party to this agreement has no rights to rely upon or enforce any term of this agreement. Nothing in this agreement shall be construed as creating any agency, partnership or other form of joint enterprise between the parties. A person who is not a party to this Agreement has no right to rely upon or enforce any term of this Agreement.
+<br/><br/>
+<b><u>22</u></b> In the event of any inconsistency between these terms and conditions and the Order Form, the Order Form shall apply to the extent of any conflict.
+<br/><br/>
+<b><u>23</u></b> Each party undertakes that it will not at any time hereafter use or disclose to any person, except to its professional representatives or as may be required by law or any legal or regulatory authority, the terms and conditions of this agreement or any confidential information concerning the business or affairs of the other party which may have come to its knowledge.  Neither party shall use any such confidential information except for the performance of this agreement or make any announcement relating to this agreement without the prior written approval of the other party.
+<br/><br/>
+<b><u>24</u></b> Neither party may assign this Agreement without the prior written consent of the other party, such consent not be unreasonably withheld or delayed, provided that each party shall have the right to assign this Agreement to any subsidiaries and holding companies, and any subsidiaries of its holding companies on prior written notice. Gumtree may perform its obligations or to exercise its rights through its authorised agent or any affiliated company.
+<br/><br/>
+<b><u>25</u></b> This agreement shall be governed by English law and subject to the exclusive jurisdiction of the English Courts. Gumtree.com, 107 Cheapside, London EC2V 6DN - Registered in England No. 393 4849 VAT no 752 2099 36
+<br/><br/>
+I have read, understood and agree to the Gumtree standard terms and conditions above: <b>{{_es_signer_initials}}</b></font>
+<p>&nbsp;</p>
+  <div style="page-break-after:always;">
+  </div>
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" id="table1">
+<tr>
+    <td>
+        <img src='{!URLFOR($Resource.GumtreeMediaLogo)}' title="logo" />
+    </td>
+    <td align="right"><font face="Tahoma, Arial, Helvetica" size="4"><b>ADVERTISING INSERTION ORDER # {!Opportunity.IOnumber__c}</b></font><br/>
+    <font face="Tahoma, Arial, Helvetica" size="3">Technical Specifications</font><br/>
+    <br/>
+
+    </td>
+</tr>
+</table>
+<hr/>
+<br/>
+Advertiser: <b>{!Opportunity.Account.name}</b><br/><br/>
+Campaign Name: <b>{!Opportunity.Campaign_Name__c}</b><br/>
+Campaign Period: <b>{!day(Opportunity.Campaign_Start__c)}/{!month(Opportunity.Campaign_Start__c)}/{!year(Opportunity.Campaign_Start__c)} - {!day(Opportunity.Campaign_End__c)}/{!month(Opportunity.Campaign_End__c)}/{!year(Opportunity.Campaign_End__c)}</b><br/><br/>
+Please ensure you have provided creative by <b>{!day(Opportunity.Creative_due_date__c)}/{!month(Opportunity.Creative_due_date__c)}/{!year(Opportunity.Creative_due_date__c)}</b> to <b><a href="mailto:adops@gumtree.com">adops@gumtree.com</a></b><br/>
+<br/>
+<table border="0" width="100%" id="table5">
+<tr>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><b>PRODUCT</b></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><b>CREATIVE SIZE</b></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><b>FILE SIZE</b></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><b>FILE TYPE</b></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><b>NOTES</b></td>
+</tr>
+       <apex:repeat value="{!Opportunity.OpportunityLineItems}" var="line">
+          <tr>
+             <td align="center" bordercolor="#000000">{!line.PricebookEntry.Name}</td>
+             <td align="center" bordercolor="#000000">{!line.Creative_Size__c} pixels</td>
+             <td align="center" bordercolor="#000000">max {!line.PriceBookEntry.Product2.Advertising_Medium__r.Max_file_size__c}kb</td>
+             <td align="center" bordercolor="#000000">{!line.PriceBookEntry.Product2.Advertising_Medium__r.File_type__c}<br/>{!line.PriceBookEntry.Product2.Advertising_Medium__r.File_type_version__c}</td>
+             <td align="center" bordercolor="#000000">{!line.PriceBookEntry.Product2.Advertising_Medium__r.Notes__c}</td>
+          </tr>
+       </apex:repeat>
+</table>
+       <br/>If you have any questions in regards to the technical specifications then please contact our team who will be more than happy to help, <a href="adops@gumtree.com">adops@gumtree.com</a> or call {!Opportunity.Owner.Phone}.
+</apex:page>

@@ -1,0 +1,389 @@
+<apex:page id="thePage" sideBar="false" showHeader="false" controller="TreeCountryAndCitySelectingController">
+<head>
+	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.js')}"/>	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.custom.js')}"/>	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.cookie.js')}"/>	
+	<apex:stylesheet value="{!URLFOR($Resource.JqueryForTree, '/ui.dynatree.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.css')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.dynatree.js')}"/>	 	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.min.js')}"/>	
+	
+	<style>
+	
+		span.dynatree-empty, span.dynatree-vline, 
+		span.dynatree-connector, span.dynatree-expander, 
+		span.dynatree-icon, span.dynatree-checkbox, span.dynatree-radio, 
+		span.dynatree-drag-helper-img, #dynatree-drop-marker {
+			background-image: url("{!URLFOR($Resource.JqueryForTree, '/iconsvista.gif')}");
+		}
+		
+		.InputStyle {
+			width: 98%;
+			margin: 2px;
+			display: inline-block;
+			color: #999;
+		}
+		input {
+			margin: 0;
+			border-radius: 3px;
+            border: 1px solid #999999;
+            padding: 3px 5px;
+			vertical-align: middle;
+		}
+		 .ui-autocomplete-loading { 
+	        background: white url(/img/loading32.gif) right center no-repeat;
+	        background-size:15px 15px; 
+	    }  
+	    .buttons{
+	    	margin-left:  5px !important;
+	    }
+	    #salesforceSource_blurybackground{
+	    	position: fixed !important;
+	    }
+	    .buttonsWidth{
+	    	width: 70px !important;
+	    }
+	    body{
+	    	background-color: #d8e3ee;
+	    }
+	    .dynatree-folder .dynatree-connector {
+			background-image: url("{!URLFOR($Resource.JqueryForTree, '/iconsvista.gif')}") !important;
+			background-position: 0px -80px;
+			cursor: pointer;
+		}
+		span.dynatree-connector {
+			background-image: none;
+		}
+	</style>
+	<script>
+		var isFromChildClick= false;
+		function setValueToTree( pos ,key,treeLv,flag ){
+			var val = document.getElementById('thePage:theForm:jsonObject').value;
+			var lstRecords = JSON.parse( val );	
+			if(treeLv == undefined){
+				for(var i=0;i< lstRecords.length;i++){
+					var treeItem = lstRecords[i];
+					if( treeItem.pos == pos && treeItem.treeId == key ){
+						lstRecords[i].isSelected = flag;					
+							for(var j=0;j<lstRecords[i].lstChild.length;j++){
+								for(var k=0;k<lstRecords[i].lstChild[j].lstChild.length;k++){
+									 if( !lstRecords[i].lstChild[j].lstChild[k].isHideCheckBox){
+									 	lstRecords[i].lstChild[j].lstChild[k].isSelected = flag;
+									 }
+									 for(var s=0;s<lstRecords[i].lstChild[j].lstChild[k].lstChild.length;s++){
+									 	if( !lstRecords[i].lstChild[j].lstChild[k].lstChild[s].isHideCheckBox){
+									 		lstRecords[i].lstChild[j].lstChild[k].lstChild[s].isSelected = flag;
+									 	}
+									 }
+								}
+								
+							}
+						
+						var jsonString = JSON.stringify( lstRecords );					
+						document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+						return;
+					}
+				}
+			}else if( treeLv == 3 ){
+				for(var i=0;i< lstRecords.length;i++){
+					var treeItem = lstRecords[i];
+					for(var j=0;j< treeItem.lstChild.length;j++){
+						var treeItemlv2 = treeItem.lstChild[j];
+						for(var k=0;k< treeItemlv2.lstChild.length;k++){
+							var treeItemlv3 = treeItemlv2.lstChild[k];
+							if( treeItemlv3.pos == pos && treeItemlv3.treeId == key ){
+								lstRecords[i].lstChild[j].lstChild[k].isSelected = flag;
+								if( flag )lstRecords[i].isSelected = flag;
+								var jsonString = JSON.stringify( lstRecords );					
+								document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+								return;
+							}
+						}
+					}
+				}
+			
+			}else if( treeLv == 4 ){
+				for(var i=0;i< lstRecords.length;i++){
+					var treeItem = lstRecords[i];
+					for(var j=0;j< treeItem.lstChild.length;j++){
+						var treeItemlv2 = treeItem.lstChild[j];
+						for(var k=0;k< treeItemlv2.lstChild.length;k++){
+							var treeItemlv3 = treeItemlv2.lstChild[k];
+							for(var t=0;t< treeItemlv3.lstChild.length;t++){
+								var treeItemlv4 = treeItemlv3.lstChild[t];
+								if( treeItemlv4.pos == pos && treeItemlv4.treeId == key ){
+									lstRecords[i].lstChild[j].lstChild[k].lstChild[t].isSelected = flag;
+									if( flag ) lstRecords[i].isSelected = flag;
+									var jsonString = JSON.stringify( lstRecords );					
+									document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+									return;
+								}
+							}
+							
+						}
+					}
+				}
+			
+			}				
+			
+			
+		}
+		
+		function setValueToParent(){				
+				var isSaveError = document.getElementById('thePage:theForm:isSaveError'); 
+				if(isSaveError.value == 'false'){
+				
+					var eleId = window.parent.document.getElementById('targetingId'); 
+					var eleCity = window.parent.document.getElementById('cityDescription');	
+					var eleCountry = window.parent.document.getElementById('countryDescription');
+											
+					eleId.value =  document.getElementById('thePage:theForm:targetId').value;					
+					eleCity.value =  document.getElementById('thePage:theForm:strValue').value;
+					eleCountry.value = document.getElementById('thePage:theForm:countryValue').value;
+				}
+				
+			}
+			
+		function checkTargetingBeforeSave(){
+			var targeting = document.getElementById('thePage:theForm:targetId');
+			var eleId = window.parent.document.getElementById('targetingId'); 
+			if(targeting=='' && eleId.value !='none'){
+				targeting.value = eleId.value;
+			}
+			saveRecords();
+		}
+		
+	</script>
+
+</head>
+
+<body   style="margin-left: 5px;margin-right: 5px;">
+<apex:form id="theForm" >
+	<apex:inputHidden value="{!isSaveError}" id="isSaveError"/>	
+	<apex:inputHidden value="{!targetId}" id="targetId"/>	
+	<apex:inputHidden value="{!strValue}" id="strValue"/>
+	<apex:inputHidden value="{!countryValue}" id="countryValue"/>		
+	<apex:inputHidden value="{!selectedCountry}" id="selectedCountry"/>	
+	<apex:inputHidden value="{!selectedRegion}" id="selectedRegion"/>
+	<apex:inputHidden value="{!selectCityLetter}" id="selectCityLetter"/>
+	<apex:inputHidden value="{!childPos}" id="childPos"/>
+	<apex:inputHidden value="{!parPos}" id="parrentPos"/>
+	<apex:inputHidden value="{!lastChildPos}" id="lastChildPos"/> 
+	<apex:inputHidden value="{!jsonObject}" id="jsonObject"/>
+	<apex:inputHidden value="{!searchFilter}" id="searchFilter"/>
+	<apex:actionFunction name="getStageRegion" action="{!getStageRegion}" rerender="theTreeContent,theMessages,jsonObject" status="status" /> 
+	<apex:actionFunction name="addCountry" action="{!addCountry}" rerender="theTreeContent,theMessages,jsonObject" status="status"/> 
+	<apex:actionFunction name="getCity" action="{!getCity}" rerender="theTreeContent,theMessages,jsonObject" status="status"/> 
+	<apex:actionFunction name="getCityByLetter" action="{!getCityByLetter}" rerender="theTreeContent,theMessages,jsonObject" status="status"/> 	
+	<apex:actionFunction name="saveRecords" action="{!saveRecords}" rerender="theTreeContent,theMessages,isSaveError,targetId,strValue,countryValue" onComplete="setValueToParent();" status="status"/> 			
+	
+	 <apex:pageMessages id="theMessages"/>
+		<div style="margin-top: 5px">			              			 	   	  			  		  			
+			<input type="text" class="InputStyle" id="searchCountry" placeholder="Country search" onkeydown="if (event.keyCode == 13){  addCountry();return false;}" />			
+		</div>
+		<table width="100%">
+			<tr>
+				<td valign="top">				
+					<apex:outputPanel id="theTreeContent" >		
+					  	<div id="tree" style="height: 400px">
+						    <ul id="treeData" style="display: none;">
+						    	 <li id="AllCountries" class="folder" data="hideCheckbox:true,expand:true" >All Countries
+							        <ul>
+								    	<apex:repeat value="{!lstCountry}" var="con" >
+												<li id="{!con.treeId}" title="{!con.treeName}" class="{!If (con.isFolder ,'folder','')} " data="pos:{!con.pos},expand:{!con.isExpand},select:{!con.isSelected}">{!con.treeName}
+													<ul>
+														<apex:repeat value="{!con.lstChild}" var="childCon" >
+															 <li id="{!childCon.treeId}" class="{!If (childCon.isFolder ,'folder','')}" title="{!childCon.treeName}"  data="hideCheckbox:{!childCon.isHideCheckBox},parrentId:'{!childCon.treeParrentId}',treeLv:{!childCon.treeLv},pos:{!childCon.pos},expand:{!childCon.isExpand},parrentPos:{!con.pos}" >{!childCon.treeName}
+															 	<ul>
+															 		<apex:repeat value="{!childCon.lstChild}" var="childCity" >
+															 			 <li id="{!childCity.treeId}" class="{!If (childCity.isFolder ,'folder','')}" title="{!childCity.treeName}"  data="hideCheckbox:{!childCity.isHideCheckBox},parrentId:'{!childCity.treeParrentId}',treeLv:{!childCity.treeLv},pos:{!childCity.pos},expand:{!childCity.isExpand},select:{!childCity.isSelected},parrentPos:{!childCon.pos},parrentTopPos:{!con.pos},parrentTopKey:'{!con.treeId}'" >{!childCity.treeName}
+															 			 	<ul>
+															 			 		<apex:repeat value="{!childCity.lstChild}" var="childLastCity" >
+															 			 				<li id="{!childLastCity.treeId}" class="{!If (childLastCity.isFolder ,'folder','')}" title="{!childLastCity.treeName}"  data="hideCheckbox:{!childLastCity.isHideCheckBox},parrentId:'{!childLastCity.treeParrentId}',treeLv:{!childLastCity.treeLv},pos:{!childLastCity.pos},select:{!childLastCity.isSelected},parrentTopPos:{!con.pos},parrentTopKey:'{!con.treeId}'" >{!childLastCity.treeName}</li>
+															 			 			
+															 			 		</apex:repeat>										 			 	
+															 			 	</ul>
+															 			 </li>
+															 		</apex:repeat>
+															 	</ul>
+															 </li>
+														</apex:repeat>
+													</ul>
+												</li>
+										</apex:repeat>
+									</ul>
+								</li>
+						    </ul>
+					   </div>
+					    <script type="text/javascript">
+						   $(function(){
+						        $("#tree").dynatree({
+						       		checkbox: true, // Show checkboxes.
+						       		 selectMode: 2,
+						       		// persist: true,// Persist expand-status to a cookie
+						       		// cookieId: "CountryAndCityGumTree",// Choose a more unique name, to allow multiple trees.
+						       		onClick: function(node, event) {
+						       	 			if( node.getEventTargetType(event) == "title" && node.data.key !="AllCountries"  ){	
+						       	 				//case click on country
+						       	 				if(node.data.parrentId == undefined){//case click on country
+						       	 					$('[id$=selectedCountry]').val( node.data.key );
+						       	 					$('[id$=parrentPos]').val( node.data.pos );			       	 								       	 							       	  			
+							       	  				getStageRegion(); 
+						       	 				}else if( node.data.treeLv == 2) {//case click on stage region				       	 					
+						       	 					$('[id$=parrentPos]').val( node.data.parrentPos );			       	 							       	 					       	 						       	 					
+						       	 					$('[id$=selectedCountry]').val( node.data.parrentId );
+						       	 					$('[id$=selectedRegion]').val( node.data.key);
+						       	 					$('[id$=childPos]').val( node.data.pos );			       	 					
+						       	 					getCity();
+						       	 				}else  if(node.data.treeLv==3 && node.data.hideCheckbox== true) {  //case click on Node that have alphabet letter 			       	 					
+						       	 					$('[id$=childPos]').val( node.data.parrentPos );	
+						       	 					$('[id$=parrentPos]').val( node.data.parrentTopPos );						
+						       	 					$('[id$=selectedRegion]').val( node.data.parrentId);
+						       	 					$('[id$=selectCityLetter]').val( node.data.key);
+						       	 					$('[id$=selectedCountry]').val( node.data.parrentTopKey );
+						       	 					$('[id$=lastChildPos]').val( node.data.pos);
+						       	 					getCityByLetter();
+						       	 					
+						       	 				}
+						       	 				
+							       	   			return false; 
+						       	 			}    
+						      		},
+								    onKeydown: function(node, event) {
+								        if( event.which == 32 ) {
+								          node.toggleSelect();
+								          return false;
+								        }
+								   },
+								   fx: { height: "toggle", duration: 200 },
+								   onSelect: function (flag, node){
+								   		if(node.data.treeLv == undefined ){								   			
+								   			if(node.childList != null  ){
+								   			    //check if call from child or call from user event
+								   				if( !isFromChildClick){								   					
+								   					for(var i=0;i<node.childList.length;i++){
+										   				var childNode = node.childList[i];
+										   				if( childNode.childList == null )continue;
+										   				for(var j=0;j<childNode.childList.length;j++){
+										   					var childNodeLv3= childNode.childList[j];									   					
+										   					if( !childNodeLv3.data.hideCheckbox){
+										   						childNodeLv3.select(flag);	
+										   					}
+										   				}
+										   										   			
+										   			}
+										   			node.expand(flag);	
+										   			isFromChildClick = false;
+										   			//setValueToTree(node.data.pos,node.data.key,node.data.treeLv,flag);
+								   				}else{
+								   					isFromChildClick = false;
+								   				}									   			
+									   		}
+								   			setValueToTree(node.data.pos,node.data.key,node.data.treeLv,flag);					
+								   		}else{
+								   			if( flag ){
+								   				var parNode = node.data.treeLv== 3? node.getParent().getParent() :node.getParent().getParent().getParent();
+								   				if( parNode!= null && !parNode.isSelected()){
+								   					isFromChildClick = true;
+								   					parNode.select(flag);
+								   				}
+								   												   				
+								   			}
+								   			setValueToTree(node.data.pos,node.data.key,node.data.treeLv,flag);
+								   		}
+								   					   		
+								   		
+								   }
+								   
+						      });
+						       
+						    });
+			    		</script>
+				   </apex:outputPanel>
+	   			</td>
+	   			<td align="center" valign="middle">
+	   				<div > <apex:commandButton value="Save" onclick="checkTargetingBeforeSave();return false;"   styleClass="buttons buttonsWidth" status="status"/></div>
+	   				<div style="margin-top:  10px;display:none;"> <apex:commandButton action="{!resetCountry}"  value="Reset tree"  rerender="theTreeContent,theMessages"  styleClass="buttons" status="status"/></div>
+	   				<div style="margin-top:  10px;"><apex:commandButton rendered="{!Not(isShowCancel)}" value="Cancel" onclick=" window.close();return false;"  styleClass="buttons buttonsWidth" /></div>
+	   			</td>
+			</tr>
+		</table>
+	    <apex:actionStatus id="status">
+                <apex:facet name="start">
+                    <c:Load BackColor="#efefef" borderColor="#efefef" borderSize="3" height="50px" width="180px" Message="Please, wait..." messageStyle="color:darkred;font-size:10pt;font-family:arial;font-weight:bold;" imageUrl="/img/loading.gif"/>
+                </apex:facet>
+       </apex:actionStatus>  
+   </apex:form>
+  </body>
+  
+  	<script type="text/javascript">
+		//without this, tabclick will stop working after jQuery lib imported.
+     var $ = jQuery.noConflict();
+    jQuery(document).ready(function($) {
+	    	 
+	      var PLACEHOLDER = 'Country search'; 
+		  var itemObjects;		  
+		  var queryTerm;  
+		  
+		  $('[id$=searchCountry]').autocomplete({
+			        minLength: 2,
+			        source: function(request, response) {
+			                    queryTerm = request.term;			                   
+			                   TreeCountryAndCitySelectingController.searchCountry(request.term, function(result, event){
+			                        if(event.type == 'exception') {
+			                              alert(event.message);
+			                        } else {			                        	
+			                             itemObjects = result;
+			                             response(itemObjects);
+			                        }
+			                    });
+			               },
+			        focus: function( event, ui ) {
+			                $('[id$=searchCountry]').val( ui.item.name  );
+			                return false;
+			                },
+			        select: function( event, ui ) {
+			                    $('[id$=searchCountry]').val( ui.item.name );	
+			                     $('[id$=selectedCountry]').val( ui.item.id );	
+			                      $('[id$=searchFilter]').val( ui.item.itemType );				                     	                  
+			                    //case pressing key enter
+			                    if(event.which==13){
+			                    	addCountry();
+			                    }
+			                    return false;
+			                },
+			})			     
+			.data( "autocomplete" )._renderItem = function( ul, item ) {
+		        var entry = "<a>" + item.name +"("+ item.itemType+")" ;			       
+		        entry = entry + "</a>";
+		        entry = entry.replace(queryTerm, "<b>" + queryTerm + "</b>");
+		        return $( "<li></li>" )
+		            .data( "item.autocomplete", item )
+		            .append( entry )
+		            .appendTo( ul );
+		    };
+			        
+		    // Add or remove placeholder values
+		    $('[id$=searchCountry]').val(PLACEHOLDER);
+		    $('[id$=searchCountry]').on("focus",  function(event){
+		        $tgt = $(event.target);
+		        if($tgt.val() === PLACEHOLDER ){
+		            $tgt.val('');		           
+		        }
+		    });
+		    $('[id$=searchCountry]').on( "blur",  function(event){
+		        $tgt = $(event.target);
+		        if($tgt.val() === '' ){
+		            $tgt.val(PLACEHOLDER);			          
+		        }
+		    });
+	      
+      
+    });
+    
+    
+  </script>
+  
+  
+</apex:page>

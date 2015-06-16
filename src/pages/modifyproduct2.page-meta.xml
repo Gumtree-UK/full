@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>18.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>&lt;script&gt;
+                                                                                    var index = checkCurrentPosition(&apos;{!rec.position}&apos;);
+                                                                                    var sp = document.getElementById(&apos;myPage:myForm:MyPageBlock:myRepeat2:&apos; + index + &apos;:Sales_Price&apos;);
+                                                                                    if(&apos;{!rec.item.PricebookEntry.Product2.Fixed_price__c}&apos; == &apos;true&apos; &amp;&amp; (&apos;{!rec.item.Billing_Category__c}&apos; == &apos;CPM&apos; || &apos;{!rec.item.Billing_Category__c}&apos; == &apos;Fix price&apos;)){
+                                                                                        sp.disabled = true;
+                                                                                    }                   
+                                                                                 &lt;/script&gt;</description>
+    <label>modifyproduct2</label>
+</ApexPage>

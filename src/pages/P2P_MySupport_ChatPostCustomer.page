@@ -1,0 +1,33 @@
+<apex:page showHeader="false" cache="false" sidebar="false">
+    <script type="text/javascript">
+        //W: 626pxH: 602px  
+        window.onload = function(){
+            var a = "{!$CurrentPage.parameters.disconnectedBy}";
+            if (a != 'error') {
+                //"agent":{"userId":"005w0000002t1l9","agentName":"Test Agent1","transfer":0}
+                var result = {!$CurrentPage.parameters.chatDetails};
+                var agent  = result['agent'];
+                var userId = agent['userId'];
+                var caseId ='';
+                var conId = '';
+                var prechatDetails = result['prechatDetails'];
+                for(var i=0;i<prechatDetails.length;i++){
+                    var item = prechatDetails[i];
+                    if(item['label']== 'PreChatCaseId'){
+                        caseId = item['value'];             
+                    }
+                    if(item['label']== 'PreChatConId'){
+                        conId = item['value'];             
+                    }
+                 }          
+                //alert("conId:"+conId);
+                window.resizeTo(626,702);
+                window.scrollbars.visible = true;
+                //"http://supportsurvey.gumtree.com/go?iv=o5748ptq31l44&q7=Live Chat"
+                window.location.replace("http://supportsurvey.gumtree.com/go?iv=o5748ptq31l44&q1="+caseId+"&q3="+conId+"&q6="+userId+"&q7=Live Chat");
+            }else{
+                window.location.replace("http://gumtree.force.com/Help/knowledgeChatError");
+            }
+        }
+    </script>
+</apex:page>

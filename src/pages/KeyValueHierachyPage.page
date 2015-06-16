@@ -1,0 +1,28 @@
+<!--
+
+Change log:
+    Sopha Pum: 08-03-2012
+    changed {!$Resource.KeyValueTree9} -> {!$Resource.KeyValueTree11} : fixed error missing first record on save
+    
+    Sopha Pum: 12-03-2012
+    changed {!$Resource.KeyValueTree11} -> {!$Resource.KeyValueTree12} : Compatibility problem (IE8 with Flash V.11 error APPCRASH)
+    
+    Sochanra Yos: 10-09-2012
+    Changed {!$Resource.KeyValueTree12} -> {!$Resource.KeyValueTree13} : fixed error for new form of KeyvalueString
+        Ex: ((key1=val1)) OR ((key2=val2)) AND ((key3=val3 OR val=val3)) => ((key1=val1) OR (key2=val2) AND (key3=val3 OR val=val3))
+        And display key in the parent node.
+   
+    Sochanra Yos: 09-11-2012
+    Changed {!$Resource.KeyValueTree13} -> {!$Resource.KeyValueTree14} : Set parenthese between operator AND of KeyValueString
+    
+    Sochanra Yos: 13-05-2013
+    Changed {!$Resource.KeyValueTree14} -> {!$Resource.KeyValueTree15} : fixed bug, push all selected keyvalue from tree to Final key value string
+    
+-->
+<apex:page Controller="KeyValueController" tabStyle="Opportunity" sidebar="false" ShowHeader="false" setup="false" > 
+        <div style="height:700;width:800;" align="center" >
+      <!--  <apex:flash src="{!$Resource.KeyValueTree14}" height="600" width="800" -->
+      <apex:flash src="{!$Resource.KeyValueTree15}" height="600" width="800"
+            flashvars="userId={!$User.Id}&session_id={!sessionId}&server_url={!$Api.Partner_Server_URL_120}&lineItemId={!lineItemId}&targetId={!targetId}&checked={!checkedNodes}&fromId={!fromId}&avaiKV={!avaiKV}&kvString={!kvString}" />
+        </div>
+</apex:page>

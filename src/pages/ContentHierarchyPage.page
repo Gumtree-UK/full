@@ -1,0 +1,13 @@
+<!--
+
+Change log:
+    Sopha Pum: 12-03-2012
+    changed {!$Resource.TargettingConfigurator_SWF_AvailableSite} -> {!$Resource.TargettingConfigurator_SWF_AvailableSite2} : Compatibility problem (IE8 with Flash V.11 error APPCRASH)
+-->
+<apex:page controller="ContentStructure" Sidebar="false" ShowHeader="false" Tabstyle="Opportunity" >
+    <div align="center">
+    <apex:flash src="{!$Resource.TargettingConfigurator_SWF_AvailableSite3}" height="600" width="800"
+        flashvars="userId={!$User.Id}&session_id={!sessionId}&server_url={!$Api.Partner_Server_URL_120}&fromId={!fromId}&targetId={!targetId}&checkedNodes={!checkedNodes}&reopenedNodes={!reopenedNodes}&fromId={!fromId}&lineItemId={!lineItemId}&availableId={!availableId}" />
+    </div> 
+    <!-- &lineItemId={!lineItemId}&backUrl={!backUrl}&rol={!rol}&modolis={!modolis}&retURL={!retURL} -->
+</apex:page>

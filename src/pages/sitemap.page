@@ -1,0 +1,15 @@
+<apex:page contentType="text/xml" cache="false"><?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <knowledge:articleList articleVar="article"
+		                           articleTypes="FAQ__kav,General_Information__kav"
+		                           sortBy="mostViewed"
+		                           pageSize="200"
+		                       >
+       <url>
+          <loc>{!HTMLENCODE(SUBSTITUTE(URLFOR($Site.CurrentSiteURL),'eu0.','')+'Help')}{!HTMLENCODE(URLFOR($Action.KnowledgeArticle.View, article.id,[at=article.title,retURL='',popup='']))}</loc> 
+          <lastmod>{!LEFT(TEXT(article.lastModifiedDate),10)}</lastmod>
+          <priority>1.0</priority>
+       </url>
+   </knowledge:articleList>
+</urlset> 
+</apex:page>

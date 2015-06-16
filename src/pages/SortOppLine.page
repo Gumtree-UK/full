@@ -1,0 +1,465 @@
+<apex:page standardController="Opportunity" extensions="SortOpplineController" id="myPage">
+<script>
+    function saveAll(){
+        try{
+           doSave();
+        }catch(e){
+            alert("Error:" + e);
+        }
+    }
+    
+    //Click on row action
+    function selectThisRow(a_obj){
+        var idSelected = document.getElementById("myPage:editPage:idSelected");
+        idSelected.value = a_obj.cells.item(0).innerHTML;
+        selRow=a_obj.sectionRowIndex+1;
+        selectRow(selRow,false);
+       
+        hiOff(a_obj);
+        
+        
+    }
+     
+   
+function selectRow(index,isMove){  
+        var tmpSelRowData=selRowData;
+        var table = document.getElementById("itemTable");
+        for (var i = 0; i < table.rows.length; i++) {
+            if(index==i){
+                selRowData=table.rows.item(i);
+                table.rows.item(i).bgColor="#85C8FC";
+                if(tmpSelRowData!=null && isMove){ changeRow(selRowData,tmpSelRowData);}
+                
+                
+              
+            }else{
+                table.rows.item(i).bgColor="white";
+           }
+        }
+        
+        
+    }
+    
+       
+    var selRow;
+    var selRowData;
+    
+    function moveFirst(){
+    var table = document.getElementById("itemTable");
+     if(table.rows.length==0 ||selRowData==null){alert("No Row Select!");return;}
+     while(selRow>1){
+        moveDown();
+     }
+        
+      
+        //selRow=1;
+        //selectRow(1,true);
+        
+        
+    }
+    
+    function moveDown(){
+        var table = document.getElementById("itemTable");
+        if(table.rows.length==0||selRowData==null) {alert("No Row Select!");return;}
+        
+        if(selRow>1){
+            selRow=selRow-1;
+            selectRow(selRow,true);
+        }
+    }
+    
+    function moveUp(){
+        var table = document.getElementById("itemTable");
+        if(table.rows.length==0||selRowData==null) {alert("No Row Select!");return;}
+        
+        if(selRow<table.rows.length-1){
+            selRow=selRow+1;
+            selectRow(selRow,true);
+        }
+
+    }
+    
+    function moveLast(){
+        var table = document.getElementById("itemTable");
+        if(table.rows.length==0||selRowData==null) {alert("No Row Select!");return;}
+        //selRow=table.rows.length-1;
+        //selectRow(table.rows.length-1,true);
+         while(selRow<table.rows.length-1){
+            moveUp();
+         }
+    }
+    
+    
+    
+    function changeRow(newRow,oldRow){
+        
+        var tmpNew=newRow.cloneNode(true);
+               // a_obj.bgColor= a_color;
+            for ( var i=0;i<newRow.cells.length;i++){
+                if(i==1) continue;
+                newRow.cells.item(i).innerHTML=oldRow.cells.item(i).innerHTML;
+                oldRow.cells.item(i).innerHTML=tmpNew.cells.item(i).innerHTML;
+                
+            }
+            if(newRow.sectionRowIndex!=oldRow.sectionRowIndex) oldRow.bgColor="white";
+            var hdd = document.getElementById("myPage:editPage:duel0");
+            hdd.value=getOrderIDs();
+            
+        
+      
+    }
+    
+ 
+    
+    function getOrderIDs(){
+        var order='';
+        var table = document.getElementById("itemTable");
+        for (var i = 1; i < table.rows.length; i++){
+           order=order+ table.rows.item(i).cells.item(0).innerHTML+',';
+        }
+        if(order!='')  order=order.substring(0,order.length-1);
+        return order;
+        
+    }
+    
+   
+    function overSelect(row){
+   
+     row.style.cursor='pointer';
+    
+    if (window.hiOn && (selRow==null||selRow!=row.sectionRowIndex+1)){hiOn(row);}
+    
+    }
+    
+    
+</script>
+<style>
+    table, td, a {
+      color: #000;
+        : normal normal 12px Verdana, Geneva, Arial, Helvetica, sans-serif
+    }
+
+   div.tableContainer {
+    clear: both;
+    /*border: 1px solid #963;*/
+    height: 340px;
+    overflow: auto;
+    width: 990px
+}
+
+    
+    html>body div.tableContainer {
+        overflow: hidden;
+        width: 990px
+    }
+    
+    
+    div.tableContainer table {
+        float: left;
+        width: 990px
+    }
+    
+    
+    html>body div.tableContainer table {
+        width: 990px
+    }
+
+    thead.fixedHeader tr {
+        position: relative
+        }
+
+
+    html>body thead.fixedHeader tr {
+          display: block
+     }
+
+
+   thead.fixedHeader th {
+        background: #C96;
+        border-left: 1px solid #EB8;
+        border-right: 1px solid #B74;
+        border-top: 1px solid #EB8;
+        font-weight: normal;
+        padding: 4px 3px;
+        text-align: left
+    }
+
+
+    thead.fixedHeader a, thead.fixedHeader a:link, thead.fixedHeader a:visited {
+        color: #FFF;
+        display: block;
+        text-decoration: none;
+        width: 100%
+    }
+
+
+    thead.fixedHeader a:hover {
+        color: #FFF;
+        display: block;
+        text-decoration: underline;
+        width: 100%
+    }
+
+    html>body tbody.scrollContent {
+        display: block;
+        height: 315px;
+        overflow: auto;
+        width: 100%
+    }
+
+
+    tbody.scrollContent td, tbody.scrollContent tr.normalRow td {
+        
+        border-bottom: none;
+        border-left: none;
+        border-right: 1px solid #CCC;
+        border-top: 1px solid #DDD;
+        padding: 2px 3px 3px 4px
+    }
+
+    tbody.scrollContent tr.alternateRow td {
+        
+        border-bottom: none;
+        border-left: none;
+        border-right: 1px solid #CCC;
+        border-top: 1px solid #DDD;
+        padding: 2px 3px 3px 4px
+    }
+    
+    html>body thead.fixedHeader th{
+        width: 0px
+    }
+
+
+/*  html>body thead.fixedHeader th + th{
+        width: 50px
+    }
+*/
+    html>body thead.fixedHeader th + th {
+        width: 170px
+    }
+    
+    html>body thead.fixedHeader th + th + th {
+        width: 50px
+    }
+    
+    html>body thead.fixedHeader th + th + th + th{
+        width: 80px
+    }
+    
+    html>body thead.fixedHeader th + th + th + th +th{
+        width: 80px
+    }
+    
+    html>body thead.fixedHeader th + th + th + th + th +th{
+        width: 570px
+    }
+    
+    /*TH WIDTH*/
+    html>body tbody.scrollContent td {
+        width: 0px
+    }
+    /*SortOrder*/
+/*  html>body tbody.scrollContent td + td{
+        width: 60px
+    }
+*/
+    /*Name*/
+    html>body tbody.scrollContent td + td {
+        width: 180px
+    }
+    /*Quantity*/
+    html>body tbody.scrollContent td + td + td {
+        width: 80px
+    }
+    /*from date*/
+    html>body tbody.scrollContent td + td + td + td {
+        width: 90px
+    }
+    /*until date*/
+    html>body tbody.scrollContent td + td + td + td + td {
+        width: 80px
+    }
+    /*Decription*/
+    html>body tbody.scrollContent td + td + td + td + td + td{
+        width: 570px
+    }
+    
+     a:link{text-decoration:none;border:0px;outline: none;}
+     a:visited{text-decoration:none;border:0px;outline: none;}
+     a:active{text-decoration:none;border:0px;outline: none;}
+     a:hover{text-decoration:none;border:0px;outline: none; }
+     a:focus{-moz-outline-style: none;}
+    
+
+
+
+
+
+-->
+  
+</style>
+<apex:form id="editPage">
+    
+    
+        <apex:actionFunction name="doSave" action="{!doSave}"/>
+        <div class="bPageTitle">
+            <div class="ptBody secondaryPalette">
+                <div class="content">
+                    <img src="/s.gif" alt="{!$Label.Opportunity}" class="pageTitleIcon" title="{!$Label.Opportunity}"/>
+                    <h1 class="pageType"><apex:outputLabel value="{!$Label.Opportunity}"/><span class="titleSeparatingColon">:</span></h1>
+                    <h2 class="pageDescription"> {!Opportunity.Name}</h2>
+                    <div class="blank">&nbsp;</div>
+                </div>
+                
+                <div class="links">
+                    <a href="javascript:openPopupFocusEscapePounds(%27/help/doc/user_ed.jsp?loc=help&target=sorting_products_on_opportunities.htm&section=Products&showSplash=true%27, %27Help%27, 700, 600, %27width=700,height=600,resizable=yes,toolbar=yes,status=no,scrollbars=yes,menubar=yes,directories=no,location=no,dependant=no%27, false, false);" title="{!$Label.Help_Page} {!$Label.New_Window}">
+                        <span class="helpLink"><apex:outputLabel value="{!$Label.Help_Page}"/></span>
+                        <img src="/s.gif" alt="{!$Label.Help}" class="helpIcon" title="{!$Label.Help}"/>
+                    </a>
+                </div>
+            </div>
+            <div class="ptBreadcrumb"></div>
+        </div>
+        <div class="bDescription"><apex:outputLabel value="{!$Label.Description_sort}"/></div>
+        
+         <apex:inputHidden value="{!idProAfterSort}" id="duel0"/> 
+        <apex:inputHidden value="{!idSelected}" id="idSelected"/> 
+        
+         
+        <table  cellspacing="0" cellpadding="0" height="250" style="table-layout:fixed;overflow:scroll;height:300px">
+        <tr>
+        <td class="selectCell" style="vertical-align:middle;width:98%"   align="center" >
+    
+             
+             <apex:pageblock id="pageblock" > 
+               <div  class="tableContainer">
+                   <table  width="" id="itemTable" cellspacing="0" cellpadding="0" border="0"  class="list "> 
+                    <thead class="fixedHeader" Style="width:100%">
+                        <tr class="headerRow ">
+                        <th   style="display:none"></th>
+                        <!--        <th  colspan="1" scope="col" class="headerRow  "><div> {!$ObjectType.OpportunityLineItem.Fields.SortOrder.Label}</div></th> -->
+                                <th  colspan="1" scope="col" class="headerRow  "><div> {!$ObjectType.Product2.Fields.Name.Label}</div></th>
+                                
+                                <th  colspan="1" scope="col" class="headerRow  "><div> {!$ObjectType.OpportunityLineItem.Fields.Quantity.Label}</div></th>
+                                <th  colspan="1" scope="col" class="headerRow  "><div> {!$ObjectType.OpportunityLineItem.Fields.from_Date__c.Label}</div></th>
+                                <th  colspan="1" scope="col" class="headerRow  "><div> {!$ObjectType.OpportunityLineItem.Fields.until_Date__c.Label}</div></th>
+                                <th  colspan="1" scope="col" class="headerRow  "><div> {!$ObjectType.OpportunityLineItem.Fields.Description.Label}</div></th>                     
+                        </tr>
+                    </thead>
+                    <tbody class="scrollContent">
+                    <apex:repeat var="p" value="{!lstDtoLineItem}">
+                        <tr onfocus="if (window.hiOn){hiOn(this);}" onblur="if (window.hiOff){hiOff(this);}" onmouseout="if (window.hiOff ){hiOff(this);} " onmouseover="overSelect(this);" onclick="selectThisRow(this)" class="dataRow even  first">
+                        
+                        <td style="display:none"><apex:outputText value="{!p.pId}" /> </td>
+                    <!--     <td colspan="1"  class="dataCell  " style="margin:0px 0px 0px 0px;padding:0px 5px 0px 0px"><div style="margin:0px 0px 0px 0px;padding:10px 0px 10px 0px;width:100%;height:100%;"> <apex:outputText value="{!p.pSortOrder}" style="padding-left:10px"/></div></td> -->
+                         <td colspan="1"  class="dataCell  " style="margin:0px 0px 0px 0px;padding:0px 0px 5px 0px"><div style="margin:0px 0px 0px 0px;padding:10px 0px 10px 10px;width:100%;height:100%;">  <apex:outputText value="{!p.pProduct2Name}"/></div></td>
+               
+                        <td colspan="1"  class="dataCell  " style="margin:0px 0px 0px 0px;padding:0px 0px 0px 0px"><div style="margin:0px 0px 0px 0px;padding:10px 0px 10px 0px;width:100%;height:100%;"> <apex:outputText value="{!p.pQuantity}" style="padding-left:10px"/></div></td>
+                         <td colspan="1"  class="dataCell  " style="margin:0px 0px 0px 0px;padding:0px 0px 0px 0px"><div style="margin:0px 0px 0px 0px;padding:10px 0px 10px 0px;width:100%;height:100%;"> <apex:outputText value="{!p.pfrom_Date}" style="padding-left:0px"/></div></td>
+                        <td colspan="1"  class="dataCell  " style="margin:0px 0px 0px 0px;padding:0px 0px 0px 0px"><div style="margin:0px 0px 0px 0px;padding:10px 0px 10px 0px;width:100%;height:100%;"> <apex:outputText value="{!p.puntil_Date}" style="padding-left:0px"/></div></td>
+         <td colspan="1"  class="dataCell  " title="{!p.pFullDescription}" style="margin:0px 0px 0px 0px;padding:0px 0px 0px 0px"><div style="padding:10px 0px 10px 0px;width:100%;height:100%"> <apex:outputText value="{!p.pDescription}"/></div></td>
+                       
+                        </tr>
+                       </apex:repeat>
+                    </tbody>
+                      
+               </table> 
+               </div>
+                </apex:pageblock>
+               
+              </td>
+              <td class="buttonCell" style="vertical-align:middle;width:2%" align="center">
+                        <div class="text"><apex:outputLabel value="{!$Label.Top}"/></div> 
+                                    <div class="text">
+                                        <a href="#" onclick="moveFirst()">
+                                            <img class="doubleArrowUp" title="{!$Label.Top}" alt="{!$Label.Top}" src="/s.gif"/>
+                                        </a>
+                                    </div>
+                                    <div class="text"><apex:outputLabel value="{!$Label.Up}"/></div>
+                                    <div class="text">
+                                        <a href="#" onclick="moveDown()">
+                                            <img class="upArrowIcon" title="{!$Label.Up}" alt="{!$Label.Up}" src="/s.gif"/>
+                                        </a>
+                                    </div>
+                                    <div class="text">
+                                        <a href="#" onclick="moveUp()">
+                                            <img class="downArrowIcon" title="{!$Label.Down}" alt="{!$Label.Down}" src="/s.gif"/>
+                                        </a>
+                                    </div>
+                                    <div class="text"><apex:outputLabel value="{!$Label.Down}"/></div>
+                                    <div class="text">
+                                        <a href="#" onclick="moveLast()">
+                                            <img class="doubleArrowDwn" title="{!$Label.Bottom}" alt="{!$Label.Bottom}" src="/s.gif"/>
+                                        </a>
+                                    </div>
+                                    <div class="text"><apex:outputLabel value="{!$Label.Bottom}"/></div>
+              </td>
+              </tr></table>
+             
+         <!-- End code  -->
+   
+        <center>
+        <table cellspacing="0" cellpadding="0" border="0" >
+            <!-- 
+            <tr>
+                <td>
+                    <div id="duel" class="duelingListBox">
+                        <div id="editPage_duel_errorMsg" class="errorMsg" style="display:none">&nbsp;</div>
+                        <table class="layout">
+                            <tr>
+                                <td class="selectCell">
+                                    
+                                    <div class="selectTitle"><apex:outputLabel for="oli_Select" value="{!$Label.Product}"/></div>
+                                    <apex:selectList id="oli_Select" value="{!item}"  multiselect="true" size="14">
+                                        <apex:selectOptions value="{!subItem}"/>
+                                    </apex:selectList>
+                                    
+                                    
+                                </td> 
+                                <td class="buttonCell">
+                                    <div class="text"><apex:outputLabel value="{!$Label.Top}"/></div> 
+                                    <div class="text">
+                                        <a href="#" onclick="moveFirst()">
+                                            <img class="doubleArrowUp" title="{!$Label.Top}" alt="{!$Label.Top}" src="/s.gif"/>
+                                        </a>
+                                    </div>
+                                    <div class="text"><apex:outputLabel value="{!$Label.Up}"/></div>
+                                    <div class="text">
+                                        <a href="#" onclick="moveDown()">
+                                            <img class="upArrowIcon" title="{!$Label.Up}" alt="{!$Label.Up}" src="/s.gif"/>
+                                        </a>
+                                    </div>
+                                    <div class="text">
+                                        <a href="#" onclick="moveUp()">
+                                            <img class="downArrowIcon" title="{!$Label.Down}" alt="{!$Label.Down}" src="/s.gif"/>
+                                        </a>
+                                    </div>
+                                    <div class="text"><apex:outputLabel value="{!$Label.Down}"/></div>
+                                    <div class="text">
+                                        <a href="#" onclick="moveLast()">
+                                            <img class="doubleArrowDown" title="{!$Label.Bottom}" alt="{!$Label.Bottom}" src="/s.gif"/>
+                                        </a>
+                                    </div>
+                                    <div class="text"><apex:outputLabel value="{!$Label.Bottom}"/></div>
+                                </td>
+                            </tr>
+                        </table>
+                        <script type="text/javascript">
+                            window.editPage_DLBEInstance=new DuelingListBoxesElement(['oli_Select'],'editPage_duel_errorMsg');
+                        </script>
+                    </div>  
+                </td>
+            </tr>
+            -->
+            <tr>
+                <td align="center">
+                    <apex:commandButton value="{!$Label.Save}" onClick="saveAll(); return false;" title="{!$Label.Save}"/>&nbsp;&nbsp;
+                    <apex:commandButton value="{!$Label.Cancel}" action="{!cancelPage}" title="{!$Label.Cancel}"/>
+                    
+                </td>
+            </tr>
+        </table>
+        </center>
+    </apex:form>
+</apex:page>

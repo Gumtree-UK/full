@@ -1,0 +1,128 @@
+<apex:page controller="CustomLookupContactEmail" sidebar="false" showHeader="false" id="page">
+   <head>
+        <script>
+            var active_element;
+            var bIsMSIE;
+
+            window.onload=function(){
+                document.getElementById('page:frm:filter').focus();
+                initiateSelfClosing();
+            }
+
+            function initiateSelfClosing() {
+              if (navigator.appName == "Microsoft Internet Explorer") {
+                active_element = document.activeElement;
+                document.onfocusout = closeWnd;
+                bIsMSIE = true;
+              }
+              else { window.onblur = closeWnd; }
+            }
+
+            function closeWnd() {
+              if (window.opener != null) {
+                if (bIsMSIE && (active_element != document.activeElement)) {
+                  active_element = document.activeElement;
+                }
+                else {
+                  window.close();
+                }
+              }
+            }
+
+            function handle(e){
+                var evt = e || window.event;
+                if(evt.keyCode === 13){
+                    search();
+                }
+                return false;
+            }
+
+            function addToLookupField(id,name){
+                try{
+                    var contactName=top.opener.document.getElementById('{!comId}');
+                    var contactId=top.opener.document.getElementById('{!comId}'+'_lkid');
+                    var contName=top.opener.document.getElementById(contactId.id.replace('lkid','lkold'));
+                    var mod=top.opener.document.getElementById(contactId.id.replace('lkid','mod'));
+                    contactName.value=name;//field component
+                    mod.value=1;//default 0->mean that we can't giva any value to referrence field; 1 -> we can
+                    contactId.value=id;//hidden field for cont id
+                    contName.value=name;//hidden field for cont name
+                    //namePro.focus();
+                    top.opener.changeContact();
+                    this.close();
+                }catch(e){
+                    alert(e);
+                }
+            } 
+
+        </script>
+    </head>
+
+
+    <body class="hasMotif lookupTab  LookupSearchFrame brandNoBgrImg">
+    <apex:form id="frm">
+        <apex:actionFunction action="{!doClear}" name="clearResult" rerender="frm"></apex:actionFunction>
+        <apex:actionFunction action="{!doSearch}" name="search" rerender="pb" status="status"></apex:actionFunction>
+            <table width="100%">
+                <tr>
+                    <td>
+                        <div class="lookupTab"><apex:Image value="/s.gif" styleClass="pageTitleIcon" width="32" height="32"/></div>
+                        <h1><span style="font-size:1.9em; color:#333435; margin:8px 0 4px;">Lookup</span></h1>
+                    </td>
+                </tr>
+                <tr> 
+                    <td style="vertical-align:middle">
+                        <b>Search</b>
+                        <apex:inputtext value="{!contactName}" id="filter" onkeypress="handle();"/>
+                        <apex:commandButton value="Go!" onclick="search();return false;" id="go"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        You can use "*" as a wildcard next to other characters to improve your search results.
+                    </td>
+                </tr>
+                <tr>
+                    <td height="40"></td>
+                </tr>
+                <tr>
+                    <td><apex:outputLink value="Clear Search Results" rendered="{!NOT(ISNULL(contactName))}" onClick="clearResult();return false;">&#60;&nbsp;Clear Search Results</apex:outputLink></td>
+                </tr>
+                <tr>
+                    <td><span style="font-weight:bold;font-size:16px;">{!lblSearchResult}</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="width:100%;height:200px;overflow:auto;" id="divData">
+                            <apex:pageBlock id="pb">
+                                <apex:pageBlockTable value="{!lstContact}" var="con">
+                                    <apex:column >
+                                        <apex:facet name="header">Name</apex:facet>
+                                        <apex:outputLink value="#" onclick="addToLookupField('{!con.id}','{!JSENCODE(con.name)}')">{!con.name}</apex:outputLink>
+                                    </apex:column>   
+                                   
+                                </apex:pageBlockTable>
+                               </apex:pageBlock>
+                            <apex:outputPanel id="thePanelInfo" rendered="{!hasRecord==false}">
+                                <div class="list">
+                                    <div class="noRows">
+                                        No records found due to one of the following:
+                                        <ul>
+                                            <li>There are no records of this type</li>
+                                            <li>You don't have permission to see any of the records</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </apex:outputPanel>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="lookup"><div class="footer">Copyright © 2000-{!year} salesforce.com, inc. All rights reserved.</div></div>
+    </apex:form>
+    </body>
+
+
+
+</apex:page>

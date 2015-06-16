@@ -1,0 +1,456 @@
+<apex:page id="pg" StandardController="Opportunity" extensions="SelectSearchController2" label="SelectSearch" sidebar="true" standardStylesheets="true" tabStyle="OpportunityLineItem">
+<head> 
+    <style>
+        .firstPg{
+            background:url('/img/paginationArrows.gif') no-repeat scroll 0px 4px transparent;
+            height:10px;
+            width:9px;
+            
+        }
+        .firstoffPg{
+            background:url('/img/paginationArrows.gif') no-repeat scroll 0px -10px transparent;
+            height:10px;
+            width:9px;
+        }
+        
+        .lastPg{
+            background:url('/img/paginationArrows.gif') no-repeat scroll -27px 4px transparent;
+            height:10px;
+            width:9px;
+        }
+        .lastoffPg{
+            background:url('/img/paginationArrows.gif') no-repeat scroll -27px -10px transparent;
+            height:10px;
+            width:9px;
+        }
+        
+        .nextPg{
+            background:url('/img/paginationArrows.gif') no-repeat scroll -17px 4px transparent;
+            height:10px;
+            width:9px;
+        }
+        .nextoffPg{
+            background:url('/img/paginationArrows.gif') no-repeat scroll -17px -10px transparent;
+            height:10px;
+            width:9px;
+        }
+        
+        .prevPg{
+            background:url('/img/paginationArrows.gif') no-repeat scroll -10px 4px transparent;
+            height:10px;
+            width:9px;
+        }
+        .prevoffPg{
+            background:url('/img/paginationArrows.gif') no-repeat scroll -10px -10px transparent;
+            height:10px;
+            width:9px;
+        }
+        
+        .bottomNavTopPg {
+            
+            border-top:1px solid #D8D8D8;
+            padding:5px;
+        }
+        .bottomNavBottomPg {
+            
+            border-bottom:1px solid #D8D8D8;
+            padding:5px;
+        }
+    
+        
+    </style>
+<script type="text/javascript">
+
+    function enter(e){
+        var keyCode=(e)? e.which :e.keyCode;
+        if(keyCode==13) {
+        
+            //ssearch();
+            //e.returnValue=false;
+            //e.preventDefault();
+
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    
+    function checkValidator(){
+
+            doSearchScript();
+        }
+        
+    
+</script>
+</head>    
+    <!-- background-color:#F3F3F3; -->
+    
+    <div class="bPageTitle">
+        <div class="ptBody secondaryPalette">
+            <div class="content">
+            <apex:image id="theImage" value="/s.gif" styleClass="pageTitleIcon"/>
+            <apex:outputPanel >
+            <h2 class="pageType"><apex:outputText value="Opportunity Name: {!mcName}"/></h2>
+            <h1 class="pageDescription"><apex:outputText value="Account Name: {!accName}"/></h1>
+            </apex:outputPanel>
+            </div>
+        </div>
+    </div>
+
+    <apex:form id="frmSelectSearch">
+            
+        <apex:pageblock title="{!$Label.Basket}" rendered="{!isViewBasket}"> 
+        <apex:pageMessages />
+            
+            <apex:PageBlockButtons >
+             <apex:commandButton value="Delete"  action="{!removeBskItem}" reRender="frmSelectSearch" status="status"/>
+                <apex:commandButton value="Start Product Configuration"  action="{!productConfig}" reRender="frmSelectSearch" status="status"/>
+                
+            </apex:PageBlockButtons>
+            
+            <apex:pageBlockTable value="{!lstBasket}" var="p" >
+                <apex:column >
+                    <apex:facet name="header">
+                        {!$Label.ActionDel}
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!p.isChecked}"/>
+                    
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                        &nbsp;
+                    </apex:facet>
+                    <apex:outputText value="{!p.rowInd}. " />
+                    
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$Label.Name_Beschreibung}" action="{!sortByBskName}" reRender="frmSelectSearch" status="status">
+                            <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnBskFldNo == '1' && Not(isBskNameAsc)}"/>
+                            <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnBskFldNo == '1' && isBskNameAsc}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:commandLink value="{!p.spec.Name}" onclick="window.open('/{!p.spec.Id}','{!p.spec.Id}','left=20,top=20,width=900,height=700,scrollbars=1,menubar=1,toolbar=1,resizable=0');return false;" title="Open New window"/>
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$Label.Werbetrager}"  action="{!sortByBskSite}" reRender="frmSelectSearch" status="status"  >
+                            <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnBskFldNo == '2' && Not(isBskSiteAsc)}"/>
+                            <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnBskFldNo == '2' && isBskSiteAsc}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputText value="{!IF(p.spec.Site__r.Name==null,'&nbsp;',p.spec.Site__r.Name)}" escape="false"/>
+                </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$Label.Platzierung}"  action="{!sortByBskPlacement}" reRender="frmSelectSearch" status="status">
+                            <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnBskFldNo == '3' && Not(isBskPlcAsc)}"/>
+                            <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnBskFldNo == '3' && isBskPlcAsc}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputText value="{!IF(p.spec.Placement__r.Name==null,'&nbsp;',p.spec.Placement__r.Name)}" escape="false"/>
+                </apex:column> 
+                
+                <apex:column >
+                    <apex:facet name="header"> 
+                        <apex:commandLink value="{!$Label.Werbeform_Leistung}" action="{!sortByBskAdverAchi}" reRender="frmSelectSearch" status="status">
+                            <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnBskFldNo == '4' && Not(isBskAdverAchiAsc)}"/>
+                            <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnBskFldNo == '4' && isBskAdverAchiAsc}"/>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputText value="{!IF(p.spec.Advertising_Medium__r.Name==null,'&nbsp;',p.spec.Advertising_Medium__r.Name)}" escape="false"/>
+                </apex:column>
+
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Creative Size" action="{!sortByBskAdverAdSlot}" reRender="frmSelectSearch" status="status">
+                        <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnFldNo == '5' && Not(isBskAdverAdSlotAsc)}"/>
+                        <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnFldNo == '5' && isBskAdverAdSlotAsc}"/>
+                    </apex:commandLink>
+                </apex:facet> 
+                  
+                <apex:outputText value="{!p.spec.Advertising_Medium__r.Dart_AdSlotSize__c}" />
+            </apex:column>
+                
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink value="{!$Label.Preis}" action="{!sortByBskPrice}" reRender="frmSelectSearch" status="status">
+                            <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnBskFldNo == '6' && Not(isBskPrceAsc)}"/>
+                            <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnBskFldNo == '6' && isBskPrceAsc}"/> 
+                        </apex:commandLink>
+                    </apex:facet> 
+                    
+                    <apex:outputField value="{!p.price.Unitprice}" />
+                     
+                </apex:column>
+            </apex:pageBlockTable>
+            
+            
+        </apex:pageblock> 
+    
+    
+    
+    
+    
+        <apex:pageblock id="pgb1"> 
+            
+            
+            
+            <apex:facet name="header">
+        
+        
+            <apex:outputPanel layout="block" ><!--  style="background-color: #EEECD1;"> -->
+                <apex:outputPanel styleclass="pbTitle"><h3><apex:outputLabel value="{!$Label.Produkte_suchen}"/></h3></apex:outputPanel>
+                <table class="searchFilterFields" cellSpacing="0px">
+                
+                                   <tbody>
+                    <tr>
+                        <td colspan="3" style="padding:5px">
+                            <br/>
+                            <apex:outputLabel value=" {!$Label.Suchbegriff_e}:" style="font-size:8pt;font-style:strong"/>
+                            <br/>
+                            <apex:inputText value="{!sWord}" style="font-size:8pt;width:300px" onkeydown="enter(event);"/>
+                         
+                         
+                         
+                         <tr style="height:10px">
+                         <td width="40px">
+                            <apex:outputLabel value=" {!$Label.Werbetrager}:" style="font-size:8pt;font-style:strong;"/>
+     
+                        </td> 
+                        <td width="40px">
+                            <apex:outputLabel value=" {!$Label.Platzierung}:" style="font-size:8pt;font-style:strong;"/>
+     
+                        </td> 
+                        <td >
+                            <apex:outputLabel value=" {!$Label.Werbeform_Leistung}:" style="font-size:8pt;font-style:strong;"/>
+                            
+                        </td>
+                    </tr>
+
+                        </td> 
+                    </tr>
+                    <tr style="height:10px">
+                      <td width="40px">
+                            <apex:SelectList id="site" value="{!siteName}" style="font-weight:bold;background-color:{!IF(siteName = $Label.Alle ,'','#FFFFCC')};" size="1" >
+                                <apex:SelectOptions value="{!lstSiteName}"/>
+                                <apex:ActionSupport event="onchange" action="{!selectListChanged}" reRender="frmSelectSearch" status="status">
+                                    <apex:param name="psite" value="site" assignTo="{!changeOn}"/>
+                                </apex:ActionSupport>
+                            </apex:SelectList>
+                        </td>                       
+                        <td width="40px">
+                            <apex:SelectList id="placement" value="{!placement}" style="font-weight:bold;background-color:{!IF(placement = $Label.Alle ,'','#FFFFCC')};" size="1" >
+                                <apex:SelectOptions value="{!lstPlacement}"/>
+                                <apex:ActionSupport event="onchange" action="{!selectListChanged}" reRender="frmSelectSearch" status="status">
+                                    <apex:param name="pplacement" value="placement" assignTo="{!changeOn}"/>
+                                </apex:ActionSupport>
+                            </apex:SelectList>
+                        </td> 
+                        <td width="1020px">
+                            <apex:SelectList id="adtype" value="{!adType}" style="font-weight:bold;background-color:{!IF(adType = $Label.Alle ,'','#FFFFCC')};" size="1" >
+                                <apex:SelectOptions value="{!lstAdType}" />
+                                <apex:ActionSupport event="onchange" action="{!selectListChanged}" reRender="frmSelectSearch" status="status">
+                                    <apex:param name="padtype" value="adtype" assignTo="{!changeOn}"/>
+                                </apex:ActionSupport>
+                            </apex:SelectList>
+                        </td>
+                    </tr> 
+                  
+                    <tr>
+                        <td colspan="3" align="center" style="padding:5px">
+                            <apex:commandButton value="{!$Label.Suchen}" onclick="checkValidator();return false;"/>
+                           <apex:actionFunction name="doSearchScript" action="{!doSearch}" reRender="frmSelectSearch" status="status"/>
+                             
+                            <apex:commandButton value="{!$Label.Suche_zurucksetzen}" action="{!resetAction}"  reRender="frmSelectSearch" status="status"/>
+                            <apex:commandButton value="{!$Label.Zuruck_zur_Opportunity}" onClick="window.location='/{!mcId}';return false;"/>
+                        </td> 
+                        
+                    </tr>
+                </tbody>
+                </table>
+            </apex:outputPanel>          
+             
+        </apex:facet>
+ 
+        <apex:actionFunction name="ssearch" action="{!doSearch}" reRender="frmSelectSearch" status="status"/>
+         
+        <apex:outputPanel layout="block" style="text-align:right" rendered="{!isResultNone}">
+            <div align="center"> 
+                <apex:commandButton value="{!$Label.Ubernahme_in_Merkliste}" action="{!viewBasket}" reRender="frmSelectSearch" status="status"/>
+                
+            </div>
+            <div align="center" class="bottomNavBottomPg">
+                <apex:outputPanel style="text-decoration: none" rendered="{!NOT(enabledfirst)}">
+                    <span class="firstoffPg" title="First"> &nbsp;&nbsp;&nbsp;</span> 
+                </apex:outputPanel>
+                <apex:commandLink style="text-decoration: none" action="{!firstPage}" rendered="{!enabledfirst}" reRender="frmSelectSearch" status="status"> 
+                    <span class="firstPg" title="First"> &nbsp;&nbsp;&nbsp;</span> 
+                </apex:commandLink>
+                &nbsp;&nbsp;
+                <apex:outputPanel style="font-size:9pt;text-align:0px;">
+                    <apex:outputPanel style="text-decoration: none" rendered="{!NOT(enabledpre)}" >
+                        <span class="prevoffPg" title="Previous"> &nbsp;&nbsp;&nbsp;</span>
+                        <!-- <span style="color:#A8A8A8;white-space:nowrap;" >{!$Label.Previous}</span>-->
+                    </apex:outputPanel> 
+                    <apex:commandLink style="text-decoration: none" action="{!prePage}" rendered="{!enabledpre}" reRender="frmSelectSearch" status="status">
+                        <span class="prevPg" title="Previous"> &nbsp;&nbsp;&nbsp;</span>
+                        <!-- <span style="white-space:nowrap;" >{!$Label.Previous}</span>-->
+                    </apex:commandLink>
+                    <apex:outputLabel value="{!$Label.Page} {!pageNo} {!$Label.of} {!totalPages}" style="border-style:solid;border-width:1px;padding-left:4px;padding-right:4px;background-color:#FFFFFF;" />
+                    <apex:outputPanel style="text-decoration: none" rendered="{!NOT(enablednext)}">
+                        <!-- <span style="color:#A8A8A8;white-space:nowrap;">{!$Label.Next}</span>-->
+                        <span class="nextoffPg"  title="Next" > &nbsp;&nbsp;&nbsp;</span>
+                    </apex:outputPanel>
+                    <apex:commandLink style="text-decoration: none" action="{!nextPage}" rendered="{!enablednext}" reRender="frmSelectSearch" status="status">
+                        <!-- <span style="white-space:nowrap;">{!$Label.Next}</span>-->
+                        <span class="nextPg"  title="Next" > &nbsp;&nbsp;&nbsp;</span>
+                    </apex:commandLink>
+                </apex:outputPanel>
+                &nbsp;&nbsp;
+                <apex:outputPanel style="text-decoration: none" rendered="{!NOT(enabledlast)}" >
+                    <span class="lastoffPg"  title="Last" > &nbsp;&nbsp;&nbsp;</span>
+                </apex:outputPanel>
+                <apex:commandLink style="text-decoration: none" action="{!lastPage}" rendered="{!enabledlast}" reRender="frmSelectSearch" status="status">
+                    <span class="lastPg" title="Last"> &nbsp;&nbsp;&nbsp;</span>
+                </apex:commandLink>
+            </div>
+             
+        </apex:outputPanel>
+        <br/>
+        <apex:pageBlockTable id="SearchList" value="{!lsrchRslt}" var="p2" rendered="{!isResultNone}">
+            
+            <apex:column >
+                <apex:facet name="header">
+                    {!$Label.Action}
+                </apex:facet>
+                <apex:inputCheckbox value="{!p2.isChecked}"/>
+                
+            </apex:column>
+    
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="{!$Label.Name_Beschreibung}" action="{!sortByName}" reRender="frmSelectSearch" status="status">
+                        <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnFldNo == '1' && Not(isNameAsc)}"/>
+                        <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnFldNo == '1' && isNameAsc}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                
+                <apex:commandLink value="{!p2.spec.Name}" onclick="window.open('/{!p2.spec.Id}','{!p2.spec.Id}','left=20,top=20,width=900,height=700,scrollbars=1,menubar=1,toolbar=1,resizable=0');return false;" title="Open New window"/>
+                
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="{!$Label.Werbetrager}" action="{!sortBySite}" reRender="frmSelectSearch" status="status">
+                        <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnFldNo == '2' && Not(isSiteAsc)}"/>
+                        <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnFldNo == '2' && isSiteAsc}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText value="{!IF(p2.spec.Site__r.Name==null,'&nbsp;',p2.spec.Site__r.Name)}" escape="false"/>
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="{!$Label.Platzierung}" action="{!sortByPlacement}" reRender="frmSelectSearch" status="status">
+                        <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnFldNo == '3' && Not(isPlcAsc)}"/>
+                        <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnFldNo == '3' && isPlcAsc}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText value="{!IF(p2.spec.Placement__r.Name==null,'&nbsp;',p2.spec.Placement__r.Name)}" escape="false"/>
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header"> 
+                    <apex:commandLink value="{!$Label.Werbeform_Leistung}" action="{!sortByAdverAchi}" reRender="frmSelectSearch" status="status">
+                        <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnFldNo == '4' && Not(isAdverAchiAsc)}"/>
+                        <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnFldNo == '4' && isAdverAchiAsc}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputText value="{!IF(p2.spec.Advertising_Medium__r.Name==null,'&nbsp;',p2.spec.Advertising_Medium__r.Name)}" escape="false"/>
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Creative Size" action="{!sortByBskAdverAdSlot}" reRender="frmSelectSearch" status="status">
+                        <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnFldNo == '5' && Not(isBskAdverAdSlotAsc)}"/>
+                        <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnFldNo == '5' && isBskAdverAdSlotAsc}"/>
+                    </apex:commandLink>
+                </apex:facet> 
+                  
+                <apex:outputText value="{!p2.spec.Advertising_Medium__r.Dart_AdSlotSize__c}" />
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="{!$Label.Preis}" action="{!sortByPrice}" reRender="frmSelectSearch" status="status">
+                        <apex:image value="/img/sort_desc_arrow.gif" rendered="{!sortOnFldNo == '6' && Not(isPrceAsc)}"/>
+                        <apex:image value="/img/sort_asc_arrow.gif" rendered="{!sortOnFldNo == '6' && isPrceAsc}"/>
+                    </apex:commandLink>
+                </apex:facet> 
+                  <apex:outputText value="£{0, number,###,###,###,##0.00}"><apex:param value="{!p2.tkp}"  /></apex:outputText>
+
+                
+            </apex:column>
+            
+        </apex:pageBlockTable>
+        <div align="center" style="color:#FF0000; font-size:12px;">{!searchMessage}</div> 
+        <br/>
+        <apex:outputPanel layout="block" style="text-align:right" rendered="{!isResultNone}">
+            <div align="center" class="bottomNavTopPg">
+                
+                <apex:outputPanel style="text-decoration: none" rendered="{!NOT(enabledfirst)}" >
+                    <span class="firstoffPg" title="First"> &nbsp;&nbsp;&nbsp;</span> 
+                </apex:outputPanel>
+                <apex:commandLink style="text-decoration: none;" action="{!firstPage}" rendered="{!enabledfirst}" reRender="frmSelectSearch" status="status">
+                    <span class="firstPg"  title="First"> &nbsp;&nbsp;&nbsp;</span> 
+                </apex:commandLink>
+                &nbsp;&nbsp;
+                <apex:outputPanel style="font-size:9pt;text-align:0px;">
+                    <apex:outputPanel style="text-decoration: none" rendered="{!NOT(enabledpre)}" >
+                        <span class="prevoffPg" title="Previous"> &nbsp;&nbsp;&nbsp;</span>
+                        <!-- <span style="color:#A8A8A8;white-space:nowrap;" >{!$Label.Previous}</span>-->
+                    </apex:outputPanel> 
+                    <apex:commandLink style="text-decoration: none" action="{!prePage}" rendered="{!enabledpre}" reRender="frmSelectSearch" status="status">
+                        <span class="prevPg" title="Previous" > &nbsp;&nbsp;&nbsp;</span>
+                        <!--  <span style="white-space:nowrap;" >{!$Label.Previous}</span>-->
+                    </apex:commandLink>
+                    <apex:outputLabel value="{!$Label.Page} {!pageNo} {!$Label.of} {!totalPages}" style="border-style:solid;border-width:1px;padding-left:4px;padding-right:4px;background-color:#FFFFFF;" />
+                    <apex:outputPanel style="text-decoration: none" rendered="{!NOT(enablednext)}">
+                        <!-- <span style="color:#A8A8A8;white-space:nowrap;">{!$Label.Next}</span>-->
+                        <span class="nextoffPg" title="Next"> &nbsp;&nbsp;&nbsp;</span>
+                    </apex:outputPanel>
+                    <apex:commandLink style="text-decoration: none" action="{!nextPage}" rendered="{!enablednext}" reRender="frmSelectSearch" status="status">
+                        <!--  <span style="white-space:nowrap;">{!$Label.Next}</span>-->
+                        <span class="nextPg" title="Next"> &nbsp;&nbsp;&nbsp;</span>
+                    </apex:commandLink>
+                </apex:outputPanel>
+                &nbsp;&nbsp;
+                <apex:outputPanel style="text-decoration: none" rendered="{!NOT(enabledlast)}" >
+                    <span class="lastoffPg" title="Last"> &nbsp;&nbsp;&nbsp;</span>
+                </apex:outputPanel>
+                <apex:commandLink style="text-decoration: none" action="{!lastPage}" rendered="{!enabledlast}" reRender="frmSelectSearch" status="status">
+                    <span class="lastPg" title="Last"> &nbsp;&nbsp;&nbsp;</span>
+                </apex:commandLink>
+                 
+                
+            </div>
+            <div align="center"> 
+                <apex:commandButton value="{!$Label.Ubernahme_in_Merkliste}" action="{!viewBasket}" reRender="frmSelectSearch" status="status"/>
+                
+            </div>
+        </apex:outputPanel>
+        <apex:actionStatus id="status">
+            <apex:facet name="start">
+                <c:Load BackColor="#efefef" borderColor="#336699" borderSize="3" height="50px" width="120px" Message="Loading..." messageStyle="color:darkred;font-size:11pt;font-weight:bold;" ImageUrl="/img/loading.gif"/>
+            </apex:facet>
+        </apex:actionStatus>
+        </apex:pageBlock>
+    
+        
+           
+    </apex:form>
+</apex:page>

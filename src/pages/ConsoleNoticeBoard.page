@@ -1,0 +1,73 @@
+<apex:page controller="ianb.ControllerNoticeBoard" showHeader="false">
+<apex:includeScript value="/support/console/25.0/integration.js"/>
+<meta http-equiv="refresh" content="300"/>
+<apex:stylesheet value="{!URLFOR($Resource.ianb__noticeboard_resources, 'noticeboard_resources/css/noticeboard_banner.css')}"/> 
+<script type="text/javascript" src="{!URLFOR($Resource.ianb__noticeboard_resources, 'noticeboard_resources/js/crawler.js')}">
+    /* Text and/or Image Crawler Script v1.5 (c)2009-2011 John Davenport Scheuer
+       as first seen in http://www.dynamicdrive.com/forums/
+       username: jscheuer1 - This Notice Must Remain for Legal Use
+       updated: 4/2011 for random order option, more (see below)
+    */
+</script>
+<apex:includeScript value="{!URLFOR($Resource.ianb__noticeboard_resources, 'noticeboard_resources/js/jquery-1.5.1.min.js')}"/>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        setDisplayedStatus();
+        sforce.console.setCustomConsoleComponentWindowVisible({!HasRecipients});
+        
+        marqueeInit({
+            uniqueid:"crawler",style:{
+                width:"100%",margin:"0 0 0 0","float":"left","font-family":'"Arial"',background:"transparent",border:"0px",height:"15px"
+                }
+                ,inc:8,mouse:"cursor driven",addDelay:10,moveatleast:2,neutral:150,savedirection:true,savewidth:true
+            });        
+    });
+
+    function gotoURL(myURL) {
+        sforce.console.openPrimaryTab(null, "/" + myURL, true, 
+        'Notifications', false, 'Notifications');
+    }
+    
+    function gotoNotifications(myURL) {
+        sforce.console.openPrimaryTab(null, "/" + myURL, true, 
+        'Notifications', false, 'Notifications');
+    }    
+
+</script>
+    
+<apex:form >
+    <apex:outputPanel id="divResult" />
+    <apex:actionFunction name="setDisplayedStatus" action="{!SetDisplayedStatus}" rerender="divResult" />
+</apex:form>
+<table id="banner-wrapper" cellspacing="0" cellpadding="0">
+    <tr>
+        <td id="banner-icon">
+            <a href="javascript:gotoURL('{!NotificationPrefix}?fcf=00B20000006cgBM')">Notifications:</a>
+            &nbsp;
+            <a href="javascript:gotoURL('{!NotificationPrefix}?fcf=00B20000006cgBM')">{!TEXT(PendingNotices)}</a></td>
+        <td id="crawler-container">
+            <apex:outputPanel rendered="{!HasRecipients}" layout="none">
+                <div class="marquee" id="crawler">
+                    <apex:repeat value="{!Recipients}" var="rec">
+                        <a href="javascript:gotoURL('{!rec.Id}')">
+                            <span class="notice-from">
+                                From:&nbsp;{!rec.From}&nbsp;
+                            </span>
+                            {!rec.Title}
+                            <span class="notice-deadline">
+                                {!rec.RequiredAction}
+                                {!IF(ISNULL(rec.FormattedRequiredActionDeadline), '', IF(ISNULL(rec.RequiredAction), rec.FormattedRequiredActionDeadline, ' ...by: ' + rec.FormattedRequiredActionDeadline))}
+                            </span>
+                        </a>
+                        <span class="bullet">• • •</span>
+                    </apex:repeat>
+                </div>  
+            </apex:outputPanel> 
+            <apex:outputPanel rendered="{!NOT(HasRecipients)}" layout="none">
+                You have no new or pending Notifications requiring attention
+            </apex:outputPanel>      
+        </td>
+    </tr>
+</table>
+</apex:page>

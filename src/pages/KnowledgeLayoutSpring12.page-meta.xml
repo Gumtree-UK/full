@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>17.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>&lt;a href=&quot;{!homeUrl}&quot; rel=&quot;nofollow&quot;&gt;Help home&lt;/a&gt;
+&lt;a href=&quot;{!ContactOptionsUrl}&quot; title=&quot;Contact us&quot; class=&quot;toplink&quot;&gt;Contact us&lt;/a&gt;   
+&lt;a href=&quot;{!safeUrl}&quot; title=&quot;Stay safe&quot; id=&quot;help-link&quot; class=&quot;toplink&quot;&gt;Stay safe&lt;/a&gt;</description>
+    <label>KnowledgeLayoutSpring12</label>
+</ApexPage>

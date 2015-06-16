@@ -1,0 +1,1349 @@
+<apex:page showHeader="false" controller="KnowledgeController" standardStylesheets="false" cache="true" expires="{!cacheMaxAge}" id="thePageLayout">
+    <html>
+        <head>  
+            <!--<link rel="shortcut icon" href="{!$Resource.FavouriteSiteIcon}" type="image/x-icon"/> -->
+            <title>
+                Support | Gumtree.com
+            </title> 
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+            <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+            <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+            <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet" type="text/css"/>
+            <script src="{!URLFOR($Resource.KnowLedgeResources, 'js/jquery.ui.touch-punch.js')}"></script>
+            
+            <link rel="stylesheet" href="{!URLFOR($Resource.KnowLedgeResources, 'venobox/venobox.css')}" type="text/css" media="screen" />
+            <link rel="stylesheet" href="{!URLFOR($Resource.KnowLedgeResources, 'datepicker/css/datepicker.css')}" type="text/css" media="screen" />
+            <script type="text/javascript" src="{!URLFOR($Resource.KnowLedgeResources, 'venobox/venobox.js')}"></script>
+            
+            <apex:stylesheet value="{!URLFOR($Resource.KnowLedgeResources, 'css/bootstrap.min.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.KnowLedgeResources, 'css/custom_bootrap.css')}" />
+            <script src="{!URLFOR($Resource.KnowLedgeResources, 'js/bootstrap.min.js')}"></script>
+            <script src="{!URLFOR($Resource.KnowLedgeResources, 'js/bootstrap-waitingfor.js')}"></script>
+            <script src="{!URLFOR($Resource.KnowLedgeResources, 'js/jquery.popupoverlay.js')}"></script>
+            <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+            <script src="{!URLFOR($Resource.KnowLedgeResources, 'datepicker/js/bootstrap-datepicker.js')}"></script>
+            
+            <apex:stylesheet value="{!URLFOR($Resource.KnowLedgeResources, 'helperDialog/helperDialog.css')}" />
+            <script src="{!URLFOR($Resource.KnowLedgeResources, 'helperDialog/helperDialog.js')}"></script>
+            <apex:stylesheet value="{!URLFOR($Resource.KnowLedgeResources, 'css/font-awesome.min.css')}" />
+            <!--- CSS now in ZIP file --->
+
+              <apex:stylesheet value="{!URLFOR($Resource.GumtreeHelp, 'css_global.css')}" />
+              <apex:stylesheet value="{!URLFOR($Resource.GumtreeHelp, 'css_layout.css')}" />
+              <apex:stylesheet value="{!URLFOR($Resource.GumtreeHelp, 'css_knowledge.css')}" />
+            <!---- ---->
+            <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+            <apex:variable var="currentCategoryVar" value="{!currentCategory}" />
+            <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+            <apex:variable var="currentKeywordVar" value="{!currentKeyword}" />
+            <apex:variable var="keywordParameterNameVar" value="{!keywordParameterName}" />
+            <apex:variable var="linkUrlVar" value="{!productUrl}" />
+            <apex:variable var="catLev1" value="" />
+            <apex:variable var="catLev2" value="" />
+            <apex:variable var="rootCat" value="" />
+            
+            <apex:variable var="firstLevel" value="" />
+            <apex:variable var="secondLevel" value="" />
+            
+            <meta name="google-site-verification" content="LHfANfJBGb1mBu8Nju_-I_tKNnz54pyWCf0u3UFE87E" />
+            <meta name="msvalidate.01" content="65649C695C59AC887DC49585DA52D1EC" />
+            <meta charset="UTF-8"/>
+            <meta name="author" content="Gumtree.com"/>
+            <title>Support - {!PageTitle}</title>
+            <!--[if lt IE 9]>
+             <link rel="stylesheet" type="text/css" media="all" href="{!URLFOR($Resource.GumtreeHelp, 'css_ie.css')}"/>
+            <![endif]-->
+            
+            <!--[if lt IE 9]>
+            <script type="text/javascript" src="{!$Resource.js_html5shiv}"></script>
+            <![endif]-->
+            
+            
+            <style>
+                body{
+                    background: #FFF !important;
+                } 
+                #wrapper{
+                    margin:0 auto;
+                    width:1180px; 
+                }
+                #head{
+                    position: relative;
+                    float: left;
+                    min-height: 51px;
+                    margin-top: 15px;
+                    width: 100%;
+                    border-radius: 0.125em;
+                    background: linear-gradient(to bottom, #95C858 0%, #7BB74C 50%, #6BAE48 100%) repeat scroll 0% 0% transparent;
+                }               
+                .panel-left{
+                    float: left;
+                }
+                .panel-left h3{
+                    margin:0;
+                }
+                .panel-left h3 span{
+                    background: #93C656;
+                    padding: 0px 5px;
+                    font-size: 20px;
+                    border-radius: 3px;
+                    color: #FFF;
+                    margin-left: 8px;
+                }
+                
+                .panel-right{
+                    float: left;
+                    width: 100%;
+                }
+                .panel-right span{
+                    color: rgb(153, 153, 153);
+                    font-size: 18px;
+                }
+                .panel-right select{
+                    margin: 0px 0 0 35px;
+                }
+                
+                #wrap-title{
+                    float: left;
+                    width: 100%;
+                    text-align: right;
+                }
+                #wrap-content{
+                    width:100%;
+                    background-color:#fff;
+                    padding: 0;
+                    float: left;
+                }
+                #mobile-navigation{
+                    background-color: #fff;
+                    margin-bottom: 20px;
+                    height: auto !important;
+                }
+                #nav{
+                    display: inline-block;
+                    height: auto;
+                    background: #E6E7E8;
+                }
+                
+                #content{
+                    margin:0 auto;
+                    background:#FFF;
+                    width: 100%;
+                    float: left;
+                }
+                
+                #logo{
+                    left: 15px;
+                    position: absolute;
+                    top: -57px;
+                    width: 114px;
+                }
+                
+                #logo-for-business{
+                    top: 10px;
+                    position: relative;
+                    padding-left: 8px;
+                }
+                #nav > ul{
+                    padding:0px;
+                    margin:0px;
+                    list-style-type: none;
+                    float: left;
+                    width: 100%;
+                }
+                
+                #nav .nav-item{
+                    background-position: center 10px;
+                    background-size: 40px auto;
+                    border-radius: 5px;
+                    color: #939598;
+                    cursor: pointer;
+                    float: left;
+                    font-size: 14px;
+                    height: 61px;
+                    margin-top: -4px;;
+                    padding: 15px;
+                    position: relative;
+                    width: 12%;
+                    margin-left: 0.5%;
+                }
+                #nav .nav-item:HOVER{
+                    background-color: #fff;
+                }
+                .nav-item div{
+                    position: absolute;
+                    bottom: 3px;
+                    text-align: center;
+                    width: 100%;
+                    left: 0px;
+                }
+                
+                #nav .nav-item:hover,#nav .active{
+                    color: #333333;   
+                    background-color: #fff;          
+                }
+                .menuTopIcon{
+                    display: block;
+                    float: none;
+                    height: 30px;
+                    margin: 0 auto;
+                    position: relative !important;
+                    width: 40px !important;
+                }
+                
+                .top-menu{
+                    float: left;
+                    width: 100%;
+                }
+                
+                .tmp-search{
+                    width: 200px;
+                    float: left;
+                    margin-top: 8px;
+                }
+                .hideActive{
+                    display: none;
+                }
+                .tmp-btn{                 
+                    margin-top: 9px;             
+                }
+                
+                li.dropdown ul li{
+                    color: #333333;
+                    font-size: 15px;
+                    padding: 5px 5px 5px 15px
+                }
+                .navbar-default .open{
+                    background-image: none;
+                }
+                li.post-ad{
+                    border: 1px solid #E06509;
+                    background: linear-gradient(to bottom, #FFBD48 0%, #DE5B23 78%) repeat scroll 0% 0% transparent;
+                    height: 36px;
+                    border-radius: 5px;
+                    margin-top: -2px;
+                }
+                li.post-ad a{
+                    color:#fff;                 
+                }
+                
+                .clear-margin{
+                    margin:0px;
+                }
+                /*Edit menu top right*/
+                .spacingTopMini{
+                    margin-top: 10px;
+                }
+                .navbar-default{
+                    background-color: transparent;
+                    border: none;
+                }
+                .navbar-default .navbar-nav > li > a {
+                    color: #fff;
+                }
+                
+                .navbar-default .navbar-nav > li > a:hover{
+                    color: #006B38;
+                }
+                .panel-right span{
+                    color: #fff;
+                }
+                
+                .panel-right a:hover span {
+                    color: #333333;
+                }
+                .navbar-default .navbar-toggle .icon-bar{
+                    background-color: #fff;
+                    color: #fff;
+                    height: 4px;
+                    width: 30px;
+                }
+                
+                .navbar-default .navbar-toggle {
+                    border-color: #fff;
+                    border: 0;
+                }
+                .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus{
+                    background-color: transparent;
+                }
+                .navbar{
+                    margin-bottom: 0;
+                }
+                .navbar-collapse{
+                    border-top: 0;
+                    box-shadow: none;
+                }
+                .navCategory .navbar-nav{
+                    width: 100%;
+                }
+                .navCategory .navbar-header{
+                    background-color: #fff;
+                    margin-top: 15px;
+                }
+                .navCategory .navbar-default .navbar-toggle .icon-bar{
+                    background-color: #888;
+                }
+                .panelTitle{
+                    float: left;
+                } 
+                .panelTitle h3{
+                    margin-top: 18px;
+                    padding-left: 15px;
+                } 
+                .panelSelect{
+                    float: right;
+                    margin-top: 15px;
+                    margin-right: 15px;
+                    margin-left: 15px;
+                } 
+                .panelStatus{
+                    padding-left: 15px;
+                    margin-top: 22px;
+                }
+                .selectedIcon{
+                    float: left;
+                    margin-left: 10px;
+                    margin-top: 5px;
+                    width: 50px;
+                }
+                .search-box{
+                    float: left;
+                }
+                .navbar-nav > li > a{
+                    padding-left: 5px;
+                    padding-right: 5px;
+                 }
+                
+                .gumtree-menu-ul-nav{
+                    padding: 0;
+                    list-style: none;
+                    background-color: #eaeaea;
+                    width: 160px;
+                    margin: 0;
+                    top: 0px;
+                    position: relative;
+                    border: 1px solid #999;
+                }
+                 
+                .gumtree-menu-ul-nav li a{
+                    font-weight: 400;
+                    position: relative;
+                    padding: 10px 10px;
+                    background-color: #eaeaea;
+                    display: block;
+                    border-bottom: solid 1px #fff;
+                    -webkit-box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                    box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                    color: #666;
+                    font-family: "Source Sans Pro",Arial,sans-serif;
+                    font-size: 12px;
+                    line-height: 1.4;
+                    padding-left: 10px !important;
+                    padding-right: 10px !important;
+                }
+                .gumtree-menu-ul-nav li a:hover{
+                    background-color: #e5e5e5;
+                    text-decoration: none;
+                    color: #666 !important;
+                }
+                
+                .gumtree-menu-ul-nav li a:hover span{
+                    color: #f4731e !important;
+                }
+                .gumtree-menu-ul-nav li a span{
+                    padding-right: 10px;
+                    font-size: 16px;
+                    top: 3px;
+                    color: #666;
+                }
+                .gumtree-menu-ul-nav li{
+                    display: list-item;
+                    text-align: -webkit-match-parent;
+                }
+                
+                .module-menu-ul-nav{
+                    padding: 0;
+                    list-style: none;
+                    background-color: #eaeaea;
+                    width: 100%;
+                    margin: 0;
+                    top: 0px;
+                    position: relative;
+                    border-width: 1px 2px 2px 2px;
+                    border-style: solid;
+                    border-color: #ddd;
+                }
+                
+                .module-menu-ul-nav li a{
+                    font-weight: 400;
+                    position: relative;
+                    padding: 10px 10px;
+                    background-color: #F2F2F2;
+                    display: block;
+                    border-bottom: solid 1px #fff;
+                    -webkit-box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                    box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                    color: #666;
+                    font-family: "Source Sans Pro",Arial,sans-serif;
+                    font-size: 15px;
+                    line-height: 1.4;
+                    padding-left: 10px !important;
+                    padding-right: 10px !important;
+                }
+                
+                .module-menu-ul-nav li a:hover{
+                    background-color: #e5e5e5;
+                    text-decoration: none;
+                }
+                
+                .module-menu-ul-nav li a:hover span{
+                    color: #f4731e;
+                }
+                
+                .module-menu-ul-nav li a span{
+                    font-size: 16px;
+                    top: 3px;
+                    color: #666;
+                }
+                .module-menu-ul-nav li{
+                    display: list-item;
+                    text-align: -webkit-match-parent;
+                }
+                a#linkMyGumtree:after {
+                    font-family: 'FontAwesome';  
+                    content: "\f0d8"; 
+                    float: right;  
+                    padding-left: 10px;
+                    font-size: 16px;
+                    padding-top: 1px;
+                }
+                a#linkMyGumtree.collapsed:after {
+                    content: "\f0d7"; 
+                }
+                .checkTextLine{
+                    text-align: justify;
+                }
+                
+                @media (max-width: 767px){
+                    .panelTitle{
+                        
+                    } 
+                    .hideActive{
+                        display: inherit;
+                        
+                    }
+                    #wrap-title{
+                        text-align: left;
+                    }
+                    .panelSelect{
+                        margin-left: 0;
+                    } 
+                    .panelStatus{
+                        margin-top: 0;
+                        width: 100%;
+                        float: left;
+                    }
+                    #nav .nav-item{
+                        width: 25%;
+                    }
+                    .header-green{
+                        background-color: #93C656;
+                    }
+                    .nav>li {
+                        float: left;
+                        
+                    }
+                    .navTopBtn{
+                        margin-top: 8px;
+                    }
+                    .cus-nav-divider{
+                        border-left: 1px solid #54b134;
+                        padding-left:10px;
+                        height: 100%;
+                    }
+                     
+                    .cus-navbar-collapse{
+                        border-top: 1px solid #54b134 !important;
+                    }
+                    
+                    .menu-ul-nav{
+                        padding: 0;
+                        list-style: none;
+                        background-color: #eaeaea;
+                        max-width: 260px;
+                        margin: 0;
+                        height: 100%;
+                        width: 260px !important;
+                    }
+                    .menu-ul-nav li a{
+                        font-weight: 500;
+                        position: relative;
+                        padding: 10px 20px;
+                        background-color: #eaeaea;
+                        display: block;
+                        border-bottom: solid 1px #fff;
+                        -webkit-box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                        box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                        color: #666;
+                        font-family: "Source Sans Pro",Arial,sans-serif;
+                        font-size: 14px;
+                        line-height: 1.4;
+                        vertical-align: top;
+                    }
+                    .menu-ul-nav li a:hover{
+                        background-color: #e5e5e5;
+                        text-decoration: underline;
+                    }
+                    
+                    .menu-ul-nav li a:hover span{
+                        color: #f4731e;
+                    }
+                    .menu-ul-nav li a span{
+                        padding-right: 10px;
+                        font-size: 20px;
+                        top: 3px;
+                    }
+                    .menu-ul-nav li{
+                        display: list-item;
+                        text-align: -webkit-match-parent;
+                    }
+                    a.navbar-brand{
+                        padding-top: 3px !important;
+                        display: inline-block !important;
+                        width: 48px;
+                        height: 48px;
+                        text-align: center;
+                        padding-left: 4px !important;
+                        padding-right: 4px !important;
+                    }
+                     
+                    
+                    .side-menu-title{
+                        margin: 6px 0 0;
+                        padding-bottom: 7px;
+                        padding-left: 20px;
+                        font-size: 13px;
+                        border-bottom: solid 1px #fff;
+                        -webkit-box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                        box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                        color: #666;
+                        font-weight: 600;
+                    }
+                    .navbar-nav {
+                        margin: 0 0 7.5px;
+                    }
+                    .alwaysAlignJustify{
+                        text-align: justify !important;
+                    }
+                }
+                @media (max-width: 480px){
+                    .panelTitle{
+                        
+                    } 
+                    .panelSelect{
+                        
+                    } 
+                    .panelStatus{
+                        
+                    }
+                    #nav .nav-item{
+                        width: 50%;
+                    }
+                }
+                @media (max-width: 479px){
+                    .panelTitle{
+                        
+                    } 
+                    .panelSelect{
+                        margin-left: 15px;
+                    } 
+                    .panelStatus{
+                        margin-top: 15px;
+                    }
+                }
+                
+                #slide-expand-menu_background {
+                  transition: all 0.3s 0.3s;
+                }
+                #slide-expand-menu,
+                #slide-expand-menu_wrapper {
+                  transition: all 0.3s linear;
+                }
+                #slide-expand-menu {
+                  transform: translateX(40%) translateY(0);
+                }
+                .popup_visible #slide-expand-menu {
+                  transform: translateX(0) translateY(0);
+                }
+                #wrap-footer{
+                    width: 100%;
+                    padding: 0;
+                    margin: 0;
+                    margin-top: 15px;
+                }
+                
+                .footer-divider{
+                    width: 100%;
+                    height: 1px;
+                    background-color: #ccc;
+                    margin: 0;
+                    margin-top: 0px;
+                }
+                .footer-link{
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+                
+                .footer-link li{
+                    width: auto;
+                    border: 0;
+                    display: inline-block;
+                    margin-top: 6px;
+                    margin-right: 6px;
+                    padding: 0 6px 0 0;
+                    border-left: 0;
+                    border-right: 1px solid #999;
+                }
+                
+                .footer-link li a{
+                    padding: 0;
+                    color:#2A5DB0 !important;
+                }
+                .footer-link li a:hover{
+                    text-decoration:underline;
+                    background-color:transparent;
+                    //color:#428bca;
+                    color:#2A5DB0;
+                }
+                .footer-link li a h5{
+                    margin-top: 3px;
+                    margin-bottom: 3px;
+                }
+                .footer-link li.end{
+                    border-right: 0;
+                }
+                .footer-follow h3{
+                    margin-top: 10px;
+                }
+                
+                .remove-padding-left{
+                    padding-left: 0;
+                }
+                .accountTitle{
+                    float: left; 
+                    margin-top: 0; 
+                    padding: 10px 15px 10px 189px !important; 
+                    position: relative; 
+                    width: 100%;
+                }
+                .safety .accountTitle{
+                    padding-left: 184px !important;
+                }
+                .site .accountTitle{
+                    padding-left: 184px !important;
+                }
+                .absoluteMe{
+                    left: 15px; 
+                    position: absolute;
+                }
+                 
+                 
+                @media (min-width: 768px) and (max-width: 1023px){
+                    .footer-link li{
+                        width: 20%;
+                        border-right: 1px solid #d6d6d6;
+                        border-left: 0;
+                        border-bottom: 1px solid #d6d6d6;
+                        margin: 0;
+                        text-align: center;
+                        padding-top: 10px;
+                        padding-bottom: 10px;
+                    }
+                    .footer-link{
+                        border-left: 0;
+                    }
+                    .footer-follow p{
+                        text-align: center;
+                    }   
+                    .footer-follow li.no-border-right-768{
+                        border-right: 0 !important;
+                    }
+                    .footer-container{
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                    }
+                }
+                @media (max-width: 767px){
+                    .footer-link li{
+                        width: 50%;
+                        border-right: 1px solid #d6d6d6;
+                        border-left: 0;
+                        border-bottom: 1px solid #d6d6d6;
+                        margin: 0;
+                        text-align: center;
+                        padding-top: 10px;
+                        padding-bottom: 10px;
+                    }
+                    .footer-follow p{
+                        text-align: center;
+                        padding-right: 10px;
+                        padding-left: 10px;
+                    }   
+                    .footer-follow h3{
+                        margin-left: 10px;
+                    }
+                    .footer-link {
+                        border-left: 0;
+                    }
+                    .footer-follow li.no-border-right-767{
+                        border-right: 0 !important;
+                    }
+                    .footer-container{
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                    }
+                    .remove-padding-left{
+                        padding-left: 0;
+                    }
+                    .accountTitle{
+                        padding-left: 15px !important;
+                    }
+                    .safety .accountTitle{
+                        padding-left: 15px !important;
+                    }
+                    .site .accountTitle{
+                        padding-left: 15px !important;
+                    }
+                    .absoluteMe{
+                        left: 0;
+                        position: inherit;
+                    }
+                }
+                
+                .desktop-head-divider{
+                    border-left: 1px solid #54b134;
+                    height: 30px;
+                    top: 10px;
+                }
+                ul.desktop-nav li a{
+                    padding-left:20px;
+                    padding-right: 20px;
+                }
+                ul.desktop-nav li a:hover, ul.desktop-nav li a:hover span{
+                    color: #006B38 ;
+                }
+                ul.desktop-nav li a span{
+                    font-size: inherit;
+                }
+                
+                
+                .shortname{
+                    display: none;
+                }
+                .fullname{
+                    display: inline;
+                }
+                #desktop-post-ad{
+                    margin-top: 8px;
+                }
+                .actionOpenMobile{
+                    -webkit-border-radius: 5px;    
+                      border-radius: 5px; 
+                      -moz-border-radius:5px;
+                      -khtml-border-radius:5px;
+                }
+                .deactionOpenMobile{
+                    -webkit-border-radius: 5px 5px 0 0;    
+                      border-radius: 5px 5px 0 0; 
+                      -moz-border-radius:5px 5px 0 0;
+                      -khtml-border-radius:5px 5px 0 0;
+                }
+                
+                .cropFullName{
+                    float: left;
+                    overflow: hidden;
+                    text-align: right;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    width: 210px;
+                }
+                body{
+                    padding: 0;
+                    font-size: 15px;
+                    font-family: "SourceSansPro Regular";
+                }
+                .container {
+                    max-width: 1350px;
+                }
+                #logo {
+                    border: medium none;
+                    left: 15px;
+                    position: absolute;
+                    top: -57px;
+                    width: 114px;
+                    background: none;
+                    height: auto;
+                    margin: 0;
+                }
+                .row{
+                    overflow: inherit;
+                }
+                #wrap-content{
+                    padding-bottom: 10px;
+                }
+                .spacingBottomMini{
+                    margin-bottom: 10px;
+                }
+                #mad-container{
+                    margin-top: 0 !important;
+                    float: left;
+                    width: 100%;
+                }
+                .search input.fld{
+                    height: auto;
+                }
+                .manage-ads-nav li a:HOVER{
+                    text-decoration: none;
+                }
+                
+                @media (max-width: 1150px){
+                    .fullname{
+                        display: none;
+                    }
+                    .shortname{
+                        display: inline;
+                    }
+                    
+                }
+                @media (max-width: 1060px){
+                    .addBorderBottom{
+                        border-bottom: 10px solid #e5e5e5 !important;
+                    }
+                    .safety{
+                        margin-bottom: 15px;
+                        float: left;
+                        width: 100%;
+                    }
+                    .site{
+                        margin-bottom: 15px;
+                        float: left;
+                        width: 100%;
+                    }
+                }
+                @media (max-width: 950px){
+                    ul.desktop-nav li a{
+                        padding-left:5px;
+                        padding-right: 5px;
+                    }
+                    #desktop-post-ad{
+                        padding-left: 5px;
+                        padding-right: 5px;
+                    }
+                    #desktop-search-box{
+                        width: 176px;
+                    }
+                }
+                @media (max-width: 800px){
+                    ul.desktop-nav li a{
+                        font-size: 13px;
+                    }
+                }
+                @media (max-width: 320px){
+                    ul.social-media-buttons li{
+                        width: auto;
+                        max-width: 70px;
+                    }
+                }
+                ul.social-media-buttons{ 
+                    list-style: none;
+                    list-style-image: none;
+                    padding: 0;
+                    float: left;
+                }
+                ul.social-media-buttons li{
+                    width: 68px;
+                    height: 28px;
+                    background-color: #ddd;
+                    border-radius: 5px;
+                    margin-right: 6px;
+                    padding: 4px 6px;
+                    font-size: 12px;
+                    position: relative;
+                    float: left;
+                    text-align: center;
+                    cursor: pointer; 
+                }
+                ul.social-media-buttons li:last-child{
+                    margin-right: 0;
+                }
+                ul.social-media-buttons li span{
+                    margin-right: 3px;
+                    font-size: 17px;
+                    top: 2px;
+                    position: relative;
+                }
+                .icn-facebook{
+                    color: #37589a;
+                }
+                .icn-twitter{
+                    color: #38a8e0;
+                }
+                .icn-google-plus{
+                    color: #da4a38;
+                }
+                .icn-pinterest{
+                    color: #c91618;
+                }
+                .alert{
+                    float: left;
+                    padding: 0;
+                    border: none;
+                }
+                .accountTitle h1{
+                    border: medium none !important;
+                    font-size: 18px !important;
+                    margin-bottom: 0 !important;
+                    margin-left: 0 !important;
+                    margin-right: 0 !important;
+                    margin-top: 3px;
+                    padding: 0 0 0 30px !important;
+                    position: relative;
+                    font-weight: bold !important;
+                }
+                .safety div:first-child{
+                    background-color: inherit;
+                    padding: 0;
+                }
+                .site div:first-child{
+                    background-color: inherit;
+                    padding: 0;
+                }
+                .site h1{
+                    color: #ff0000 !important;
+                }
+                .site .signal{
+                    color: #ff0000;
+                    font-size: 26px;
+                    left: 0;
+                    margin-right: 10px;
+                    position: absolute;
+                    top: -5px;
+                }
+                .safety .signal{
+                    margin-right: 10px;
+                    font-size: 26px;
+                    left: 0;
+                    margin-right: 10px;
+                    position: absolute;
+                    top: -5px;
+                }
+            </style>
+        
+        <!-- Start: GPT Async -->
+            <script type='text/javascript'>
+            (function() {
+                var useSSL = 'https:' == document.location.protocol;
+                var src = (useSSL ? 'https:' : 'http:') +
+                '//www.googletagservices.com/tag/js/gpt.js';
+                document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>');
+            })();
+        </script>
+
+        <script type='text/javascript'>
+            googletag.defineSlot('/5144/gtr.help', [728, 90], 'div-gpt-ad-1427962895728-0').addService(googletag.pubads());
+            googletag.pubads().enableSyncRendering();
+            googletag.enableServices();
+        </script>
+
+        <!-- End: GPT -->
+        
+        <script>
+              var dataLayer = [{"p": {"t": "GumtreeHelp","lng": "EN-GB", "pl": "SFDC", "v": "2015-04-27 v1.00"},   
+                                "d": {"ua": "{!UA}" }
+                              }];
+    
+    <!-- GTM Pt1 -->
+                     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                     j.async=true;
+                     j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;
+                     f.parentNode.insertBefore(j,f);
+                     })(window,document,'script','dataLayer','GTM-FF7Z');
+              </script>
+     <!-- End GTM Pt1 -->
+
+      </head>    
+        
+        <body>
+        
+        <!-- GTM Pt2 -->
+            <noscript>
+                <iframe src="//www.googletagmanager.com/ns.html?id=GTM-FF7Z" height="0" width="0" style="display:none;visibility:hidden">
+                </iframe>
+            </noscript>
+        <!-- End GTM Pt2 -->
+            
+            <knowledge:categoryList categoryGroup="{!categoryGroupNameVar}" rootCategory="{!rootCategoryName}"  ancestorsOf="{!currentCategoryVar}" categoryVar="cat" level="-1">
+                <apex:variable var="rootCat" value="{!IF(cat.depth=1, cat.name,rootCat)}" />
+                <apex:variable var="catLev1" value="{!IF(cat.depth=2, cat.name,catLev1)}" />
+                <apex:variable var="catLev2" value="{!IF(cat.depth=3, cat.name,catLev2)}" />    
+            </knowledge:categoryList>
+            <knowledge:categoryList categoryGroup="{!categoryGroupNameVar}" rootCategory="{!rootCat}" categoryVar="category" level="-1">
+                <apex:variable var="firstLevel" value="{!IF(category.depth=1 && firstLevel='',  category.name,firstLevel)}" />
+                     <knowledge:categoryList categoryGroup="{!categoryGroupNameVar}" rootCategory="{!category.name}" categoryVar="subcategory" level="2">
+                       <apex:variable var="secondLevel" value="{!IF(subcategory.depth=1 && secondLevel='',  subcategory.name,secondLevel)}" />
+                  </knowledge:categoryList>
+            </knowledge:categoryList>
+            <div class="container">
+                <apex:variable var="pageParam" value=""/>
+                <!-- desktop header -->
+                <div class="row clear-margin hidden-xs">
+                 
+                    <!-- Beginning Async AdSlot 1 for Ad unit manage-ads-business  ### size: [[728,90],[468,60]] -->
+                    <!-- Adslot's refresh function: googletag.pubads().refresh([gptadslots[1]]) -->
+                    <div style="margin-top:20px; height: 90px; width: 100%; display: block !important;">
+                       <div id='div-gpt-ad-543961393633539649-1' align="center" style="margin-top:20px;">
+                          <script type='text/javascript'>
+                              googletag.cmd.push(function() { googletag.display('div-gpt-ad-1427962895728-0'); });
+                          </script>
+                       </div>
+
+                    </div>
+                    <!-- End AdSlot 1 -->
+                              
+                    <div id="head">
+                                            
+                        <a href="http://www.gumtree.com">
+                            <img src="{!URLFOR($Resource.KnowLedgeResources, 'header-icons/gfb-dtlogo.png')}" alt="logo" id="logo"/> 
+                        </a>
+                        <div class="panel-right" style="padding: 0px;">
+                            <div class="top-menu">
+                                <nav class="navbar navbar-default">
+                                  <div class="container-fluid">
+                                    
+                                    <!-- Brand and toggle get grouped for better mobile display -->
+                                    <div class="navbar-header">
+                                      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                      </button>
+                                    </div>
+                                
+                                    <!-- Collect the nav links, forms, and other content for toggling -->
+                                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                      <ul class="nav navbar-nav" style="margin-left:110px;">
+                                        <li>
+                                            <div class="search-box">
+                                                <input type="text" class="tmp-search" placeholder="Search in United Kingdom" id="desktop-search-box"/>
+                                                <button class="btnOrange btnSearch tmp-btn">
+                                                    <i class="fa fa-search"></i>
+                                                </button>                                               
+                                            </div>
+                                        </li>
+                                      </ul>
+                                      <ul class="nav navbar-nav navbar-right desktop-nav">
+                                         
+                                        <!-- <li><a href="https://my.gumtree.com/logout"><span class="fullname">logout</span><span class="shortname">Logout</span></a></li> -->
+                                        <!-- <li class="desktop-head-divider"></li> -->
+                                        <li>
+                                          <a id="linkMyGumtree" href="#myGumtree" class="collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="myGumtree">My Gumtree </a>
+                                          <div id="myGumtree" style="position: absolute; z-index: 9999;" class="collapse">
+                                          <ul class="gumtree-menu-ul-nav">
+                                            <li><a href="http://www.gumtree.com/my-account/favourites"><span class="glyphicon glyphicon-star"></span> Favourites</a></li>
+                                            <li><a href="http://www.gumtree.com/my-account/saved-searches"><span class="glyphicon glyphicon-floppy-disk"></span> Saved searches</a></li>
+                                            <li><a href="https://my.gumtree.com/manage/ads"><span class="glyphicon glyphicon-folder-open"></span> Manage my ads</a></li>
+                                            <li><a href="https://my.gumtree.com/manage/details/update"><span class="glyphicon glyphicon-user"></span> My details</a></li>
+                                          </ul>
+                                          </div>
+                                        </li>
+                                        <li class="desktop-head-divider"></li>
+                                        <li><a href="http://help.gumtree.com/knowledgeHome">Help &amp; Contact</a></li>
+                                        <button class="btnOrange setLeft spacingTopMini btnPostAd" id="desktop-post-ad"><span class="glyphicon glyphicon-plus-sign" style="top: 4px;padding-right: 5px;"></span> Post an ad</button>
+                                        <!-- <li><a href="https://my.gumtree.com/postad"><button class="btnOrange setLeft spacingTopMini">Post an ad</button></a></li> -->
+                                      </ul>
+                                    </div>
+                                  </div> 
+                                </nav>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+                <!-- end desktop header -->    
+                            
+                <!-- mobile header -->
+                <div class="visible-xs">  
+                    <nav class="navbar navbar-default header-green" style="min-height:20px">
+                      <div class="container-fluid" >
+                        <div class="navbar-header">
+                            <ul class="nav navbar-nav" style="float:left;margin-bottom:0;height:47px;">
+                                <li>
+                                    <img src="{!URLFOR($Resource.KnowLedgeResources, 'header-icons/mobile-logo.png')}" alt="logo" width="47px"/>
+                                </li>
+                                <li>
+                                    <button style="margin-top: 6px;" class="btnOrange setLeft spacingTopMini btnPostAd" id="desktop-post-ad"><span class="glyphicon glyphicon-plus-sign" style="top: 4px;padding-right: 5px;"></span> Post an ad</button>
+                                </li>
+                            </ul>
+                            <ul class="nav navbar-nav" style="float:right;margin-bottom:0;height:47px;">
+                                <li class="cus-nav-divider" style="padding-left:0; padding-right:0;">
+                                    <button id="btnSearchToggle" type="button" class="navbar-toggle collapsed" data-toggle="collapse" style="margin-right: 0px; margin-bottom: 0px;margin-top:3px;" data-target="#search-navbar-collapse">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="glyphicon glyphicon-search" style="color: white; font-size: 25px;"></span>
+                                      </button>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="cus-nav-divider" style="padding-left:0; padding-right:0;">
+                                    <button id="menuSlider" type="button" class="navbar-toggle collapsed" data-toggle="collapse" style="margin-right: 0px;margin-top:6px;" >
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                      </button>
+                                </li>
+                            </ul>
+                        </div> 
+                        
+                        <div class="collapse navbar-collapse cus-navbar-collapse" id="search-navbar-collapse" style="background-color: #54b134;">
+                            <div class="search-box" style="padding-bottom: 10px;width: 100%;padding-right: 40px;position: relative;">
+                                <input type="text" class="tmp-search" placeholder="Search in London" style="width: 100%;"/>
+                                <button class="btnOrange btnSearch tmp-btn" style="position: absolute; right: 0;">
+                                    <i class="fa fa-search"></i>
+                                </button>                                
+                            </div>
+                        </div>
+                        
+                        
+                          
+                      </div> 
+                      
+                    </nav>
+                </div>
+                <!-- End mobile header -->
+                <div id="main" role="main" class="content-block">
+                    <div id="mad-header">
+                        <h1 id="primary-h1">Gumtree Support</h1>
+                        <div id="account-info" class="">
+                        </div>
+                    </div>
+                  
+                <apex:outputPanel id="msgSysPanel" rendered="{!msgErr.size!=0}">
+                    <apex:repeat value="{!msgErr}" var="msg">
+                         <div class="{!If(msg.Message_Type__c == 'Safety Alert','safety' ,'site' )}">
+                                <div class="col-md-12 addBorderBottom" style="width: 100%; float: left; background-color: inherit; border: 10px solid #e5e5e5; border-bottom: 0;">
+                                    <div class="accountTitle">
+                                        <div class="absoluteMe col-md-5 col-xs-12 col-sm-5" style="padding-left: 0;">
+                                            <h1 style="color: #009BDF;">
+                                                <i class="fa fa-rss signal"></i><apex:outputText value="{!If(msg.Message_Type__c == 'Safety Alert','Safety Alert !' ,'Site Alert !' )}" escape="false" />
+                                            </h1>
+                                        </div>
+                                        <div class="col-md-12 col-xs-12 col-sm-12 padding-zero remove-padding-right remove-padding-left">
+                                            <span class="checkTextLine alwaysAlignJustify" style="margin-top: 3px; font-size: 15px; display: block; line-height: 18px;">  
+                                                <apex:outputText value="{!msg.MessageText__c}" escape="false" />
+                                            </span>
+                                        </div>
+                                     </div>
+                                </div>
+                        </div>
+                    </apex:repeat>
+                    <script>
+                        $('.checkTextLine').find('br').replaceWith(' ');
+                        /*function checkIfBreakLine(){
+                            $('.checkTextLine').each(function(){
+                                if($(this).height() > 18){
+                                    $(this).css('text-align','justify');
+                                }else{
+                                    $(this).css('text-align','right');
+                                } 
+                            });
+                        } 
+                        checkIfBreakLine();
+                        window.onresize = checkIfBreakLine;
+                        $(window).on("orientationchange",function(event){
+                            checkIfBreakLine();
+                        });*/
+                    </script>
+                </apex:outputPanel>      
+                <div id="wrap-content">
+                    
+                    <div>
+                        <select id="mobile-navigation">
+                            <option value=""></option>
+                            <option class="{!IF(rootCat=='' && !isFaqPage, 'selected', '')}" value="{!$Site.CurrentSiteURL}knowledgeHome">Home</option>
+                            <option class="{!IF(rootCat=='Gumtree_basic', 'selected', '')}" value="{!$Site.CurrentSiteURL}knowledgeProduct?c=Posting_an_ad&k=Example:%20'email%20alerts'">Gumtree basics</option>
+                            <option class="{!IF(rootCat=='Something_not_working', 'selected', '')}" value="{!$Site.CurrentSiteURL}knowledgeProduct?c=Ads_removed&k=Example:%20'email%20alerts'">Something not working?</option>
+                            <option class="{!IF(rootCat=='Report_abuse_or_violations', 'selected', '')}" value="{!$Site.CurrentSiteURL}knowledgeProduct?c=Report_ads&k=Example:%20'email%20alerts'">Report abuse or violations</option>
+                            <option class="{!IF(isFaqPage, 'selected', '')}" value="{!$Site.CurrentSiteURL}knowledgeFAQs?c=General&k=Example:%20'general'">FAQs</option>
+                            <option class="{!IF(rootCat=='Business_on_Gumtree', 'selected', '')}" value="{!$Site.CurrentSiteURL}knowledgeProduct?c=Job_accounts&k=Example:%20'email%20alerts'">Business accounts</option>
+                            <option class="{!IF(rootCat=='Safety_advice', 'selected', '')}" value="{!$Site.CurrentSiteURL}knowledgeProduct?c=Safety_advice">Safety advice</option>
+                        </select>   
+                    </div>
+                    <section id="mad-container">
+                        <nav class="manage-ads-nav">
+                        <ul>
+                            <li class="middle {!IF(rootCat=='' && !isFaqPage, 'active', '')}"><a href="{!$Site.CurrentSiteURL}knowledgeHome">Help home</a></li>
+                            <li class="middle {!IF(rootCat=='Gumtree_basic', 'active', '')}"><a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Posting_an_ad&k=Example:%20'email%20alerts'">Gumtree basics</a></li>
+                            <li class="big {!IF(rootCat=='Something_not_working', 'active', '')}"><a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Ads_removed&k=Example:%20'email%20alerts'">Something not working?</a></li>
+                            <li class="big {!IF(rootCat=='Report_abuse_or_violations', 'active', '')}"><a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Report_ads&k=Example:%20'email%20alerts'">Report abuse or violations</a></li>
+                            <li class="small {!IF(rootCat=='FAQs', 'active', '')}"><a href="{!$Site.CurrentSiteURL}knowledgeFAQs?c=General">FAQs</a></li>
+                            <li class="bigmiddle {!IF(rootCat=='Business_on_Gumtree', 'active', '')}"><a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Job_accounts&k=Example:%20'email%20alerts'">Business accounts</a></li>
+                            <li class="safety">
+                            <div class="safety-icon">
+                            </div>
+                            <a href="{!$Site.CurrentSiteURL}knowledgeProduct?c=Safety_advice">Safety advice</a></li>
+                        </ul>
+                        </nav>
+                        <div id="content">
+                            <apex:insert name="content"/>
+                        </div>
+                    </section>
+                   </div> 
+                </div> 
+            </div>
+            
+            <!-- Footer -->
+            <div id="wrap-footer">
+                
+                 <div class="row footer-divider"></div>
+                  <div class="container">
+                      <div class="footer-follow" style="overflow:auto; padding-left: 15px; padding-right: 15px;">
+                          <!-- <h3>Follow Gumtree</h3> -->
+                          <h5 class="spacingTopMini">Follow Gumtree</h5>
+                          <ul class="social-media-buttons spacingTopMini spacingBottomMini">  
+                              <li onclick="top.location='https://www.facebook.com/gumtree'"><span class="fa fa-facebook icn-facebook"></span> Like</li>
+                              <li onclick="top.location='https://twitter.com/gumtree'"><span class="fa fa-twitter icn-twitter"></span> Tweet</li>
+                              <li onclick="top.location='https://plus.google.com/+gumtree'"><span class="fa fa-google-plus icn-google-plus"></span> +1</li>
+                              <li onclick="top.location='http://www.pinterest.com/gumtreeuk'"><span class="fa fa-pinterest icn-pinterest"></span> Pin it</li>
+                          </ul>
+                      </div>
+                 </div>
+                 <div class="row footer-divider"></div>
+                 <div class="container footer-container spacingBottomMini">
+                     
+                     <div class="footer-follow">
+                         <ul class="nav navbar-nav footer-link">
+                             <li ><a href="http://help.gumtree.com/knowledgeHome"><h5>Help &amp; Contact</h5></a></li>
+                             <li class="no-border-right-767"><a href="https://my.gumtree.com/manage/ads"><h5>My Gumtree</h5></a></li>
+                             <li ><a href="http://blog.gumtree.com/aboutus"><h5>About Gumtree</h5></a></li>
+                             <li class="no-border-right-767"><a href="http://www.gumtree.com/partners"><h5>Partners</h5></a></li>
+                             <li class="no-border-right-768"><a href="http://www.gumtreeforbusiness.co.uk"><h5>For business</h5></a></li>
+                             <li class="no-border-right-767"><a href="http://www.gumtree.com/popular-search"><h5>Popular searches</h5></a></li>
+                             <li ><a href="http://www.gumtree.com/privacy_policy"><h5>Privacy Policy</h5></a></li>
+                             <li class="no-border-right-767"><a href="#http://www.gumtree.com/cookies"><h5>Cookies Policy</h5></a></li>
+                             <li ><a href="http://www.gumtree.com/termsofuse"><h5>Terms of use</h5></a></li>
+                             <li class="end"><a href="http://blog.gumtree.com/"><h5>Blog</h5></a></li>
+                         </ul>
+                                                                             
+                         
+                         <p >© Copyright 2000-{!YEAR(TODAY())} Gumtree.com Limited. All rights reserved.</p>
+                         
+                     </div>
+                </div>
+            </div>
+            <!-- End Footer -->
+                    
+            <!-- Menu on right side -->
+            <div id="slide-expand-menu" style="height:100%; display: none;">
+               <ul class="menu-ul-nav" style="">
+                    <li><a href="http://www.gumtree.com/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                    <li><a href="https://my.gumtree.com/postad"><span class="glyphicon glyphicon-plus-sign"></span> Post an ad</a></li>
+                    <li><h2 class="side-menu-title">My Gumtree</h2></li>
+                    <li><a href="http://www.gumtree.com/my-account/favourites"><span class="glyphicon glyphicon-star"></span> Favorites</a></li>
+                    <li><a href="http://www.gumtree.com/my-account/saved-searches"><span class="glyphicon glyphicon-floppy-save"></span> Saved searches</a></li>
+                    <li><a href="https://my.gumtree.com/manage/ads"><span class="glyphicon glyphicon-folder-open"></span> Manage my ads</a></li>
+                    <li><a href="https://my.gumtree.com/manage/details/update"><span class="glyphicon glyphicon-user"></span> My details</a></li>
+                    <li><a href="https://my.gumtree.com/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+                    <li><h2 class="side-menu-title">More information</h2></li>
+                    <li><a href="http://help.gumtree.com/knowledgeHome"><span class="glyphicon glyphicon-question-sign"></span> Help &amp; Contact</a></li>
+                </ul>
+           </div>
+            
+            <script type="text/javascript">
+                    setTimeout(function(){var a=document.createElement("script");
+                    var b=document.getElementsByTagName("script")[0];
+                    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0012/7064.js?"+Math.floor(new Date().getTime()/3600000);
+                    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+            </script>
+            
+        </body> 
+        <script>     
+            $('head').prepend('<link rel="shortcut icon" href="{!URLFOR($Resource.KnowLedgeResources, 'img/FavouriteSiteIcon.ico')}" type="image/x-icon"/>'); 
+                      
+            $(document).ready(function(){ 
+                 
+                $('#slide-expand-menu').popup({
+                        scrolllock: true,
+                        outline: true,
+                        focusdelay: 400, 
+                        horizontal: 'right',
+                        vertical: 'top' 
+                    });
+                $("#menuSlider").click(function(){
+                    $('#slide-expand-menu').popup('show');
+                });
+                
+                $("#btnSearchToggle").click(function(){
+                    $(this).parent().css('background-color','inherit');
+                    if($(this).hasClass('collapsed')){
+                        $(this).parent().css('background-color','#54b134');
+                    }
+                });
+                
+                $(".btnPostAd").click(function(){
+                    window.location ="https://my.gumtree.com/postad";
+                });
+                
+                $('.btnSearch').off('click')
+                .on('click',function(){
+                    var $input = $(this).closest('.search-box').find('input');
+                    if($input.val().trim() != ''){
+                        window.location.href = "http://www.gumtree.com/search?q="+$input.val().trim()+"&search_category=all&search_location=&distance=0.0001";
+                    }
+                });
+  
+            });
+        </script>
+        <!-- Script copy from old template -->
+        <script type="text/javascript" src="{!$Resource.js_setup}"></script>
+        <apex:outputPanel rendered="{!catLev2!='' || catLev1!=''}" layout="none">
+        <script type="text/javascript">
+            gumtree.lastLevelCat = 'cat_{!catLev1}';
+        </script>
+        </apex:outputPanel>
+        
+        <script type="text/javascript" src="{!$Resource.js_VMenu}"></script>
+        
+        <script type="text/javascript" src="{!$Resource.js_gumlightbox}"></script>
+        
+        <script type="text/javascript" src="{!$Resource.js_application}"></script>
+        <script type="text/javascript" src="{!$Resource.js_search}"></script>
+        
+        <script type="text/javascript" src="{!$Resource.js_validation}" ></script>
+        <script type="text/javascript" src="{!$Resource.js_contact}" ></script>
+         
+        <script type="text/javascript" src="{!$Resource.js_social}" ></script>
+        
+        
+        
+                     
+        <script type='text/javascript' src='https://c.la2w2.salesforceliveagent.com/content/g/js/33.0/deployment.js'></script>
+<script type='text/javascript'>
+liveagent.init('https://d.la2w2.salesforceliveagent.com/chat', '57220000000CaZh', '00D200000006AK6');
+</script>
+            
+        <!-- START Salesforce Live Agent Deployment Code: MUST BE PLACED DIRECTLY ABOVE THE CLOSING </BODY> TAG and AFTER/OUTSIDE ALL HTML -->
+        <script type="text/javascript">
+        //var __ALC_Deployment = 9926;
+        //document.write(unescape("%3Cscript src='"+document.location.protocol+"//depot.liveagentforsalesforce.com/app/js/lt.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        
+        <script type="text/javascript">
+        setTimeout(function(){var a=document.createElement("script");
+        var b=document.getElementsByTagName("script")[0];
+        a.src=document.location.protocol+"//dnn506yrbagrg.cloudfront.net/pages/scripts/0012/7064.js?"+Math.floor(new Date().getTime()/3600000);
+        a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+        </script>
+    </html>
+</apex:page>

@@ -1,0 +1,302 @@
+<apex:page controller="ClassifiedsAdsRemainingController" showHeader="true" tabstyle="Classified_Ads__tab" title="Classified Ads" cache="false" sidebar="false">
+   <style>
+
+   </style>
+
+ <div class="bPageTitle">
+        <div class="ptBody secondaryPalette">
+            <div class="content">
+            <apex:image id="theImage" value="/s.gif" styleClass="pageTitleIcon"/>
+            <apex:outputPanel >
+            <h2 class="pageType"><apex:outputText value="Classifieds"/></h2>
+            <h1 class="pageDescription"><apex:outputText value="Ads Remaining"/></h1>
+            </apex:outputPanel>
+            </div>
+        </div> 
+    </div>
+<apex:form >   
+    <apex:pageBlock title="Filters" id="search">
+       <apex:pageBlockSection collapsible="false">
+          <apex:pageblockSectionItem >
+          <apex:outputLabel value="Package status:" for="ps"/>
+          <apex:selectList value="{!pstatus}" size="1" id="pstatus" style="width:100px">
+            <apex:selectOptions value="{!pstatuses}" />
+            <apex:actionSupport event="onchange" rerender="std,ftd3,ftd7,ftd14,ftdu7,ftds7,debug" status="status"/>
+          </apex:selectList>
+          </apex:pageBlockSectionItem>
+          <apex:pageblockSectionItem >
+          <apex:outputLabel value="Account status:" for="ps"/>
+          <apex:selectList value="{!accstatus}" size="1" id="astatus" style="width:100px">
+            <apex:selectOptions value="{!accstatuses}" />
+            <apex:actionSupport event="onchange" rerender="std,ftd3,ftd7,ftd14,ftdu7,ftds7,debug" status="status"/>
+          </apex:selectList>
+          </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+         <apex:outputLabel value="Site:" for="site"/>
+          <apex:selectList value="{!site}" size="1" id="site" style="width:100px">
+            <apex:selectOptions value="{!sites}"/>
+            <apex:actionSupport event="onchange" rerender="std,ftd3,ftd7,ftd14,ftdu7,ftds7" status="status"/>
+          </apex:selectList>
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Credits remaining:" for="creditsr"/>
+          <apex:selectList value="{!creditr}" size="1" id="creditsr" style="width:100px">
+            <apex:selectOptions value="{!creditsr}"/>
+            <apex:actionSupport event="onchange" rerender="std,ftd3,ftd7,ftd14,ftdu7,ftds7" status="status"/>
+          </apex:selectList>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+         <apex:outputLabel value="Days remaining:" for="daysr"/>
+          <apex:selectList value="{!dayr}" size="1" id="daysr" style="width:100px">
+            <apex:selectOptions value="{!daysr}"/>
+            <apex:actionSupport event="onchange" rerender="std,ftd3,ftd7,ftd14,ftdu7,ftds7" status="status"/>
+          </apex:selectList>
+          </apex:pageblockSectionItem>
+          <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Burn rate:" for="burnrate"/>
+          <apex:selectList value="{!burnrate}" size="1" id="burnrates" style="width:100px">
+            <apex:selectOptions value="{!burnrates}"/>
+            <apex:actionSupport event="onchange" rerender="std,ftd3,ftd7,ftd14,ftdu7,ftds7,debug" status="status"/>
+          </apex:selectList>
+          </apex:pageblockSectionItem>
+
+       </apex:pageBlockSection>
+
+    </apex:pageBlock>
+
+      <div style="position: relative;">
+          <apex:actionstatus id="status">
+            <apex:facet name="start">
+              <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                               height: 100%;opacity:0.65;width:100%;"> 
+                <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                  <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                  <span class="waitingDescription">Loading...</span>
+                </div>
+              </div>
+            </apex:facet>
+          </apex:actionstatus>
+              
+<apex:pageBlock >
+        <apex:pageBlockSection title="Standard Ads" collapsible="True" id="std" columns="1">
+                <apex:pageBlockTable rowclasses="odd,even" value="{!olistdcredit}" var="oli">
+                    <apex:column headerValue="Account">
+                        <apex:outputLink value="/{!oli.Opportunity.Account.Id}" id="theLink" target="_parent">
+                            <apex:outputText value="{!oli.Opportunity.Account.Name}"/>
+                            </apex:outputLink>
+                    </apex:column>
+                   <apex:column headerValue="Opportunity">
+                        <apex:outputLink value="/{!oli.Opportunity.Id}" id="theLink1" target="_parent">
+                            <apex:outputText value="View"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Length">
+                        <apex:outputText value="{!ROUND(oli.Length_Months__c,0)}" />
+                    </apex:column>
+                    <apex:column headerValue="Days Remain">
+                        <apex:outputText value="{!ROUND(oli.Days_remaining__c,0)}" style="{!IF(oli.Days_remaining__c<=7, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headerValue="Quantity">
+                        <apex:outputText value="{!ROUND(oli.Quantity,0)}"/>
+                    </apex:column>
+                    <apex:column headerValue="Credits Used">
+                        <apex:outputText value="{!ROUND(oli.Credits_used__c,0)}"/>
+                    </apex:column>
+                    <apex:column headervalue="Credits Remain">
+                        <apex:outputText value="{!ROUND(oli.Credits_remaining__c,0)}" style="{!IF(oli.Credits_remaining__c<=5, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headervalue="Burn Rate">
+                        <apex:outputText value="{!oli.Credit_burn_rate__c}" style="{!IF(oli.Credit_burn_rate__c<=1, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+       </apex:pageBlockSection>
+</apex:pageblock>
+<apex:pageBlock >
+        <apex:pageBlockSection title="Featured Ads (3 day)" collapsible="True" id="ftd3" columns="1">
+                <apex:pageBlockTable rowclasses="odd,even" width="100%" styleClass="tableClass" value="{!oliftd3credit}" var="oli">
+                    <apex:column headerValue="Account">
+                        <apex:outputLink value="/{!oli.Opportunity.Account.Id}" id="theLink" target="_parent">
+                            <apex:outputText value="{!oli.Opportunity.Account.Name}"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Opportunity">
+                        <apex:outputLink value="/{!oli.Opportunity.Id}" id="theLink1" target="_parent">
+                            <apex:outputText value="View"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Length">
+                        <apex:outputText value="{!ROUND(oli.Length_Months__c,0)}" />
+                    </apex:column>
+                    <apex:column headerValue="Days Remain">
+                        <apex:outputText value="{!ROUND(oli.Days_remaining__c,0)}" style="{!IF(oli.Days_remaining__c<=7, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headerValue="Quantity">
+                        <apex:outputText value="{!ROUND(oli.Quantity,0)}"/>
+                    </apex:column>
+                    <apex:column headervalue="Credits Remain">
+                        <apex:outputText value="{!ROUND(oli.Credits_remaining__c,0)}" style="{!IF(oli.Credits_remaining__c<=5, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headervalue="Burn Rate">
+                        <apex:outputText value="{!oli.Credit_burn_rate__c}" style="{!IF(oli.Credit_burn_rate__c<=1, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+       </apex:pageBlockSection>
+</apex:pageblock>
+<apex:pageBlock >
+        <apex:pageBlockSection title="Featured Ads (7 day)" collapsible="True" id="ftd7" columns="1">
+                <apex:pageBlockTable rowclasses="odd,even" width="100%" styleClass="tableClass" value="{!oliftd7credit}" var="oli">
+                    <apex:column headerValue="Account">
+                        <apex:outputLink value="/{!oli.Opportunity.Account.Id}" id="theLink" target="_parent">
+                            <apex:outputText value="{!oli.Opportunity.Account.Name}"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Opportunity">
+                        <apex:outputLink value="/{!oli.Opportunity.Id}" id="theLink1" target="_parent">
+                            <apex:outputText value="View"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Length">
+                        <apex:outputText value="{!ROUND(oli.Length_Months__c,0)}" />
+                    </apex:column>
+                    <apex:column headerValue="Days Remain">
+                        <apex:outputText value="{!ROUND(oli.Days_remaining__c,0)}" style="{!IF(oli.Days_remaining__c<=7, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headerValue="Quantity">
+                        <apex:outputText value="{!ROUND(oli.Quantity,0)}"/>
+                    </apex:column>
+                    <apex:column headervalue="Credits Remain">
+                        <apex:outputText value="{!ROUND(oli.Credits_remaining__c,0)}" style="{!IF(oli.Credits_remaining__c<=5, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headervalue="Burn Rate">
+                        <apex:outputText value="{!oli.Credit_burn_rate__c}" style="{!IF(oli.Credit_burn_rate__c<=1, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+       </apex:pageBlockSection>
+</apex:pageblock>
+<apex:pageBlock >
+        <apex:pageBlockSection title="Featured Ads (14 day)" collapsible="True" id="ftd14" columns="1">
+                <apex:pageBlockTable rowclasses="odd,even" width="100%" styleClass="tableClass" value="{!oliftd14credit}" var="oli">
+                    <apex:column headerValue="Account">
+                        <apex:outputLink value="/{!oli.Opportunity.Account.Id}" id="theLink" target="_parent">
+                            <apex:outputText value="{!oli.Opportunity.Account.Name}"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Opportunity">
+                        <apex:outputLink value="/{!oli.Opportunity.Id}" id="theLink1" target="_parent">
+                            <apex:outputText value="View"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Length">
+                        <apex:outputText value="{!ROUND(oli.Length_Months__c,0)}" />
+                    </apex:column>
+                    <apex:column headerValue="Days Remain">
+                        <apex:outputText value="{!ROUND(oli.Days_remaining__c,0)}" style="{!IF(oli.Days_remaining__c<=7, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headerValue="Quantity">
+                        <apex:outputText value="{!ROUND(oli.Quantity,0)}"/>
+                    </apex:column>
+                    <apex:column headervalue="Credits Remain">
+                        <apex:outputText value="{!ROUND(oli.Credits_remaining__c,0)}" style="{!IF(oli.Credits_remaining__c<=5, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headervalue="Burn Rate">
+                        <apex:outputText value="{!oli.Credit_burn_rate__c}" style="{!IF(oli.Credit_burn_rate__c<=1, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+       </apex:pageBlockSection>
+</apex:pageblock>
+<apex:pageBlock >
+        <apex:pageBlockSection title="Featured Ads - Urgent (7 day)" collapsible="True" id="ftdu7" columns="1">
+                <apex:pageBlockTable rowclasses="odd,even" width="100%" styleClass="tableClass" value="{!oliftdurgcredit}" var="oli">
+                    <apex:column headerValue="Account">
+                        <apex:outputLink value="/{!oli.Opportunity.Account.Id}" id="theLink" target="_parent">
+                            <apex:outputText value="{!oli.Opportunity.Account.Name}"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Opportunity">
+                        <apex:outputLink value="/{!oli.Opportunity.Id}" id="theLink1" target="_parent">
+                            <apex:outputText value="View"/>
+                            </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Length">
+                        <apex:outputText value="{!ROUND(oli.Length_Months__c,0)}" />
+                    </apex:column>
+                    <apex:column headerValue="Days Remain">
+                        <apex:outputText value="{!ROUND(oli.Days_remaining__c,0)}" style="{!IF(oli.Days_remaining__c<=7, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headerValue="Quantity">
+                        <apex:outputText value="{!ROUND(oli.Quantity,0)}"/>
+                    </apex:column>
+                    <apex:column headervalue="Credits Remain">
+                        <apex:outputText value="{!ROUND(oli.Credits_remaining__c,0)}" style="{!IF(oli.Credits_remaining__c<=5, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headervalue="Burn Rate">
+                        <apex:outputText value="{!oli.Credit_burn_rate__c}" style="{!IF(oli.Credit_burn_rate__c<=1, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+      </apex:pageBlockSection>
+</apex:pageblock>
+<apex:pageBlock >
+        <apex:pageBlockSection title="Featured Ads - Spotlight (7 day)" collapsible="True" id="ftds7" columns="1">
+                <apex:pageBlockTable rowclasses="odd,even" width="100%" styleClass="tableClass" value="{!oliftdspotcredit}" var="oli">
+                    <apex:column headerValue="Account">
+                        <apex:outputLink value="/{!oli.Opportunity.Account.Id}" id="theLink" target="_parent">
+                            <apex:outputText value="{!oli.Opportunity.Account.Name}"/>
+                        </apex:outputLink>
+                    </apex:column>       
+                    <apex:column headerValue="Opportunity">
+                        <apex:outputLink value="/{!oli.Opportunity.Id}" id="theLink1" target="_parent">
+                            <apex:outputText value="View"/>
+                        </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Length">
+                        <apex:outputText value="{!ROUND(oli.Length_Months__c,0)}" />
+                    </apex:column>
+                    <apex:column headerValue="Days Remain">
+                        <apex:outputText value="{!ROUND(oli.Days_remaining__c,0)}" style="{!IF(oli.Days_remaining__c<=7, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headerValue="Quantity">
+                        <apex:outputText value="{!ROUND(oli.Quantity,0)}"/>
+                    </apex:column>
+                    <apex:column headervalue="Credits Remain">
+                        <apex:outputText value="{!ROUND(oli.Credits_remaining__c,0)}" style="{!IF(oli.Credits_remaining__c<=5, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headervalue="Burn Rate">
+                        <apex:outputText value="{!oli.Credit_burn_rate__c}" style="{!IF(oli.Credit_burn_rate__c<=1, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+       </apex:pageBlockSection>
+    </apex:pageblock>
+    <apex:pageBlock >
+        <apex:pageBlockSection title="Featured Ads - URL" collapsible="True" id="ftdurl" columns="1">
+                <apex:pageBlockTable rowclasses="odd,even" width="100%" styleClass="tableClass" value="{!oliftdurlcredit}" var="oli">
+                    <apex:column headerValue="Account">
+                        <apex:outputLink value="/{!oli.Opportunity.Account.Id}" id="theLink" target="_parent">
+                            <apex:outputText value="{!oli.Opportunity.Account.Name}"/>
+                            </apex:outputLink>
+                    </apex:column>       
+                    <apex:column headerValue="Opportunity">
+                        <apex:outputLink value="/{!oli.Opportunity.Id}" id="theLink1" target="_parent">
+                            <apex:outputText value="View"/>
+                        </apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Length">
+                        <apex:outputText value="{!ROUND(oli.Length_Months__c,0)}" />
+                    </apex:column>
+                    <apex:column headerValue="Days Remain">
+                        <apex:outputText value="{!ROUND(oli.Days_remaining__c,0)}" style="{!IF(oli.Days_remaining__c<=7, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headerValue="Quantity">
+                        <apex:outputText value="{!ROUND(oli.Quantity,0)}"/>
+                    </apex:column>
+                    <apex:column headervalue="Credits Remain">
+                        <apex:outputText value="{!ROUND(oli.Credits_remaining__c,0)}" style="{!IF(oli.Credits_remaining__c<=5, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                    <apex:column headervalue="Burn Rate">
+                        <apex:outputText value="{!oli.Credit_burn_rate__c}" style="{!IF(oli.Credit_burn_rate__c<=1, 'font-weight:bold; color:red','color:black')}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+       </apex:pageBlockSection>
+    </apex:pageblock>
+</div>
+</apex:form>
+</apex:page>

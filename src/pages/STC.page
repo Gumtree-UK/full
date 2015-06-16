@@ -1,0 +1,15 @@
+<apex:page >
+<html>
+<head>
+    <title>Sales Team Challenge</title>
+</head>
+<body>
+<br/><img src="http://image.comms.gumtree.com/lib/fef613727c6106/m/1/Eiffel+Tower.jpg"></img>
+<br/>
+<img src="http://image.comms.gumtree.com/lib/fef613727c6106/m/1/Cocktails.jpg"></img>
+<br/>
+<img src="http://image.comms.gumtree.com/lib/fef613727c6106/m/1/Questionmark.jpg"></img>
+</body>
+</html>
+
+</apex:page>

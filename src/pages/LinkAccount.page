@@ -1,0 +1,57 @@
+<apex:page standardController="Account">
+<script src="/soap/ajax/10.0/connection.js"></script>
+<script src="/soap/ajax/10.0/apex.js"></script>
+<script type="text/javascript">
+var action = getParameter("Action");
+   linkAccount();
+   //HCS 11.05.2015
+   //fixed System.CalloutException: Read timed out
+   /*function linkAccount(){ 
+    sforce.sessionId = '{!$Api.Session_ID}';
+    sforce.connection.sessionId=sforce.sessionId;
+    var result= sforce.apex.execute("WSGumtreeFeed", "linkGumtree",{
+        FeedProvider:"{!Account.Feed_Provider__c}",
+        AccNumber: "{!Account.AccountNumber}",
+        MPAccNumber:"{!Account.eMP_Account_Number__c}",
+        Action:getParameter("Action")
+    });
+    alert(result);
+   window.location = "/" + "{!Account.Id}" ;
+   }*/
+   
+   function linkAccount(){ 
+    	sforce.sessionId = '{!$Api.Session_ID}';
+    	sforce.connection.sessionId=sforce.sessionId;
+    	try{
+    		setTimeout(function(){ 
+			     var result= sforce.apex.execute("WSGumtreeFeed", "linkGumtree",{
+			        FeedProvider:"{!Account.Feed_Provider__c}",
+			        AccNumber: "{!Account.AccountNumber}",
+			        MPAccNumber:"{!Account.eMP_Account_Number__c}",
+			        Action:getParameter("Action")
+			    });
+			     alert(result);
+			    window.location = "/" + "{!Account.Id}" ;
+			},1000); 
+		
+		}catch(e){
+			alert(err);
+			window.location = "/" + "{!Account.Id}" ; 
+		}
+	
+   }
+   
+   
+   function getParameter(theParameter) { 
+      var params = window.location.search.substr(1).split('&');
+     
+      for (var i = 0; i < params.length; i++) {
+            var p=params[i].split('=');
+            if (p[0] == theParameter) {
+                  return decodeURIComponent(p[1]);
+            }
+      }
+      return false;
+}
+    </script>
+</apex:page>

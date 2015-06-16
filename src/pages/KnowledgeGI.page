@@ -1,0 +1,41 @@
+<apex:page standardController="General_Information__kav" title="{!General_Information__kav.Title}" showHeader="false" sidebar="false" standardStylesheets="false">
+    <apex:composition template="{!$Site.Template}">
+        <apex:define name="content">
+            <section class="manage-ads">
+                <div class="column grid_1">
+                    <article class="space">
+                        <apex:define name="content">
+                            <div class="page-content">
+                                <apex:outputPanel styleClass="pkMaintwo" layout="block">
+                                    <apex:outputPanel styleClass="pkbResultPanel" layout="block">
+                                        <apex:outputPanel styleClass="pkbResultInner" layout="block">
+                                            <article class="space">
+                                                <hgroup>
+                                                    <h2>{!General_Information__kav.Title}</h2>
+                                                </hgroup>
+                                                <p class="space">
+                                                    <apex:outputField value="{!General_Information__kav.Description__c}"></apex:outputField>
+                                                </p>
+                                                </article>
+                                                <hr />
+                                                <div align="right"><c:ArticleDeflectionBox knowledgeArticleId="{!General_Information__kav.Id}"/></div>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                </apex:outputPanel>
+                            </div>
+                        </apex:define>
+                    </article>
+                </div>
+                <div class="column grid_2">
+                    <div class="roundedbox darkgray search">
+                        <input name="" type="text" class="fld" />
+                        <input type="submit" value="Search" class="secondary button" />
+                    </div>
+                    <c:contactOptions2 />
+                    <!--     <c:watchOurVideo /> -->
+     <c:watchOurHowtoGuide /> 
+                </div>
+            </section>
+        </apex:define>
+    </apex:composition>     
+</apex:page>

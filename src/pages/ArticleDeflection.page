@@ -1,0 +1,51 @@
+<apex:page controller="ArticleDeflectionController" sidebar="false" standardStylesheets="false">
+
+    <style>
+    
+    .content .pageTitleIcon {
+        background-image: url(/img/knowledge/publishing/knowledgemanagement32.png);
+        background-position: 0 0;
+        width: 32px;
+        height: 32px;
+    }
+    
+    </style>
+    
+    <div class="bPageTitle">
+        <div class="ptBody secondaryPalette brandSecondaryBrd">
+            <div class="content">
+                <img src="/s.gif" class="pageTitleIcon" title="Article" alt="Article" />
+                    <h1 class="pageType">Article</h1>
+                    <span class="titleSeparatingColon">:</span>
+                    <h2 class="pageDescription">{!knowArt.Title}</h2>
+            </div>              
+        </div>
+    </div>
+    
+    <apex:pageBlock title="Article Deflection">
+        <apex:outputText rendered="{!NOT(hasArtDef)}" value="No Related Article Deflection" />
+        <apex:pageBlockTable value="{!lstArtDefs}" var="artDef" rendered="{!hasArtDef}">
+            <apex:column >
+                <apex:facet name="header">{!$ObjectType.PKB_Article_Feedback_Deflection__c.fields.Name.Label}</apex:facet>
+                <apex:outputLink value="/{!artDef.Id}">{!artDef.Name}</apex:outputLink>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">{!$ObjectType.PKB_Article_Feedback_Deflection__c.fields.Article_Number__c.Label}</apex:facet>
+                <apex:outputField value="{!artDef.Article_Number__c}" />
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">{!$ObjectType.PKB_Article_Feedback_Deflection__c.fields.Article_Title__c.Label}</apex:facet>
+                <apex:outputField value="{!artDef.Article_Title__c}" />
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">{!$ObjectType.PKB_Article_Feedback_Deflection__c.fields.Deflection__c.Label}</apex:facet>
+                <apex:outputField value="{!artDef.Deflection__c}" />
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">{!$ObjectType.PKB_Article_Feedback_Deflection__c.fields.Comments__c.Label}</apex:facet>
+                <apex:outputField value="{!artDef.Comments__c}" />
+            </apex:column>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+
+</apex:page>

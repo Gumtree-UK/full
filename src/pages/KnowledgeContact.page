@@ -1,0 +1,205 @@
+<apex:page controller="KnowledgeController" showHeader="false" title="Public Knowledge Base" cache="true" expires="{!cacheMaxAge}">
+<html>
+<body>
+    <apex:composition template="{!$Site.Template}"> -->
+    <apex:define name="content">
+       <apex:variable var="productUrlVar" value="{!productUrl}" />
+       <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+       <apex:variable var="cpt" value="{!0}" />
+       <apex:variable var="categoryDescriptionsVar" value="{!categoryDescriptions}" />
+       <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+
+      
+                    <div class="page-content">
+                        <apex:outputPanel styleClass="pkbHpMaincs" layout="block">
+                        <apex:outputPanel styleClass="pkbResultPanelcs" layout="block">
+                                <apex:outputPanel styleClass="pkbResultInnercs" layout="block">
+                
+                                    <apex:outputPanel styleClass="pkbResultSummarycs" layout="block">
+                                       Top questions
+                                    </apex:outputPanel>
+                                        <ul>
+                                            <apex:variable var="anyDocument" value="false" />
+                                            <apex:variable var="hasMore" value="" />
+                    
+                                            <knowledge:articleList articleVar="article"  hasMoreVar="hasMore"
+                                                pageSize="10"
+                                                articleTypes="FAQ__kav"
+                                                sortBy="mostViewed"
+                                                categories="{!categoryGroupNameVar}:Contact_us_Top_questions"
+                                            >
+                                                <li class="pkbSearchResult"> <a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a></li>
+                                                <apex:variable var="anyDocument" value="true" /> 
+                                                
+                                            </knowledge:articleList>
+                                        </ul>                  
+                                        <apex:outputText value="No Result found for '{!subject}' in the selected category" rendered="{!anyDocument=='false'}" />&nbsp;
+                        </apex:outputPanel>
+                        
+                                 
+                          <apex:outputPanel styleClass="pkbForm" layout="block" > 
+                           <apex:outputPanel styleClass="pkbResultSummarycs" layout="block">  
+                                            &nbsp;&nbsp;&nbsp; Tell us how we can help you:
+                                    </apex:outputPanel>
+                          <apex:pageMessage severity="error" strength="3" summary="{!errorMessage}"/>
+
+<br/>
+                          
+                             <apex:outputPanel styleClass="pkbInnerForm"  layout="block">
+                              
+                             
+                                <apex:form id="gmform">
+                                            
+                                            <table>
+                                            <tr>
+                                            
+                                                <td>    
+                                                        <apex:outputText value="Subject" styleClass="textForm"/>
+                                             
+                                                </td>
+                                                <td>    
+                                                         <apex:selectList id="categorySubject" value="{!categorySubject}" size="1">
+                                                            <apex:selectOptions value="{!FinalsOptions}" />
+                                                            <apex:actionSupport event="onchange" action="{!checkspam}" rerender="gmform" status="refreshstatus"/>
+                                                            
+                                                        </apex:selectList>  
+                                                        <apex:actionStatus id="refreshstatus" startstyle="color:green;" startText="Refreshing...."></apex:actionStatus>
+                                                             
+                                                                                                                                
+                                               </td>
+                                            </tr>
+                                         
+                                             <tr>
+                                                 <td>&nbsp;
+                                                 </td>
+                                                  <td>&nbsp;
+                                                 </td>
+                                            </tr>
+                                             <tr>
+                                                <td>                    
+                                                        <apex:outputText value="Your question" styleClass="textForm" rendered="{!(!spam && !issue)}" />
+                                                </td>
+                                                <td>
+                                                        <apex:inputText style="color:#CCCCCC;" value="{!subject}" styleClass="innertextForm" id="subject" maxlength="100" rendered="{!(!spam && !issue)}" onblur="setsearchtexty(this);" onclick="clearsearchtexty(this);" onfocus="clearsearchtexty(this);"/>
+                                                                        
+                                                </td>
+                                            </tr>
+                                 
+                                             <tr>
+                                                 <td>&nbsp;
+                                                 </td>
+                                                  <td>&nbsp;
+                                                 </td>
+                                             </tr>
+                                             <tr>
+                                                <td>        
+                                                        <apex:outputText value="Comments" styleClass="textForm" rendered="{!spam}"/>
+                                                      
+                                                </td>
+                                                <td>
+                                                        <apex:inputTextarea style="font-size:12px;" id="comments" value="{!comments}"  rendered="{!spam}" styleClass="innertextForm"/>                      
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>        
+                                                         <apex:outputText value="Description of issue" styleClass="textForm" rendered="{!issue}"/>
+                                                </td>
+                                                <td>
+                                                        <apex:inputTextarea rows="15" style="color:#CCCCCC;font-size:12px;" id="DescriptionIssue" value="{!issueDescription}"  rendered="{!issue}" styleClass="innertextForm" onblur="setIssueDescription(this);" onclick="clearIssueDescription(this);" onfocus="clearIssueDescription(this);"/>                       
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;
+                                                 </td>
+                                                  <td>&nbsp;
+                                                 </td>
+                                            </tr>
+                                             <tr>
+                                                <td>    
+                                                        
+                                                        <apex:outputText value="Ad reference number(s) (optional)" styleClass="textForm" rendered="{!(spam || issue)}"/>
+                                                </td>
+                                                <td>
+                                                        <apex:inputText value="{!ad}" id="ad" maxlength="255" rendered="{!(spam || issue)}" styleClass="innertextForm"/>
+                                                </td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td>&nbsp;
+                                                 </td>
+                                                  <td>&nbsp;
+                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td>    
+                                                        <apex:outputText value="What is your internet browser? (optional)" styleClass="textForm" rendered="{!issue}"/>
+                                                </td>
+                                                <td>
+                                                        <apex:inputText style="color:#CCCCCC;" value="{!internetBrowser}" id="InternetBrowser" maxlength="100" rendered="{!issue}" styleClass="innertextForm" onblur="setInternetBrowser(this);" onclick="clearInternetBrowser(this);" onfocus="clearInternetBrowser(this);"/>
+                                                </td>
+                                            </tr>
+                                             <tr>
+                                                <td>    
+                                                        
+                                                        <apex:outputText value="Copy of email(s) received" styleClass="textForm" rendered="{!spam}"/>   
+                                                        <br/>                   
+                                                        <apex:outputText value="Please copy the full email communication including email addresses and Date/Time information (optional) " styleClass="textFormSmall" rendered="{!spam}"/>
+                                                </td>
+                                                <td>
+                                                        <apex:inputTextarea style="font-size:12px;" id="copyemail" value="{!copyEmail}" rows="5" rendered="{!spam}"  styleClass="innertextForm"/>           
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;
+                                                 </td>
+                                                  <td>&nbsp;
+                                                 </td>
+                                            </tr>
+                                             <tr>
+                                                <td>
+                                                        <apex:outputText value="Your email address" styleClass="textForm" rendered="{!(spam || issue)}"/>
+                                                </td>
+                                                <td>
+                                                        <apex:inputText value="{!email}" id="email" maxlength="255" rendered="{!(spam || issue)}"  styleClass="innertextForm"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;
+                                                 </td>
+                                                  <td>&nbsp;
+                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td>    
+                                                        <apex:outputText value="Your phone number (optional)" styleClass="textForm" rendered="{!issue}"/>
+                                                </td>
+                                                <td>
+                                                        <apex:inputText style="color:#CCCCCC;" value="{!phoneNumber}" id="PhoneNumber" maxlength="100" rendered="{!issue}" styleClass="innertextForm" onblur="setPhoneNumber(this);" onclick="clearPhoneNumber(this);" onfocus="clearPhoneNumber(this);"/>
+                                                </td>
+                                            </tr>
+                                              </table>  
+                                        
+                                        <apex:commandButton action="{!doSearchContact2}" value="Next" id="searchButtonContactNext"  rendered="{!(!spam && !issue)}" styleClass="search-button-Contact"/>
+                                        <apex:commandButton action="{!doSaveCase}"  value="Submit" id="searchButtonContact" rendered="{!spam}" styleClass="search-button-Contact" />
+                                        <apex:commandButton action="{!doSaveCaseIssue}"  value="Submit" id="searchButtonContact2" rendered="{!issue}" styleClass="search-button-Contact"/>
+                
+                                    </apex:form>
+                                     
+                              </apex:outputPanel>
+                              </apex:outputPanel>
+                              
+                         </apex:outputPanel>
+                     </apex:outputPanel>
+                </div>
+
+                
+        
+               
+
+       
+    </apex:define>
+    </apex:composition>
+
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,419 @@
+<apex:page id="thePage" sideBar="false" showHeader="false" controller="TreeConnectionSelectionController">
+	
+	<head>
+	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.js')}"/>	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.custom.js')}"/>	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.cookie.js')}"/>	
+	<apex:stylesheet value="{!URLFOR($Resource.JqueryForTree, '/ui.dynatree.css')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.css')}"/>
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery.dynatree.js')}"/>	 	
+	<script type="text/javascript" src="{!URLFOR($Resource.JqueryForTree, '/jquery-ui.min.js')}"/>	
+	
+	<style>
+	
+		span.dynatree-empty, span.dynatree-vline, 
+		span.dynatree-connector, span.dynatree-expander, 
+		span.dynatree-icon, span.dynatree-checkbox, span.dynatree-radio, 
+		span.dynatree-drag-helper-img, #dynatree-drop-marker {
+			background-image: url("{!URLFOR($Resource.JqueryForTree, '/iconsvista.gif')}");
+		}
+		
+		.InputStyle {
+			width: 98%;
+			margin: 2px;
+			display: inline-block;
+			color: #999;
+		}
+		input {
+			margin: 0;
+			border-radius: 3px;
+            border: 1px solid #999999;
+            padding: 3px 5px;
+			vertical-align: middle;
+		}
+		 .ui-autocomplete-loading { 
+	        background: white url(/img/loading32.gif) right center no-repeat;
+	        background-size:15px 15px; 
+	    }  
+	    .buttons{
+	    	margin-left:  5px !important;
+	    }
+	    #salesforceSource_blurybackground{
+	    	position: fixed !important;
+	    }
+	    .buttonsWidth{
+	    	width: 70px !important;
+	    }
+	    body{
+	    	background-color: #d8e3ee;
+	    }
+	    .dynatree-folder .dynatree-connector {
+			background-image: url("{!URLFOR($Resource.JqueryForTree, '/iconsvista.gif')}") !important;
+			background-position: 0px -80px;
+			cursor: pointer;
+		}
+		span.dynatree-connector {
+			background-image: none;
+		}
+	</style>
+	<script>
+		
+		var isFromChildClick= false; 
+		function setValueToTree( pos ,key,treeLv,flag ){
+			var val = document.getElementById('thePage:theForm:jsonObject').value;
+			var lstRecords = JSON.parse( val );	
+
+			for(var i=0;i< lstRecords.length;i++){
+				var treeItem = lstRecords[i];
+				if(treeItem.pos == pos && treeItem.treeId == key) {
+				    lstRecords[i].isSelected = flag; 
+				    var jsonString = JSON.stringify(lstRecords);					
+					document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+					return;
+				}
+				for(var j=0;j< treeItem.lstChild.length;j++){
+					var treeItemlv2 = treeItem.lstChild[j]; 
+					if( treeItemlv2.pos == pos && treeItemlv2.treeId == key ){
+						lstRecords[i].lstChild[j].isSelected = flag;
+						var jsonString = JSON.stringify(lstRecords);					
+						document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+						return;
+					}
+					for(var k=0;k< treeItemlv2.lstChild.length;k++){
+						var treeItemlv3 = treeItemlv2.lstChild[k];
+						if( treeItemlv3.pos == pos && treeItemlv3.treeId == key ){
+							lstRecords[i].lstChild[j].lstChild[k].isSelected = flag;
+							var jsonString = JSON.stringify(lstRecords);					
+							document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+							return;
+						}
+						for(var l=0;l< treeItemlv3.lstChild.length;l++){
+							var treeItemlv4 = treeItemlv3.lstChild[l];
+							if( treeItemlv4.pos == pos && treeItemlv4.treeId == key ){
+								lstRecords[i].lstChild[j].lstChild[k].lstChild[l].isSelected = flag;
+								var jsonString = JSON.stringify(lstRecords);					
+								document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+								return;
+							}
+							for(var m=0;m< treeItemlv4.lstChild.length;m++){
+								var treeItemlv5 = treeItemlv4.lstChild[m];
+								if( treeItemlv5.pos == pos && treeItemlv5.treeId == key){
+									lstRecords[i].lstChild[j].lstChild[k].lstChild[l].lstChild[m].isSelected = flag;
+									var jsonString = JSON.stringify(lstRecords);					
+									document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+									return;
+								}
+								for(var n=0;n< treeItemlv5.lstChild.length;n++){
+									var treeItemlv6 = treeItemlv5.lstChild[n];
+									if( treeItemlv6.pos == pos && treeItemlv6.treeId == key){
+										lstRecords[i].lstChild[j].lstChild[k].lstChild[l].lstChild[m].lstChild[n].isSelected = flag;
+										var jsonString = JSON.stringify(lstRecords);					
+										document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+										return;
+									}
+									for(var p=0;p< treeItemlv6.lstChild.length;p++){
+										var treeItemlv7 = treeItemlv6.lstChild[p];
+										if( treeItemlv7.pos == pos && treeItemlv7.treeId == key){
+											lstRecords[i].lstChild[j].lstChild[k].lstChild[l].lstChild[m].lstChild[n].lstChild[p].isSelected = flag;
+											var jsonString = JSON.stringify(lstRecords);					
+											document.getElementById('thePage:theForm:jsonObject').value= jsonString;
+											return;
+										}
+									}
+								}	
+							} 
+						}
+					}
+				}
+			}	
+		}
+		
+		function checkTargetingBeforeSave(){
+			var targeting = document.getElementById('thePage:theForm:targetId');
+			var eleId = window.parent.document.getElementById('targetingId'); 
+			if(targeting=='' && eleId.value !='none'){
+				targeting.value = eleId.value;
+			}
+			saveRecords();
+		}
+		
+		function initializeTree()
+	    {
+			//ul -> li -> ul -> li -> ul -> li
+			var selectedCon = document.getElementById("thePage:theForm:selectedConnection").value;
+
+			var tree = document.getElementById("tree");
+			var ulTop = document.createElement("ul");
+			ulTop.style.display = "none";
+			ulTop.id = "treeData"; 
+	    	var liParent = document.createElement("li");
+	    	liParent.innerHTML = "All Connections"; 
+	    	liParent.className = "folder";
+	    	liParent.id = "AllConnections";
+	    	liParent.setAttribute("data","hideCheckbox:true,expand:true,select:"+{!isExistSelected});
+	    	var ulParent = document.createElement("ul");
+	    	var val = document.getElementById("thePage:theForm:jsonObject").value;
+			var lstRecords = JSON.parse( val );	
+			//Initial all devices to tree
+			for(var i=0;i< lstRecords.length;i++) 
+			{
+				var treeParent = lstRecords[i];
+				var liDevice = document.createElement("li");
+				liDevice.id = treeParent.treeId;
+				liDevice.className = treeParent.isFolder==true?"folder":"";
+				liDevice.title = treeParent.treeName;
+				liDevice.innerHTML = treeParent.treeName;
+				liDevice.id = treeParent.treeId;
+				// Set focus to node that has been clicked
+				var fc = "";
+				if(selectedCon != "" && treeParent.treeId == selectedCon)
+				{
+					fc = ",focus:true";
+				}
+				liDevice.setAttribute("data","pos:"+treeParent.pos+",expand:"+treeParent.isExpand+",select:"+treeParent.isSelected+fc);
+				ulParent.appendChild(liDevice);
+				
+				var ulChild = createUlLiComp(treeParent);
+				
+				liDevice.appendChild(ulChild);
+				ulParent.appendChild(liDevice);
+			}
+			
+	    	liParent.appendChild(ulParent);
+	    	ulTop.appendChild(liParent);
+	    	tree.appendChild(ulTop);
+	    }
+		
+		function createUlLiComp(treeParent) 
+		{	
+			var selectedCon = document.getElementById("thePage:theForm:selectedConnection").value;
+			var ulChild = document.createElement("ul");
+				
+			for(var j=0;j<treeParent.lstChild.length;j++)
+			{
+
+				var treeChild = treeParent.lstChild[j];
+				
+				var fc = "";
+				if(selectedCon != "" && treeChild.treeId == selectedCon)
+				{
+					fc = ",focus:true";
+				}
+				
+				var liChild = document.createElement("li");
+				liChild.className = treeChild.isFolder==true?"folder":"";
+				liChild.title = treeChild.treeName; 
+				liChild.id = treeChild.treeId; 
+				liChild.setAttribute("data","hideCheckbox:"+treeChild.isHideCheckBox+",parrentId:'"+treeChild.treeParrentId+"',treeLv:"+treeChild.treeLv+",pos:"+treeChild.pos+",expand:"+treeChild.isExpand+",select:"+treeChild.isSelected+",parrentPos:"+treeParent.pos+",parrentTopPos:"+treeParent.pos+",parrentTopKey:"+treeParent.treeId+",isFolder:"+treeChild.isFolder+fc);
+				liChild.innerHTML = treeChild.treeName;
+				if(treeChild.lstChild.length>0)
+				{
+					var ulVal = createUlLiComp(treeChild);
+					liChild.appendChild(ulVal);
+					
+				}
+				
+				ulChild.appendChild(liChild);
+						
+			}
+			return ulChild;
+			
+		}
+		
+	</script>
+
+</head>
+
+<body style="margin-left: 5px;margin-right: 5px;">
+	<apex:form id="theForm">
+		
+	<apex:inputHidden value="{!isSaveError}" id="isSaveError"/>	
+	<apex:inputHidden value="{!targetId}" id="targetId"/>	
+	<apex:inputHidden value="{!connectionDes}" id="connectionDes"/>	
+	<apex:inputHidden value="{!selectedConnection}" id="selectedConnection"/>
+	<apex:inputHidden value="{!jsonObject}" id="jsonObject"/>
+	<apex:actionFunction name="addConnection" action="{!addConnection}" rerender="theTreeConn,theMessages,jsonObject" status="status"/> 
+	<apex:actionFunction name="saveRecords" action="{!saveRecords}" rerender="theTreeConn,theMessages,isSaveError,targetId,deviceDes" status="status"/> 			
+	<apex:actionFunction name="getConnections" action="{!getConnections}" rerender="theTreeConn,theMessages,jsonObject" status="status"/>
+	
+	
+	<apex:pageMessages id="theMessages"/> 
+	
+	<div style="margin-top: 5px">			              			 	   	  			  		  			
+		<input type="text" class="InputStyle" id="searchConn" placeholder="Connection search" onKeypress="if (event.keyCode == 13){addConnection();return false;}"/>
+	</div>
+	
+	<table width="100%">
+			<tr>
+				<td valign="top">				
+					<apex:outputPanel id="theTreeConn" >		
+					  	<div id="tree" style="height: 400px"> 
+					  		<script>
+					              initializeTree(); 
+					         </script>
+					   </div>
+					    <script type="text/javascript">
+						   $(function(){
+						        $("#tree").dynatree({
+						       		 checkbox: true, // Show checkboxes.
+						       		 selectMode: 2,
+						       		// persist: true,// Persist expand-status to a cookie
+						       		// cookieId: "CountryAndCityGumTree",// Choose a more unique name, to allow multiple trees.
+						       		onClick: function(node, event) {
+					       	 			if( node.getEventTargetType(event) == "title" && node.data.key !="AllConnections" && node.data.isFolder == true ){	
+					       	 				$('[id$=selectedConnection]').val(node.data.key);
+					       	  				getConnections(); 
+						       	   			return false; 
+					       	 			}     
+						      		},
+								    onKeydown: function(node, event) {
+								        if( event.which == 32 ) {
+								          node.toggleSelect();
+								          return false;
+								        }
+								   },
+								   fx: { height: "toggle", duration: 200 },
+								   onSelect: function (flag, node){
+								   		if(node.childList != null)
+								   		{
+								   			if( !isFromChildClick){
+									   			for(var i=0;i<node.childList.length;i++)
+									   			{
+									   				var childNode = node.childList[i];
+								   					node.select(flag);
+								   					childNode.select(flag);
+									   				
+									   			}
+									   			
+									   			node.expand(flag);	
+									   			isFromChildClick = false;
+									   		}
+									   		else
+									   		{
+									   			isFromChildClick = false;
+									   		}
+								   		}
+									   		
+								   		if(flag){
+							   				var parNode = node.getParent();
+							   				
+							   				if(parNode!= null && !parNode.isSelected())
+							   				{
+							   					isFromChildClick = true;
+							   					parNode.select(flag);
+							   					
+							   				}
+							   			}else
+							   			{
+							   				
+							   				if(node.childList != null)
+									   		{
+									   			for(var i=0;i<node.childList.length;i++)
+									   			{	
+									   				var childNode = node.childList[i];
+								   					childNode.select(flag);
+									   			}
+									   			node.expand(flag);	
+									   			isFromChildClick = false;
+									   		}
+							   			}
+
+								   		setValueToTree(node.data.pos,node.data.key,node.data.treeLv,flag);	
+								   		
+								   }
+								   
+						      });
+						       
+						    });
+			    		</script>
+				   </apex:outputPanel>
+	   			</td>
+	   			<td align="center" valign="middle">
+	   				<div > <apex:commandButton value="Save" onclick="checkTargetingBeforeSave();return false;"   styleClass="buttons buttonsWidth" status="status"/></div>
+	   				<div style="margin-top:  10px;display:none;"> <apex:commandButton action="{!resetConnection}"  value="Reset tree"  rerender="theTreeConn,theMessages"  styleClass="buttons" status="status"/></div>
+	   				<div style="margin-top:  10px;"><apex:commandButton rendered="{!Not(isShowCancel)}" value="Cancel" onclick=" window.close();return false;"  styleClass="buttons buttonsWidth" /></div>
+	   			</td>
+			</tr>
+		</table>
+	    <apex:actionStatus id="status">
+                <apex:facet name="start">
+                    <c:Load BackColor="#efefef" borderColor="#efefef" borderSize="3" height="50px" width="180px" Message="Please, wait..." messageStyle="color:darkred;font-size:10pt;font-family:arial;font-weight:bold;" imageUrl="/img/loading.gif"/>
+                </apex:facet>
+       </apex:actionStatus>
+	
+	
+		
+	</apex:form>
+</body>
+
+<script type="text/javascript">
+		//without this, tabclick will stop working after jQuery lib imported.
+     var $ = jQuery.noConflict();
+    jQuery(document).ready(function($) {
+	    	 
+	      var PLACEHOLDER = 'Connection search'; 
+		  var itemObjects;		  
+		  var queryTerm;   
+		  
+		  $('[id$=searchConn]').autocomplete({
+			        minLength: 2,
+			        source: function(request, response) {
+			                    queryTerm = request.term;			                   
+			                   TreeConnectionSelectionController.searchConnection(request.term, function(result, event){
+			                        if(event.type == 'exception') {
+			                              alert(event.message);
+			                        } else {			                        	
+			                             itemObjects = result;
+			                             response(itemObjects);
+			                        }
+			                    }); 
+			               },
+			        focus: function( event, ui ) {
+			                $('[id$=searchConn]').val( ui.item.name  );
+			                return false;
+			                },
+			        select: function( event, ui ) {
+			                    $('[id$=searchConn]').val( ui.item.Name);	
+			                    $('[id$=selectedConnection]').val( ui.item.Id);					                     	                  
+			                    //case pressing key enter
+			                    if(event.which==13){
+			                    	addConnection();
+			                    	return false;
+			                    }  
+			                    return false;
+			                    
+			                    
+			                },
+			})			     
+			.data( "autocomplete" )._renderItem = function( ul, item ) {
+		        var entry = "<a>" + item.Name;			       
+		        entry = entry + "</a>"; 
+		        entry = entry.replace(queryTerm, "<b>" + queryTerm + "</b>");
+		        return $( "<li></li>" )
+		            .data( "item.autocomplete", item )
+		            .append( entry )
+		            .appendTo( ul );
+		    };
+			        
+		    // Add or remove placeholder values
+		    $('[id$=searchConn]').val(PLACEHOLDER);
+		    $('[id$=searchConn]').on("focus",  function(event){
+		        $tgt = $(event.target);
+		        if($tgt.val() === PLACEHOLDER ){
+		            $tgt.val('');		           
+		        } 
+		    });
+		    $('[id$=searchConn]').on( "blur",  function(event){
+		        $tgt = $(event.target);
+		        if($tgt.val() === '' ){
+		            $tgt.val(PLACEHOLDER);			          
+		        }
+		    });
+	      
+    });
+      
+  </script>
+
+	
+</apex:page>

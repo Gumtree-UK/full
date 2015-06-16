@@ -1,0 +1,37 @@
+<apex:page controller="SalesLeaderBoardController" showHeader="false" tabstyle="Account">
+<style>
+      .activeTab {background-color: #236fbd; color:white; background-image:none}
+      .inactiveTab { background-color: lightgrey; color:black; background-image:none}
+   </style>
+<br/>
+<apex:tabPanel tabClass="activeTab" inactiveTabClass="inactiveTab">
+        <apex:tab label="Standard Packages" name="tab1" id="tab1">
+            <apex:dataTable align="center" columns="9" width="100%" value="{!olistandard}" var="oli" rowclasses="odd,even">
+                <apex:column width="16%" style="" headerValue="Product">
+                    <apex:outputLink value="/{!oli.Id}" id="theLink" target="_parent">
+                        <apex:outputText value="{!oli.PriceBookEntry.Name}"/>
+                    </apex:outputLink>
+                </apex:column>
+                <apex:column width="10.5%" value="{!oli.Length_Months__c}" headerValue="Length (mths)"/>
+                <apex:column width="10.5%" value="{!oli.Period__c}" headerValue="Period"/>
+                <apex:column width="10.5%" headerValue="Quantity">
+                    <apex:outputText value="{!ROUND(oli.Quantity,0)}"/>
+                </apex:column>
+                <apex:column width="10.5%" value="{!oli.Credits_used__c}" headerValue="Credits Used"/>
+                <apex:column width="10.5%" headerValue="Credits Remaining">
+                    <apex:outputText value="{!ROUND(oli.Credits_remaining__c,0)}" style="{!IF(oli.Credits_remaining__c<=5, 'font-weight:bold; color:red; text-align:center','font-weight:bold; color:green; text-align:center')}"/>    
+                </apex:column>
+                <apex:column width="10.5%" headerValue="Credit Burn Rate">
+                    <apex:outputText value="{!oli.Credit_burn_rate__c}" style="{!IF(oli.Credit_burn_rate__c>1.0, 'font-weight:bold; color:green','font-weight:bold; color:red')}"/>                    
+                </apex:column>
+                <apex:column width="10.5%" headerValue="Days Remaining">
+                    <apex:outputText value="{!ROUND(oli.Days_remaining__c,0)}" style="{!IF(oli.Days_remaining__c<=7, 'font-weight:bold; color:red','font-weight:bold; color:green')}"/>                    
+                </apex:column>
+                <apex:column width="10.5%" headerValue="Package Status">                
+                    <apex:outputText value="{!oli.Package_Status__c}" style="{!IF(oli.Package_Status__c='Overusage', 'font-weight:bold; color:red','font-weight:bold; color:green')}"/>
+                </apex:column>                                   
+            </apex:dataTable>
+         </apex:tab>
+        
+        </apex:tabPanel>
+</apex:page>

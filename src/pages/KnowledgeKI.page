@@ -1,0 +1,28 @@
+<apex:page standardController="Known_Issue__kav" title="{!Known_Issue__kav.Title}" showHeader="false" sidebar="false">	
+	<apex:composition template="{!$Site.Template}">
+		<apex:define name="content">
+			<div class="page-content">
+				<apex:outputPanel styleClass="pkMaintwo" layout="block">
+					<br />
+					<br />
+					<apex:outputLink value="{!IF($CurrentPage.parameters.retURL!='',$CurrentPage.parameters.retURL,$Site.CurrentSiteURL)}"> &lt; Back</apex:outputLink> 
+					<br />
+	    			<h1>{!Known_Issue__kav.Title}</h1>
+					<br />
+					<apex:outputField value="{!Known_Issue__kav.Description__c}"></apex:outputField>
+					<br /> 
+					<br />      
+				</apex:outputPanel>
+				<div align="right"><c:ArticleDeflectionBox knowledgeArticleId="{!Known_Issue__kav.Id}"/></div>
+			</div>
+            <div class="secondary">
+				<div class="content-header">
+                    <div class="inner"><h2>Help topics</h2></div>
+                </div>
+                <div class="block bottom-block">
+                    <div class="block"><c:knowledgeCategories /></div>                                  
+                </div>
+            </div>
+		</apex:define>
+    </apex:composition>     
+</apex:page>

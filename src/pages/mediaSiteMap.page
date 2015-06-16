@@ -1,0 +1,30 @@
+<apex:page contentType="text/xml">
+
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+      http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator 
+     www.xml-sitemaps.com -->  
+    
+
+<!-- Replace the following URL with the site URL that you want
+     to be mapped and accessible to Web crawlers. -->  
+    
+<url>
+  <loc>http://www.gumtree-media.com</loc>
+</url>
+<!-- Replace the following URLs with your site's actual URLs -->  
+    
+<url>
+  <loc>http://www.gumtree-media.com/page?pageid=a0W20000002UUvEEAW</loc>
+</url>
+<url>
+  <loc>http://www.gumtree-media.com/page?pageid=a0W20000002UUvOEAW</loc>
+</url>
+<url>
+  <loc>http://www.gumtree-media.com/page?pageid=a0W20000002UUvJEAW</loc>
+</url>
+</urlset>
+</apex:page>

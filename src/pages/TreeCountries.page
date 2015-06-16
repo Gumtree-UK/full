@@ -1,0 +1,11 @@
+<!--
+Change log:
+    Sopha Pum: 12-03-2012
+    changed {!$Resource.TreeCountriesSWF} -> {!$Resource.TreeCountriesSWF2} : Compatibility problem (IE8 with Flash V.11 error APPCRASH)
+-->
+<apex:page Controller="TreeCountriesController" tabStyle="Opportunity" sidebar="false" ShowHeader="false" setup="false" > 
+       <div style="height:630;width:840;" align="center" >
+        <apex:flash src="{!$Resource.TreeCountriesSWF2}" height="630" width="830"
+            flashvars="userId={!$User.Id}&session_id={!sessionId}&server_url={!$Api.Partner_Server_URL_120}&lineItemId={!lineItemId}&targetId={!targetId}&checked={!checkedNodes}&fromId={!fromId}&hideId={!hideId}" />
+        </div> 
+</apex:page>

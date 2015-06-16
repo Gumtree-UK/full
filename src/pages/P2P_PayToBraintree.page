@@ -1,0 +1,487 @@
+<apex:page controller="P2P_PayToBraintree" showHeader="false" action="{!actionMethod}">
+    <html>
+        <head>  
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+            <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet" type="text/css"/>
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'css/bootstrap.min.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'css/custom_bootrap.css')}" />
+            <script src="{!URLFOR($Resource.P2P_PayToBraintree,'cardValidator.js')}"></script>
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'helperDialog/helperDialog.css')}" />
+            
+            <style> 
+                .wrap-max{
+                    max-width: 400px;
+                }
+                .clearPadding{
+                	padding-left: 0;
+                	padding-right: 0;
+                }
+                .h-line{
+                    border: 1px solid #D3D3D3;
+                    width: 100%;
+                    margin: 8px;
+                    margin-left: 0px;
+                }
+                .label{
+                    font-size: 15px;
+                    color: #333;
+                    display: block;
+					text-align: left;
+					padding-left: 0;
+                }
+                input[type="text"] {
+                    display: block;
+                    margin: 9px 0;
+                }
+                
+                .largeInput{
+                    width: 98%;
+                }
+                .smallInput{
+                    font-size: inherit;
+                    width: 80% !important;
+                    float: left;
+                }
+                .row{
+                    display: inline-block;
+                    width: 100%;
+                }
+                .container{
+					padding-left: 0;
+					padding-right: 0;
+				}
+				.row{
+					margin-left: 0;
+					margin-right: 0;
+				}
+                .no-padding{
+                    padding: 0;
+                }
+                .adjust-width{
+                    width: 70% !important;
+                }
+                .headerIcon {
+                    margin-top: 17px;
+                    margin-right: -5px;
+                }
+                .error-msg{
+                    padding: 0px 0px 10px 15px;
+                }
+                .red{color: #F00;}
+                .smallrow{
+                    padding: 0px;
+                    float: left;
+                     width: 140px;
+                }
+                .smallrow:FIRST-CHILD{
+                	margin-right: 8px;
+                }
+                #card-number{
+                    background: url("{!URLFOR($Resource.P2P_PayToBraintree, 'card.png')}"),url("{!URLFOR($Resource.P2P_PayToBraintree, 'card.png')}");
+                    background-size: 115px 359px, 75px 300px;
+                    background-position: -27px -109px, 110% -13px; 
+                    background-repeat: no-repeat;
+                    padding-left: 56px;
+                }
+                .error{
+                	border: none !important;
+					color: red;
+					font-size: 14px;
+					display: none;
+					float: left;
+                }
+                
+                #month,#year{
+                	margin-top: 8px;
+					margin-left: 8px;
+					float: left;
+                }
+                #month{
+                	margin-left: 0;
+                	clear: left;
+                }
+                .visa{background-position: -27px -266px, 110% -13px !important; }
+                .visa.valid{background-position: -27px -266px,110% -50px !important;}
+                .mastercard{background-position: -27px -228px, 110% -13px !important;}
+                .mastercard.valid{background-position: -27px -228px, 110% -50px !important;}
+                .american{background-position: -27px -305px, 110% -13px !important;}                
+                .american.valid{background-position: -27px -305px, 110% -50px !important;}
+                .discover{background-position: -27px -188px, 110% -13px !important;}
+                .discover.valid{background-position: -27px -188px, 110% -50px !important;}
+                .jcb{background-position: -27px -150px, 110% -13px !important;}
+                .jcb.valid{background-position: -27px -150px, 110% -50px !important;}
+                .unknow{background-position: -27px -109px, 110% -13px !important;}
+                .unknow.valid{background-position: -27px -109px, 110% -50px !important;}
+                body {
+				    display: table;
+				    padding-bottom: 0;
+				    position: relative;
+				    background-color: #fff;
+				}
+				.iconpayByCard{
+                    background-image: url("{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'white_lock.png')}");
+                    background-position: 26% center;
+                    background-repeat: no-repeat;
+                    padding-left: 30px;
+                }
+                input[type="text"]::-ms-clear,
+				input[type="number"]::-ms-clear,
+				input[type="email"]::-ms-clear,
+				input[type="password"]::-ms-clear { 
+					display: none; 
+				}
+                @media (max-width: 379px){
+                	.iconpayByCard{
+                		background-position: 22% center;
+                	}
+                }
+                @media (max-width: 320px){
+                	.iconpayByCard{
+                		background-position: 15% center;
+                	}
+                }
+                #content{
+	                height: 100%;
+					display: inline-block;
+				}
+            </style>
+        </head>
+    
+        <body>
+        	<div id="content">
+            <div class="wrapTableList wrap-max" style="padding: 0;">
+                <div class="col-md-12 clearPadding">
+                    <h2>Please enter your card details:</h2>
+                    <div class="h-line"></div>
+                </div>
+                <div class="col-md-12 clearPadding">
+                    <apex:pageMessages escape="false"/>
+                    <div class="error-msg red"><apex:outputText value="{!message}" escape="false" rendered="{!NOT(cardSuccess)}"/></div>
+                </div>
+                <div class="col-md-12 clearPadding">
+                    <form action="P2P_PayToBraintree?{!accIdParamName}={!accId}" method="post" id="braintree-payment-form">
+                        <div class="row">
+                            <div class="label">Name on card:</div>
+                            <input type="text" class="largeInput required" name="holderName" placeholder="e.g. John Smith" autocomplete="off"/>
+                            <span class="error">Cardholder name must be less than or equal to 175 characters</span>
+                        </div>
+                        <div class="row">
+                            <div class="label">Card number:</div>
+                            <input type="text" class="largeInput required" data-braintree-name="number" id="card-number" placeholder="e.g. 1234 5678 9012 3456" maxlength="19" autocomplete="off"/>
+                            <span class="error"></span>
+                        </div>
+                        <div class="row">
+                            <div class="smallrow">
+                                <div class="label">Expires on:</div>
+                                <input type="hidden" id="cardDateMonth" class="required" data-braintree-name="expiration_month" autocomplete="off"/>
+                                <select id="month" onchange="copyValueTo(this.value, 'cardDateMonth');">
+                                    <option value="">MM</option>
+                                </select>                                
+                                <input type="hidden" class="required" id="cardDateYear" data-braintree-name="expiration_year" autocomplete="off"/>
+                                <select id="year" onchange="copyValueTo(this.value, 'cardDateYear');">
+                                    <option value="">Year</option>                                    
+                                </select>
+                                <span class="error">Value is required.</span>
+                            </div>
+                            <div class="smallrow">
+                                <div class="label">Security code:</div>
+                                
+                                <input type="text" class="smallInput adjust-width required" style="margin-bottom: 0;" data-braintree-name="cvv" id="cvv" maxlength="4" placeholder="e.g. 123" autocomplete="off"/>
+                                <span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Payment_CVV}"></span>
+                                <span class="error"></span> 
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="submit" class="btnOrange inputFullWidth spacingTop btnConfirmPay iconpayByCard" value="Confirm card details" id="submitButton"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+            <script>
+                braintree.setup("{!client_Token}", "custom", {id: "braintree-payment-form"});
+            </script>
+            <script>
+            	var validCard = false;
+                $('#card-number').validateCreditCard(function(result){
+                    if(result.card_type != null){
+                        validCard = result.length_valid && result.luhn_valid
+                        if(result.card_type.name == 'visa'){
+                            resetClass();
+                            $('#card-number').addClass("visa");
+                            if(result.length_valid && result.luhn_valid){
+                                $('#card-number').addClass("valid");
+                            }else{
+                                $('#card-number').removeClass("valid");
+                            }
+                        }else if(result.card_type.name == 'amex'){
+                            resetClass();
+                            $('#card-number').addClass("american");
+                            if(result.length_valid && result.luhn_valid){
+                                $('#card-number').addClass("valid");
+                            }else{
+                                $('#card-number').removeClass("valid");
+                            }
+                        }else if(result.card_type.name == 'discover'){
+                            resetClass();
+                            $('#card-number').addClass("discover");
+                            if(result.length_valid && result.luhn_valid){
+                                $('#card-number').addClass("valid");
+                            }else{
+                                $('#card-number').removeClass("valid");
+                            }
+                        }else if(result.card_type.name == 'jcb'){
+                            resetClass();
+                            $('#card-number').addClass("jcb");
+                            if(result.length_valid && result.luhn_valid){
+                                $('#card-number').addClass("valid");
+                            }else{
+                                $('#card-number').removeClass("valid");
+                            }
+                        }else if(result.card_type.name == 'mastercard'){
+                            resetClass();
+                            $('#card-number').addClass("mastercard");
+                            if(result.length_valid && result.luhn_valid){
+                                $('#card-number').addClass("valid");
+                            }else{
+                                $('#card-number').removeClass("valid");
+                            }
+                        }else{
+                            resetClass();
+                            $('#card-number').addClass("unknow");
+                            if(result.length_valid && result.luhn_valid){
+                                $('#card-number').addClass("valid");
+                            }else{
+                                $('#card-number').removeClass("valid");
+                            }
+                        }
+                        if(validCard){
+	                		$("#card-number").parent().find(".error").hide();
+	                		resizeTo($("#content").height());
+	                	}
+                    }
+                });
+                
+                $('#card-number').keypress(function(e){
+                    if(e.keyCode==8 && $(this).val().trim().length == 1){
+                        resetClass();
+                        $(this).addClass("unknow");
+                    }
+                });
+                
+                function resetClass(){
+                    $('#card-number').removeClass("visa");
+                    $('#card-number').removeClass("american");
+                    $('#card-number').removeClass("discover");
+                    $('#card-number').removeClass("jcb");
+                    $('#card-number').removeClass("mastercard");
+                    $('#card-number').removeClass("unknow");
+                    $('#card-number').removeClass("valid");
+                }
+                
+                $(document).ready(function(){
+                	resizeTo($("#content").height());
+                	$(window).resize(function(){
+                		resizeTo($("#content").height());
+                	});
+                	$( window ).on( "orientationchange", function( event ) {
+						resizeTo($("#content").height());
+					});
+                	closePopup();
+                	addYear();
+                	addMonth();          
+                    $('[data-toggle="tooltip"]').bind({
+                        mouseover : function(){
+                            var title = $(this).attr('title');
+                            var data_title = $(this).attr('data-title');
+                            $(this).attr('title','');
+                            if(!data_title){
+                                data_title = title;
+                                $(this).attr('data-title',title);
+                            }
+                            helperDialog.show($(this).get(0),data_title);
+                        },
+                        mouseout : function(){
+                            helperDialog.hide();
+                        }
+                    });
+                });
+                
+                $("#cvv").keyup(function(){cvvChange();});
+                
+                function copyValueTo(val, toId){
+                	if($("#month").val()!="MM" && $("#year").val()!=="Year"){
+                		$("#cardDateMonth").parent().find(".error").hide();
+                	}
+                	resizeTo($("#content").height());
+                    var toInput = document.getElementById(toId);
+                    toInput.value = val; 
+                }
+                
+                $("#submitButton").click(function(e) {
+                	resizeTo($("#content").height());                	
+				    return validate();
+				});
+				
+				function validate(){
+					var b = true;
+					$(".required").each(function(){
+    					if($(this).val().trim()==""){    						
+    						$(this).parent().find(".error").show();
+    						b = false;
+    					}else{
+    						$(this).parent().find(".error").hide();
+    					}
+					});
+					
+					if(!validCard){
+						if($("#card-number").val().trim() !=""){
+							$("#card-number").parent().find(".error").text("Credit card number must pass a Luhn-10 check");
+						}else{
+							$("#card-number").parent().find(".error").text("Credit card number must be 12-19 digits inclusive");
+						}
+						$("#card-number").parent().find(".error").show();
+						b = false;
+					}
+					if(!validLength()){
+						if($("#cvv").val().trim() !=""){
+							$("#cvv").parent().find(".error").text("CVV must be 3 of 4 digits.");
+						}else{
+							$("#cvv").parent().find(".error").text("Value is required.");
+						}
+						$("#cvv").parent().find(".error").show();
+						b = false;
+					}else if(!validCVV()){
+						$("#cvv").parent().find(".error").text("Invalid CVV.");
+						$("#cvv").parent().find(".error").show();
+						b = false;
+					}
+					if(!validDate()){
+						$("#cardDateMonth").parent().find(".error").show();
+						b = false;
+					}
+					resizeTo($("#content").height());
+					return b;
+				}
+				
+				function cvvChange(){
+					if(!validLength()){
+						if($("#cvv").val().trim()!=""){
+							$("#cvv").parent().find(".error").text("CVV must be 3 of 4 digits.");
+						}else{
+							$("#cvv").parent().find(".error").text("Value is required.");
+						}
+						$("#cvv").parent().find(".error").show();
+					}else if(!validCVV()){
+						$("#cvv").parent().find(".error").text("Invalid CVV.");
+						$("#cvv").parent().find(".error").show();
+					}else{
+						$("#cvv").parent().find(".error").hide();
+					}
+					resizeTo($("#content").height());
+				}
+				
+				function addYear(){
+			        var currentYear = new Date().getFullYear();
+			        for (var i = 1; i <= 10; i++) {
+			            $("#year").append( $("<option></option>")
+			                    .attr("value", currentYear)
+			                    .text(currentYear)
+			            );
+			            currentYear++;
+			        }
+			    }
+			    function addMonth(){			        
+			        for (var i = 1; i <= 12; i++) {
+			            $("#month").append( $("<option></option>")
+		                    .attr("value", i)
+		                    .text(i)
+			            );
+			        }
+			    }
+				function validCVV(){
+					var pattern = /^[0-9]+$/;
+					var cvv = $("#cvv").val();
+					return pattern.test(cvv);
+				}
+				function validLength(){
+					return (($("#cvv").val().length == 3)||($("#cvv").val().length == 4));
+				}
+				function validDate(){
+					return !($("#month").val()=="MM" || $("#year").val()=="Year");
+				}
+
+				function closePopup(){
+					if({!cardSuccess}){
+						javascript:window.top.closePupup("{!message}");
+					} 
+				}
+				function resizeTo(h){
+					javascript:window.top.resizeFrame(h);
+				}
+            </script>
+            <script>
+	            var helperDialog = helperDialog || (function ($) {
+					'use strict';
+				
+					// Creating modal dialog's DOM
+					var $dialog = $(
+						'<div class="popupHeaderInfo">' +
+						'<div class="arrow-image"></div>' +
+						'<label>This is Helper Text</label>' +
+						'</div>');
+						
+					$('body').prepend($dialog);
+					function getScreenCordinates(obj) {
+						var p = {};
+						p.x = obj.offsetLeft;
+						p.y = obj.offsetTop;
+						while (obj.offsetParent) {
+							p.x = p.x + obj.offsetParent.offsetLeft;
+							p.y = p.y + obj.offsetParent.offsetTop;
+							if (obj == document.getElementsByTagName("body")[0]) {
+								break;
+							}else {
+								obj = obj.offsetParent;
+							}
+						}
+						return p;
+					}
+					return {
+						show: function (activeEle, message) {
+							var pos = getScreenCordinates(activeEle);
+							pos.x -= 20;
+							pos.y = $(window).height()-(pos.y-15);
+							
+							var posX = pos.x + $dialog.width();
+							if(posX > $(window).width()){
+								var distance = posX - $(window).width() + 5;
+								pos.x -= distance;
+								$dialog.find('.arrow-image').css({"margin-left": distance+15+"px",
+																	"-webkit-transform": "rotate(180deg)",
+																	"-moz-transform": "rotate(180deg)",
+																	"-ms-transform": "rotate(180deg)",
+																	"-o-transform": "rotate(180deg)",
+																	"transform": "rotate(180deg)",
+																	"margin-bottom":"-10px",
+																	"position":"absolute",
+																	"bottom":"0"}); 
+							}else{
+								$dialog.find('.arrow-image').css("margin-left","15px");
+							}
+							$dialog.css({"margin-left":pos.x+"px","margin-bottom":pos.y+"px","position":"absolute","bottom":"0"});
+							$dialog.find('label').text(message);
+							$dialog.show();
+						},
+						
+						hide: function () {
+							$dialog.hide();
+						}
+					};
+				})(jQuery);
+            </script>
+            </div>
+        </body>
+    </html>
+</apex:page>

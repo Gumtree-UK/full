@@ -1,0 +1,1094 @@
+<apex:page standardController="Opportunity" extensions="ModifyProductController2"  Sidebar="false" showHeader="true" id="myPage" tabstyle="Opportunity">
+
+<head>
+ 
+<style type="text/css">
+        .dateFormat{display:none;}
+        .activeTab {background-color: #FDD017; color:white; background-image:none}
+        .inactiveTab { background-color: #F3F3EC; color:black; background-image:none}
+        .colHeader{font-weight:bold;border-bottom:1px solid #E3DEB8;}
+        .colContent{border-bottom:1px solid #E3DEB8}
+        html, body {
+            overflow-x: hidden;
+            
+        } 
+        
+        .visibleDiv{border:1px solid gray;width:125px;background: #9E9E9E;height: 18px;text-align:left;padding-left:2px;}
+input[disabled],input.disabled {
+    border: 1px solid gray;
+    background-color: #9E9E9E;
+    height: 18px;
+    color: black;
+    font-size: 11px;
+}
+</style>
+ 
+<script type="text/javascript">
+
+    function changeBC(index) {
+    
+        //alert(index);
+        
+        var bc = document.getElementById('myPage:myForm:MyPageBlock:myRepeat2:'+ index+':BillingCategory').value;
+        var qt = document.getElementById('myPage:myForm:MyPageBlock:myRepeat2:'+ index+':Quantity').value;
+        
+        if (bc=='Fix Price' && qt=='') {
+            document.getElementById('myPage:myForm:MyPageBlock:myRepeat2:'+ index+':Quantity').value=1;
+            }
+    }
+
+    function getWidth(){
+        return (typeof window.innerWidth != 'undefined' ? window.innerWidth : document.documentElement.clientWidth);
+    }
+    
+    function setPosition(value){
+                var doc=document.getElementById("myPage:myForm:SelPosition");
+                doc.value=value;    
+                
+    }
+    
+    function setToDate(index) {
+
+        var start = document.getElementById('myPage:myForm:MyPageBlock:myRepeat1:'+ index+':startDate').value;
+        var end = document.getElementById('myPage:myForm:MyPageBlock:myRepeat1:'+ index+':endDate').value; 
+        
+        if (start!='' && end=='') {
+          document.getElementById('myPage:myForm:MyPageBlock:myRepeat1:'+ index+':endDate').value=start;          
+          DatePicker.pickDate(true, 'myPage:myForm:MyPageBlock:myRepeat1:'+ index+':endDate', false);
+          }
+    
+    }
+    
+    function change_fromdate(index) {
+    
+        //alert('change_fromdate');
+        
+        var adtype = document.getElementById('myPage:myForm:MyPageBlock:myRepeat1:'+ index+':ad_type').value;
+        var start = document.getElementById('myPage:myForm:MyPageBlock:myRepeat1:'+ index+':startDate').value;
+    
+        //alert('adtype: '+adtype);
+        //alert('start: '+start);
+        
+        if (start!='' &&
+            (
+            adtype.search('Wallpaper')>-1 ||   
+            adtype.search('Homepage Event')>-1 || 
+            adtype.search('Homepage Takeover')>-1 ||
+            adtype.search('Expandable Homepage Event')>-1
+            )
+            ) {
+            
+            //alert('JA');
+            
+            //alert('adtype: '+adtype);
+            //alert('start: '+start);
+            
+            var date = start.split('.');
+            var month = date[1];
+            month = parseFloat(month).toFixed(0);
+            
+            //alert('month: '+month);
+            
+            if (month>=1 && month<=12) {
+            
+                var ai_vol = document.getElementById('myPage:myForm:MyPageBlock:myRepeat1:'+ index+':ai_vol'+month).value;
+            
+                //alert('ai_vol: '+ai_vol);
+                
+                ai_vol = parseFloat(ai_vol).toFixed(0);
+                
+                if (ai_vol!='NaN') {
+                    
+                    if (document.getElementById('myPage:myForm:MyPageBlock:myRepeat2:'+ index+':Guaranteed_AI')) {
+                        document.getElementById('myPage:myForm:MyPageBlock:myRepeat2:'+ index+':Guaranteed_AI').value = ai_vol;
+                        }
+                    if (document.getElementById('myPage:myForm:MyPageBlock:myRepeat2:'+ index+':Guaranteed_AI3')) {
+                        document.getElementById('myPage:myForm:MyPageBlock:myRepeat2:'+ index+':Guaranteed_AI3').value = ai_vol;
+                        //document.getElementById('myPage:myForm:MyPageBlock:myRepeat2:'+ index+':Guaranteed_AI3').style.backgroundcolor = '#FF0000';
+                        }
+                }
+            }
+        }
+    }
+    
+    function setColumn(value){
+                var doc=document.getElementById("myPage:myForm:SelColumn");
+                doc.value=value;
+    }
+    
+    
+
+    function cancel(){
+        document.getElementById('overlayBackground').style.display='none';
+        document.getElementById('InlineEditDialog').style.display='none';
+
+    }
+    
+    function cancelCx(){
+        document.getElementById('overlayBackground').style.display='none';
+        document.getElementById('InlineCopyDialog').style.display='none';
+
+    }
+    
+    function days_between(date1, date2) {
+        // The number of milliseconds in one day
+        var ONE_DAY = 1000 * 60 * 60 * 24;
+        // Convert both dates to milliseconds
+        var date1_ms = date1.getTime();
+        var date2_ms = date2.getTime();
+        // Calculate the difference in milliseconds
+        var difference_ms = Math.abs(date1_ms - date2_ms);    
+        // Convert back to days and return
+        return Math.round(difference_ms/ONE_DAY);
+
+    }
+    
+    function setShare(value){
+        var doc=document.getElementById("myPage:myForm:SelShare");
+        doc.value=value;        
+    }
+    
+    mDaysInMonth=[31,28,31,30,31,30,31,31,30,31,30,31];  
+    
+    function daysInMonth(month,year){
+        if((month==1)&&(year%4==0)&&((year%100!=0)||(year%400==0))){
+            return 29;
+        }else{
+            return mDaysInMonth[month];
+        }
+    }
+    
+    function IsDateEqual(Date1, Date2){
+        var DaysDiff;       
+        DaysDiff = Math.floor((Date1.getTime() - Date2.getTime())/(1000*60*60*24));
+        if(DaysDiff == 0)
+            return true;
+            else
+            return false;
+    }   
+    
+    var position;
+    
+    function loadCx(proName,index){  
+      
+        position=index;
+        var title = document.getElementById('InlineCopyDialogTitle');
+        title.innerHTML=proName;
+        var radioStr='';
+        var newdiv = document.getElementById('contentCopy');  
+        
+        newdiv.innerHTML='<tr><td>{!$Label.HowManyCopies}&nbsp;&nbsp;<input id="copies" name="copies" type="input"></td></tr>'; 
+        }
+ 
+     function editBlockOpenCx(){
+            var divOverLay =document.getElementById('overlayBackground');
+            var divObj =document.getElementById('InlineCopyDialog')
+            divOverLay.style.display='inline';
+            divObj.style.display='inline';
+    }
+   
+
+    
+    function setWidthDiv(val){
+            var mydiv =document.getElementById(val);        
+            mydiv.style.width=(getWidth()-485)+'px';
+            //mydiv.style.word-wrap= 'break-word';
+            
+    }
+    
+    function editBlockOpen(){
+            var divOverLay =document.getElementById('overlayBackground');
+            var divObj =document.getElementById('InlineEditDialog');
+            divOverLay.style.display='inline';
+            divObj.style.display='inline';
+    }
+    
+    /*function checkValidationCopyField(p,n,i){
+        var compo = document.getElementById('myPage:myForm:MyPageBlock:myRepeat'+ i +':'+ p+':'+n); 
+                
+            if(compo.value!=''){                
+                copyField();
+            }   
+            
+    }*/
+    
+    function checkValidationCopyField(p,n,i){
+       
+        var compo = document.getElementById('myPage:myForm:MyPageBlock:myRepeat'+ i +':'+ p+':'+n).value;       
+        //cut all space throw aways
+        compo=trim(compo);
+        //alert(compo); 
+        if(compo!=''){
+       
+        copyField();
+        }
+        
+        }
+        
+        function trim(str) {
+        var reExtraSpace = /^\s+(.*?)\s+$/;
+        str=str.replace(reExtraSpace, '$1');
+        return str.replace(' ','');
+        }
+    
+    
+    function checkValidationSplit(){
+        var start = document.getElementById('myPage:myForm:MyPageBlock:myRepeat1:'+ position+':startDate').value;
+        var end = document.getElementById('myPage:myForm:MyPageBlock:myRepeat1:'+ position+':endDate').value;   
+        if (start!='' && end!='') {
+            split();
+        }         
+    }
+
+    function checkValidationCopy(){
+        var copies = document.getElementById('copies').value;
+        if (copies!='' && copies>0) {
+            var doc=document.getElementById("myPage:myForm:SelCopies");
+            doc.value=copies;        
+            copy(); 
+            }       
+    }
+    
+    function isIE() {
+            return /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent);
+    }
+ 
+</script>
+
+</head>
+   <div class="bPageTitle">
+        <div class="ptBody secondaryPalette">
+            <div class="content">
+            <apex:image id="theImage" value="/s.gif" styleClass="pageTitleIcon"/>
+            <apex:outputPanel >
+            <h2 class="pageType"><apex:outputText value="Opportunity Name: {!mcName}"/></h2>
+            <h1 class="pageDescription"><apex:outputText value="Account Name: {!accName}"/></h1>
+            </apex:outputPanel>
+            </div>
+        </div> 
+    </div>
+   
+    
+    <apex:form id="myForm"> 
+            
+            <apex:InputHidden id="SelPosition" value="{!selPosition}" />
+            <apex:InputHidden id="SelColumn" value="{!selColumn}" />
+            <apex:InputHidden id="SelShare" value="{!selShare}" /> 
+            <apex:InputHidden id="SelCopies" value="{!selCopies}" />  
+            <apex:InputHidden id="uAgent" value="{!hsize}"/>
+            <apex:InputHidden id="prodcount" value="{!prodcount}"/>
+                                
+
+        <apex:actionFunction name="saveRecord" action="{!saveRecords}" rerender="MyPageBlock" status="status"/>
+        <apex:actionFunction name="copyField" action="{!copyField}"  rerender="MyPageBlock" status="status"/>
+        <apex:actionFunction name="copy" action="{!copyRecords}" rerender="MyPageBlock" status="status"/>
+                        
+        <apex:pageBlock id="MyPageBlock" title="{!$Label.BlockTitle}">                                           
+            <apex:pageBlockButtons >
+               
+                <apex:commandButton value="Save"  title="Save" action="{!saveRecords}" rerender="MyPageBlock" status="status" />
+                <apex:commandButton value="Back" title="Back" action="{!goBack}"  immediate="true"  rerender="MyPageBlock" status="status" />
+                <apex:commandButton value="Clear all" title="Clear all" onClick="window.location='{!refreshUrl}';return false;"/>
+            </apex:pageBlockButtons> 
+            
+        
+            
+            <div  class="pbSubheader first tertiaryPalette" >
+                <span class="pbSubExtra"><nobr>
+                        <span class="requiredLegend">
+                            <span class="requiredExampleOuter">
+                                <span class="requiredExample">&nbsp; </span>
+                            </span>     
+                            <span class="requiredMark">*</span>                 
+                            <span  class="requiredText"> = Required Information</span>
+                        </span></nobr>
+                </span>
+                <h3>
+                Information             
+                </h3> 
+            </div>
+            
+            <apex:pageMessage severity="error" summary="{!errorMsg}" rendered="{!If(errorMsg<>'',true,false)}"  strength="3"  > 
+            </apex:pageMessage>
+            
+            <apex:InputHidden id="fromDateStatus" value="{!fromDateError}" />   
+            <apex:InputHidden id="forceSave" value="{!forceDateSave}" />    
+            <apex:InputHidden id="errorField" value="{!errorFieldStatus}" />  
+            <apex:InputHidden id="BPCollision" value="{!BP_Collision}" />   
+            
+            
+                <script type="text/javascript">
+                    
+                    //call when got error from date < today
+                    var fromDate=document.getElementById("myPage:myForm:MyPageBlock:fromDateStatus").value;
+                    var forceSave=document.getElementById("myPage:myForm:MyPageBlock:forceSave");
+                    var errorField=document.getElementById("myPage:myForm:MyPageBlock:errorField").value;
+                    var BPCollision=document.getElementById("myPage:myForm:MyPageBlock:BPCollision").value;
+                    
+                    if(fromDate=='true' && errorField=='false'){
+                         var ans;                        
+                        ans=window.confirm('{!$Label.Error_date}');
+                     
+                        
+                         if (ans==true) {                               
+                                forceSave.value=true;
+                                
+                                saveRecords();
+                         }
+
+                    }
+                    else if (BPCollision!=''){
+                        window.alert('Belegungsplan Kollision\n\n'+BPCollision);
+                        forceSave.value=true;
+                        saveRecord();
+                    }
+                                                        
+                </script>           
+                
+            <div style="overflow: auto"> 
+            <table cellpadding="0" cellspacing="0" width="100%" >
+                <tr style="vertical-align:top">
+                    <td  width="20%">    
+                        <table style="margin-top:24px;background-color:#F3F3EC" cellpadding="0" cellspacing="0"  width="370px">
+                            <tr style="height:{!hsize}" id = "header">
+                                <td  align="center" style="font-weight:bold;border-bottom:1px solid #E3DEB8;">{!$Label.Product_Name} </td>
+                                                     
+                            </tr>
+                                <apex:repeat value="{!lstRecords}" var="rec" >
+                                    <tr style="height:84px">
+                                            <td  width="280px" style="border-bottom:1px solid #E3DEB8;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;">{!rec.position+1}){!rec.productName}</td>
+                                            <td align="center" style="border-bottom:1px solid #E3DEB8;" width="90px">                                                                             
+                                                <apex:commandButton value="{!$Label.K}" action="{!duplicateRecord}"    rerender="MyPageBlock" status="status" title="{!$Label.DuplicationItem}">
+                                                     <apex:param name="selPosition" value="{!rec.position}"  assignTo="{!selPosition}"/>
+                                                </apex:commandButton>
+                                                <apex:commandButton value="{!$Label.Kx}"  onmouseover="setPosition('{!rec.position}');"   onclick="loadCx('{!rec.productName}','{!rec.position}');editBlockOpenCx();return false;" title="{!$Label.DuplicationXItem}"/>
+                                                <br/>
+                                                <apex:commandButton value="{!$Label.L}" action="{!deleteRecord}"   rerender="MyPageBlock" status="status" title="{!$Label.DeleteItem}">
+                                                        <apex:param name="selPosition" value="{!rec.position}"  assignTo="{!selPosition}"/>
+                                                </apex:commandButton>
+                                        <!--  
+                                                <apex:commandButton value="{!$Label.V}"  onmouseover="setPosition('{!rec.position}');"   onclick="loadRadio('{!rec.productName}','{!rec.position}');editBlockOpen();return false;" title="{!$Label.SplitItem}"/>
+                                        -->                
+                                                
+                                                
+                                            </td>               
+                                    </tr>
+            
+                                </apex:repeat>
+                    
+                            </table>
+                    </td>
+                    <td width="80%"> 
+                             
+          <apex:tabPanel switchType="client" selectedTab="name1" id="theTabPanel" style="padding:0px;margin:0px;border:0px;" tabClass="activeTab" inactiveTabClass="inactiveTab" immediate="false" value="{!ActiveTab}">
+                                                                
+                                <apex:tab label="{!$Label.Tab1}" name="name1" id="tabOne" style="padding:0px;margin:0px;border:0px;background-color:#F3F3DC;"  >
+                                        <div style="overflow-x: hidden;overflow-y:hidden;border:0px;padding:0px;margin:0px;width: 100%" id="mydev1" >
+                                        <table  cellpadding="0" cellspacing="0" width="100%" >
+                                                <tr  id="tab1" style="height:64px;border-bottom:1px solid #E3DEB8;background-color:#F3F3EC">                                                       
+                                                
+                                                    <td align="center" class="colHeader"><apex:outputText value="Site (s)" style="color: #CC0000;"/></td>                                                   
+                                                    <td align="center" class="colHeader"><apex:outputText value="from (Date)" style="color: #CC0000;"/></td>
+                                                    <td align="center" class="colHeader"><apex:outputText value="Length (months)" style="color: #CC0000;"/></td>
+                                                    <td align="center" class="colHeader"><apex:outputText value="Extra (days)"/></td>
+                                                    <td align="center" class="colHeader"><apex:outputText value="until (Date)"/></td>                                                                                                                                                          
+                                                    <td class="colHeader">&nbsp;</td>
+                                                      
+                                                </tr>
+                                                    <apex:repeat value="{!lstRecords}" var="rec" id="myRepeat1">
+                                                    
+                                                            <tr style="height:84px;background-color:#F3F3DC" class="multiSelectPicklistRow"> 
+                                                                <td align="center" class="colContent" style="padding-left: 5px;width: 290px">
+                                                                    <div class="requiredExample" style="text-align:left;" >&nbsp;
+                                                                        <apex:inputField value="{!rec.item.Site_s__c}"  id="Site"/><br/>
+                                                                    </div>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','Site','1');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Site_s__c')" style="margin-top:2px;text-align:center">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                </td>
+                                                                
+                                                                <td align="center" class="colContent" style="padding-left: 5px;" width="80px">                                                                       
+                                                                            <div class="requiredExample"  style="text-align:left;" > &nbsp;                                                               
+                                                                                <apex:inputField value="{!rec.item.from_Date__c}" id="startDate" required="false"  style="width:95px;" onChange="change_fromdate('{!rec.position}');"/>                                                                   
+                                                                             </div>                                                                   
+                                                                                                                         
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','startDate','1');return false;" onmouseover="setPosition('{!rec.position}');setColumn('from_Date__c')" style="margin-top:2px">
+                                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />                                                                                           
+                                                                        </apex:commandLink>
+                                                                       
+                                                                       <apex:inputHidden id="ad_type" value="{!rec.item.PricebookEntry.Product2.Advertising_Medium__r.Name}"></apex:inputHidden>
+                                          
+                                                                       
+                                                                </td>
+                                                                
+                                                                <td align="center" class="colContent" style="padding-left: 5px;" width="80px">
+                                                                           <div class="requiredExample" style="text-align:left;"> &nbsp;   
+                                                                       
+                                                                                 <apex:inputField value="{!rec.item.Length_Months__c}"  id="length" required="false" style="width:95px;" />
+                                                                        
+                                                                        
+                                                                        </div>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','length','1');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Length_months__c')" style="margin-top:2px">
+                                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                            
+                                                                        </apex:commandLink>
+                                                               </td>
+                                                               
+                                                                <td align="center" class="colContent" style="padding-left: 5px;" width="80px">
+                                                                           <div class="requiredExample" style="text-align:left;"> &nbsp;   
+                                                                       
+                                                                                 <apex:inputField value="{!rec.item.Additional_Time_Days__c}"  id="days" required="false" style="width:95px;" onClick="setToDate('{!rec.position}')"/>
+                                                                        
+                                                                        
+                                                                        </div>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','days','1');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Additional_Time_Days__c')" style="margin-top:2px">
+                                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                            
+                                                                        </apex:commandLink>
+                                                               </td>
+                                                               <td align="center" class="colContent" style="padding-left: 5px;" width="80px">
+                                                                      
+                                                                                 <apex:inputField value="{!rec.item.until_Date__c}"  id="endDate" required="false" style="width:95px;" onClick="setToDate('{!rec.position}')"/>
+                                                                        
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','endDate','1');return false;" onmouseover="setPosition('{!rec.position}');setColumn('until_Date__c')" style="margin-top:2px">
+                                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                            
+                                                                        </apex:commandLink>
+                                                               </td>
+                                                                                                                                                                                      
+                                                                                                                                                                                                                                                                                                                                              
+ 
+                                                               
+                                                               <td class="colContent">&nbsp;</td>
+                                                                 
+                                                            </tr>                       
+                                                    </apex:repeat>                                      
+                                            </table>
+                                            </div>                               
+                                                                           <script>
+                                                                        
+                                            $$('table.multiSelectPicklistTable tr.multiSelectPicklistRow select').each(function(i) { i.style.height = "55px";i.style.width = "130px"; });                           
+                                            //setWidthDiv('mydev2');
+                                            
+                                        </script>                                                     
+                                                                            
+                                    </apex:tab>
+                                    <apex:tab label="Pricing Detail" name="name2" id="tabTwo" style="padding:0px;margin:0px;border:0px;background-color:#F3F3DC">
+                                        <div style="padding:0px;margin:0px;border:0px solid;overflow-x: auto;overflow-y:hidden;width: 100%" id="mydev2">
+                                        <table cellpadding="0" cellspacing="0" width="100%" >
+                                            <tr id ="tab2" style="height:64px;border-bottom:1px solid #E3DEB8;background-color:#F3F3EC">
+                                                <td align="center" class="colHeader"><apex:outputText value="Quantity" style="color: #CC0000;"/></td>
+                                                <td align="center" class="colHeader"><apex:outputText value="Sales Price" style="color: #CC0000;"/></td> 
+                                                <td align="center" class="colHeader"><apex:outputText value="Discount"/></td>
+                                                <td align="center" class="colHeader"><apex:outputText value="Discount reason"/></td>
+                                                <td align="center" class="colHeader"><apex:outputText value="A/C"/></td>                                                
+                                                <td class="colHeader">&nbsp;</td>                                               
+                                                <td align="center" class="colHeader"><apex:outputText value="Line Description"/></td>                                                                                              
+                                                <td align="center" class="colHeader"><apex:outputText value="Billing Category (required banners)" /></td>                                                
+                                                <td class="colHeader">&nbsp;</td>          
+                                            
+                                            </tr>
+                                                <apex:repeat value="{!lstRecords}" var="rec"  id="myRepeat2">
+                                                        <tr style="height:84px;background-color:#F3F3DC" class="multiSelectPicklistRow">     
+                                                             
+                                                                <td align="center" style="padding-left: 5px;width:80px;" class="colContent">                                                                   
+                                                                        <div class="requiredExample" style="text-align:left;">&nbsp;
+                                                                        
+                                                                            <apex:inputText value="{!rec.quantity}" required="false" id="Quantity" style="padding-left: 2px;width:95px;" />
+                                                                                                                                                                                                                               
+                                                                        </div>
+                                                                            
+                                                                                                                                                                                                                                                                                                              
+                                                                         <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','Quantity','2');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Quantity')" style="margin-top:2px" >
+                                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                            
+                                                                         </apex:commandLink>
+                                                                        
+                                                                </td>
+                                                                
+                                                                 <td align="center"   class="colContent" style="padding-left: 5px;width:80px;" >
+
+                                                                                        
+                                                                                        <apex:outputText >
+                                                                            
+                                                                                              <div class="requiredExample" style="text-align:left;" >&nbsp;
+                                                                                                 
+                                                                                                 <apex:inputField value="{!rec.item.UnitPrice}" id="Sales_Price" required="false" style="width:95px;" />
+                                                                                                 
+                                                                                        </div>        
+                                                                                            
+                                                                                            <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','Sales_Price','2');return false;" onmouseover="setPosition('{!rec.position}');setColumn('UnitPrice')" >
+                                                                                                    <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                                    
+                                                                                         </apex:commandLink> 
+                                                                                        
+                                                                                    </apex:outputText>
+                                                                            
+                                                                       
+                                                                </td>                                                                   
+                                                                <td align="center" class="colContent" style="padding-left: 5px; width: 80px;">
+                                                                        <apex:inputField value="{!rec.item.Discount}" id="Discount" style="width:90px;" /><br/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','Discount','2');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Discount')"  style="margin-top:2px">
+                                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                            
+                                                                        </apex:commandLink>
+                                                                </td>
+                                                                <td align="center" class="colContent" style="padding-left: 5px; width: 100px;">
+                                                                        <apex:inputField value="{!rec.item.Discount_reason__c}" id="Discountreason" style="width:110px;" /><br/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','Discountreason','2');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Discount_reason__c')"  style="margin-top:2px">
+                                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                            
+                                                                        </apex:commandLink>
+                                                                </td>       
+                                                                <td align="center" class="colContent" style="padding-left: 5px;" width="30px">
+                                                                        <apex:inputField value="{!rec.item.AE__c}"  id="AE"/><br/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','AE','2');return false;" onmouseover="setPosition('{!rec.position}');setColumn('AE__c')" style="margin-top:2px;text-align:center;">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                </td>       
+                                                             
+                                                             <td class="colContent" style="padding-left: 5px;" width="120px">&nbsp;</td>                                                
+                                                             
+                                                             <td align="center" class="colContent" style="padding-left: 5px;" width="120px">
+                                                                        <div><apex:inputField value="{!rec.item.Description}"  id="LineDescription"  />
+                                        
+                                                                         </div>
+                                                                        
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','LineDescription','2');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Description')"  style="margin-top:2px">
+                                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}"  />                                                                                          
+                                                                        </apex:commandLink>
+                                                             </td>
+                                                             
+                                                                <td align="center" class="colContent" style="padding-left: 5px;width: 100px;">
+                                                                            <apex:outputText >
+
+                                                                                 <div class="requiredExample" style="text-align:left;" >&nbsp;                                                                     
+                                                                                    
+                                                                                    <apex:inputField id="BillingCategory" value="{!rec.item.Billing_Category__c}" onChange="changeBC('{!rec.position}')" required="false"/>
+                                                                                </div>    
+                                                                                 
+                                                                                 <apex:commandLink action="{!copyField}"  rerender="MyPageBlock" status="status" style="margin-top:2px" >
+                                                                                 <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                 <apex:param name="selPosition" value="{!rec.position}"  assignTo="{!selPosition}"/>
+                                                                                 <apex:param name="selColumn" value="Billing_category__c"  assignTo="{!selColumn}"/>
+                                                                                </apex:commandLink>   
+                                                                            
+                                                                            </apex:outputText>                                                                                                                   
+                                                                </td>
+
+                                                                
+                                                                <td class="colContent">&nbsp;</td>                                            
+                                                            
+                                                        </tr>                       
+                                                </apex:repeat>                                  
+                                        </table>
+                                        </div>  
+                                        <script>
+                                                                        
+                                            $$('table.multiSelectPicklistTable tr.multiSelectPicklistRow select').each(function(i) { i.style.height = "55px";i.style.width = "130px"; });                           
+                                            //setWidthDiv('mydev2');
+                                            
+                                        </script>   
+                                                                            
+                                    </apex:tab>
+                                    
+                                                 <apex:tab label="{!$Label.Tab6}" name="tabname6" id="tabname6" style="padding:0px;margin:0px;border:0px;background-color:#F3F3DC">
+                                        <div style="padding:0px;margin:0px;border:0px solid;overflow-x: auto;overflow-y:hidden;width: 100%" id="mydevNew">
+                                        <table cellpadding="0" cellspacing="0" width="100%" >
+                                            <tr  id="tab1" style="height:65px;border-bottom:1px solid #E3DEB8;background-color:#F3F3EC">    
+                                                    
+                                                    <td align="center" class="colHeader"  width="127px">&nbsp;</td>
+                                                    <td align="center" class="colHeader" width="427px">Category Targeting</td>
+                                                    <td align="center" class="colHeader"  width="60px">&nbsp;</td>
+                                                    <td align="center" class="colHeader" width="427px">Key Value Targeting</td>
+                                                    <td class="colHeader" width="127px">&nbsp;</td>
+                                                      
+                                            </tr>
+                                           
+                                            <apex:repeat value="{!lstRecords}" var="rec" id="myRepeat6">
+                                                    <tr style="height:84px">
+                                                        
+                                                      <td align="center" class="colContent" style="padding-left: 5px;" width="60px">
+                                                            
+                                                            <apex:inputHidden value="{!rec.item.Targeting__c}" id="hidTargetId"/>
+                                                            
+                                                            
+                                                       </td> 
+                                                        
+                                                      <td align="center" class="colContent" style="padding-left: 5px;" width="427px" >                                                                       
+                                                            <table cellspacing= "0" cellpadding= "0">
+                                                                <tr>
+                                                                    <td>
+                                                                         <apex:commandButton id="btnTarget" value="Select" onclick="openTargetingTreePopup2(this.id,'myPage:myForm:MyPageBlock:myRepeat6:{!rec.position}:hidTargetId','TargetingButton','{!rec.proId}'); return false;"/>      
+                                                                    </td>
+                                                                    <td>
+                                                                        <apex:inputTextArea disabled="true" id="txaTarget" value="{!rec.item.Rich_Line_Description__c}" cols="48" rows="4" style="vertical-align:middle;"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','txaTarget','6');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Rich_Line_Description__c')" style="margin-top:2px;padding-left:5px">
+                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                        </apex:commandLink>   
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                                            
+                                                       </td>
+                                                       <td align="center" class="colContent" style="padding-left: 10px;" width="60px">
+                                                        
+                                                       </td>
+                                                       <td align="center" class="colContent" style="padding-left: 5px;" width="427px" >
+                                                            
+                                                            <table cellspacing= "0" cellpadding= "0">
+                                                                <tr>
+                                                                    <td>
+                                                                        <apex:commandButton id="btnKeyValue" value="Select" onclick="openTargetingTreePopup(this.id,'myPage:myForm:MyPageBlock:myRepeat6:{!rec.position}:hidTargetId','KeyValueButton'); return false;"/>  
+                                                      
+                                                                    </td>
+                                                                    <td>
+                                                                        <apex:inputTextArea disabled="true" id="keyvalueString" value="{!rec.item.KeyValueString__c}" cols="48" rows="4" style="vertical-align:middle;"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','keyvalueString','6');return false;" onmouseover="setPosition('{!rec.position}');setColumn('KeyValueString__c')" style="margin-top:2px;padding-left:5px">
+                                                                            <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                        </apex:commandLink>   
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            
+                                                       </td>
+                                                                                                                           
+                                                       <td class="colContent">&nbsp;</td>
+                                                        
+                                                    </tr>                       
+                                            </apex:repeat>  
+                                                                         
+                                        </table>
+                                        </div>  
+                                        <script>
+                                                                        
+                                            $$('table.multiSelectPicklistTable tr.multiSelectPicklistRow select').each(function(i) { i.style.height = "55px";i.style.width = "130px"; });                           
+                                            //setWidthDiv('mydev2');
+                                            
+                                        </script>   
+                                                                            
+                                    </apex:tab>   
+                                                                   
+                                   
+                                     <apex:tab label="{!$Label.Tab3}" name="name3" id="tabThree" style="padding:0px;margin:0px;border:0px;background-color:#F3F3DC">
+                                         <div style="padding:0px;margin:0px;border:0px solid;overflow-x: auto;overflow-y:hidden;width: 100%" id="mydev3">
+                                                 <table cellpadding="0" cellspacing="0" width="100%" >
+                                                        <tr id ="tab3" style="height:64px;border-bottom:1px solid #E3DEB8;background-color:#F3F3EC">                                            
+                                                            <td align="center" class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.FC_Number_of_Impressions__c.label}"/></td>
+                                                            <td align="center" class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.FC_Number_of_Timeperiods__c.label}"/></td>
+                                                            <td align="center" class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.FC_Entity_of_TimePeriods__c.label}"/></td>
+
+                                                             <td class="colHeader">&nbsp;</td>                                                    
+                                                        </tr>
+                                                        <apex:repeat value="{!lstRecords}" var="rec"  id="myRepeat3">
+                                                            <tr style="height:84px;background-color:#F3F3DC" class="multiSelectPicklistRow">    
+                                                                
+                                                  
+                                                                <td align="center" class="colContent" style="padding-left: 5px;" width="150px">
+                                                                        <apex:inputField value="{!rec.item.FC_Number_of_Impressions__c}"  id="FC_Impr"/><br/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','FC_Impr','3');return false;" onmouseover="setPosition('{!rec.position}');setColumn('FC_Number_of_Impressions__c')" style="margin-top:2px;text-align:center;">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                </td>
+                                                                <td align="center" class="colContent" style="padding-left: 2px;" width="80px">
+                                                                        <apex:inputField value="{!rec.item.FC_Number_of_Timeperiods__c}"  id="N_o_Timeperiods"/><br/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','N_o_Timeperiods','3');return false;" onmouseover="setPosition('{!rec.position}');setColumn('FC_Number_of_Timeperiods__c')" style="margin-top:2px;">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                </td>                                                    
+                                                                <td align="center" class="colContent" style="padding-left: 5px;" width="150px">
+                                                                        <apex:inputField value="{!rec.item.FC_Entity_of_TimePeriods__c}"  id="Fc_Ent_Timep"/><br/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','Fc_Ent_Timep','3');return false;" onmouseover="setPosition('{!rec.position}');setColumn('FC_Entity_of_TimePeriods__c')" style="margin-top:2px;text-align:center;">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                </td>
+                                                                
+                                                                 <td class="colContent">&nbsp;</td>                                
+                                                            </tr>                       
+                                                </apex:repeat>                          
+                                                     
+                                                 </table>
+                                         </div>                                 
+                                         <script>                                                                        
+                                            $$('table.multiSelectPicklistTable tr.multiSelectPicklistRow select').each(function(i) { i.style.height = "55px";i.style.width = "130px"; });                           
+                                           // setWidthDiv('mydev3');                                            
+                                        </script>   
+                                    </apex:tab>
+                                    
+                                   
+                                     <apex:tab label="{!$Label.Tab4}" name="name4" id="tabFour" style="padding:0px;margin:0px;border:0px;background-color:#F3F3DC">
+                                         <div style="padding:0px;margin:0px;border:0px solid;overflow-x: auto;overflow-y:hidden;width: 100%" id="mydev4">
+                                             <table cellpadding="0" cellspacing="0" width="100%" >
+                                                        <tr id ="tab4" style="height:64px;border-bottom:1px solid #E3DEB8;background-color:#F3F3EC">                                            
+                                                              <td align="center" class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.AdWeekdays__c.label}"/></td>
+                                                              <td align="center"  class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.AdTimes__c.label}"/></td> 
+                                                              <td align="center" class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.AdServer_Keywords_Key_Values__c.label}"/></td>
+                                                              <td align="center" class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.Keywords_KeyValue_combination__c.label}"/></td>     
+                                                        </tr>
+                                                        <apex:repeat value="{!lstRecords}" var="rec"  id="myRepeat4">
+                                                            <tr style="height:84px;background-color:#F3F3DC" class="multiSelectPicklistRow">  
+                                                                
+                                                                     <td align="center" class="colContent" style="padding-left: 5px;width: 290px;">
+                                                                        <apex:inputField value="{!rec.item.AdWeekdays__c}" id="AdDayOfWeek" style="margin:0px;padding:0px;float:right"/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','AdDayOfWeek','4');return false;" onmouseover="setPosition('{!rec.position}');setColumn('AdWeekdays__c')" style="margin-top:2px">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                    </td>
+                                                                    <td align="center" class="colContent" style="padding-left: 5px;width: 290px;">
+                                                                        <apex:inputField value="{!rec.item.AdTimes__c}"  id="AdTimes" style="margin:0px;padding:0px;float:right"/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','AdTimes','5');return false;" onmouseover="setPosition('{!rec.position}');setColumn('AdTimes__c')" style="margin-top:2px">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                    </td>
+                                                                    <td align="center" class="colContent" style="padding-left: 5px;width: 140px;">
+                                                                            <apex:inputField value="{!rec.item.AdServer_Keywords_Key_Values__c}" id="AdKeyWord" style="margin-top:2px;padding:0px;height:50px"/><br/>
+                                                                            <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','AdKeyWord','4');return false;" onmouseover="setPosition('{!rec.position}');setColumn('AdServer_Keywords_Key_Values__c')" style="margin-top:2px">
+                                                                                    <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                    
+                                                                            </apex:commandLink>
+                                                                    </td>
+                                                                    
+                                                                    <td align="center" class="colContent" style="padding-left: 5px;width: 200px;">
+                                                                            <apex:inputField value="{!rec.item.Keywords_KeyValue_combination__c}" id="combo" style="margin-top:2px;padding:0px;height:50px"/><br/>
+                                                                            <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','combo','4');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Keywords_KeyValue_combination__c')" style="margin-top:2px">
+                                                                                    <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                    
+                                                                            </apex:commandLink>
+                                                                    </td>
+                                                        
+                                                            </tr>                       
+                                                        </apex:repeat>  
+                                         
+                                            </table>
+                                        </div>                                  
+                                         <script>                                                                        
+                                            $$('table.multiSelectPicklistTable tr.multiSelectPicklistRow select').each(function(i) { i.style.height = "55px";i.style.width = "130px"; });                           
+                                           // setWidthDiv('mydev4');                                            
+                                        </script>   
+                                    </apex:tab>
+                                    
+                                     <apex:tab label="{!$Label.Tab5}" name="name5" id="tabFive" style="padding:0px;margin:0px;border:0px;background-color:#F3F3DC">
+                                         <div style="padding:0px;margin:0px;border:0px solid;overflow-x: auto;overflow-y:hidden;width: 100%" id="mydev5">
+                                             <table cellpadding="0" cellspacing="0" width="100%">
+                                                <tr id ="tab5" style="height:64px;border-bottom:1px solid #E3DEB8;background-color:#F3F3EC">                                            
+                                                            <td align="center" class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.AdOperating_System__c.label}"/></td>
+                                                            <td align="center" class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.AdBrowser__c.label}"/></td>
+                                                            <td align="center"  class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.AdBrowser_Version__c.label}"/></td>
+                                                            <td align="center"  class="colHeader"><apex:outputText value="{!$ObjectType.OpportunityLineItem.Fields.AdBrowser_SubVersion__c.label}"/></td>
+                                                                                                      
+                                                             <td class="colHeader">&nbsp;</td>        
+                                                </tr>
+                                                <apex:repeat value="{!lstRecords}" var="rec"  id="myRepeat5">
+                                                            <tr style="height:84px;background-color:#F3F3DC" class="multiSelectPicklistRow">  
+                                                                     <td align="center" class="colContent" style="padding-left: 5px;width: 290px;">
+                                                                        <apex:inputField value="{!rec.item.AdOperating_System__c}"  id="AdOperating" style="margin:0px;padding:0px;float:right"/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','AdOperating','5');return false;" onmouseover="setPosition('{!rec.position}');setColumn('AdOperatingSystems__c')" style="margin-top:2px;text-align:center;">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                    </td> 
+                                                                    <td align="center" class="colContent" style="padding-left: 5px;width: 290px;">
+                                                                        <apex:inputField value="{!rec.item.AdBrowser__c}"  id="AdOpBrowse" style="margin:0px;padding:0px;float:right"/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','AdOpBrowse','5');return false;" onmouseover="setPosition('{!rec.position}');setColumn('AdBrowser__c')" style="margin-top:2px;text-align:center;">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                    </td> 
+                                                                    
+                                                                     <td align="center" class="colContent" style="padding-left: 5px;width: 150px;">
+                                                                        <apex:inputField value="{!rec.item.AdBrowser_Version__c}"  id="AdVer" style="margin:0px;padding:0px;float:right"/><br/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','AdVer','5');return false;" onmouseover="setPosition('{!rec.position}');setColumn('AdBrowser_Version__c')" style="margin-top:2px;text-align:center;">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                    </td> 
+                                                                    <td align="center" class="colContent" style="padding-left: 5px;width: 150px;">
+                                                                        <apex:inputField value="{!rec.item.AdBrowser_SubVersion__c}"  id="AdSubVer" style="margin:0px;padding:0px;float:right"/><br/>
+                                                                        <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','AdSubVer','5');return false;" onmouseover="setPosition('{!rec.position}');setColumn('AdBrowser_SubVersion__c')" style="margin-top:2px;text-align:center;">
+                                                                                <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                
+                                                                        </apex:commandLink>
+                                                                    </td>
+                                                                                                   
+                                                                     <td class="colContent">&nbsp;</td>
+                                                            </tr>                       
+                                                </apex:repeat>                                                  
+                                    
+                                            </table>
+                                        </div>                                  
+                                         <script>                                                                        
+                                            $$('table.multiSelectPicklistTable tr.multiSelectPicklistRow select').each(function(i) { i.style.height = "55px";i.style.width = "130px"; });                           
+                                            //setWidthDiv('mydev5');                                            
+                                        </script>   
+                                    </apex:tab>
+
+                              <!--  Regional Targeting -->                                   
+
+        <apex:tab label="Geo-targeting" name="tabname7" id="tabname7" style="padding:0px;margin:0px;border:0px;background-color:#F3F3DC">
+                                        <div style="padding:0px;margin:0px;border:0px solid;overflow-x: auto;overflow-y:hidden;width: 100%" id="mydevNew">
+                                        <table cellpadding="0" cellspacing="0" width="100%" >
+                                            <tr  id="tab7" style="height:65px;border-bottom:1px solid #E3DEB8;background-color:#F3F3EC">    
+           
+                                                    <td align="center" class="colHeader"  width="127px">&nbsp;</td>
+                                                    <td align="center" class="colHeader" width="427px">Countries</td>
+                                                    <td align="center" class="colHeader"  width="60px">&nbsp;</td>
+                                                    <td align="center" class="colHeader" width="427px">Cities</td>
+                                                    <td class="colHeader" width="127px">&nbsp;</td>
+           
+                                                      
+                                            </tr>                                                      
+            
+                                              <apex:repeat value="{!lstRecords}" var="rec" id="myRepeat7">
+                                                    <tr style="height:84px">
+                                                        
+                                                      <td align="center" class="colContent" style="padding-left: 5px;" width="60px">
+                                                            
+                                                     <!--        <apex:inputHidden value="{!rec.item.Targeting__c}" id="hideTargetId"/> -->
+                                                                                                                       
+                                                       </td> 
+                                                        
+                                                      <td align="center" class="colContent" style="padding-left: 5px;" width="427px" >                                                                       
+                                                               
+                                                             <table cellspacing= "0" cellpadding= "0">
+                                                                <tr>
+                                                                    <td>
+                                                                        <apex:commandButton id="btnCountry" value="Select" onclick="openTargetingTreePopup(this.id,'myPage:myForm:MyPageBlock:myRepeat6:{!rec.position}:hidTargetId','CountriesButton'); return false;"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <table cellspacing= "0" cellpadding= "0">
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <apex:inputTextArea disabled="true" id="txaCountry" value="{!rec.item.Countries_Description__c}" cols="48" rows="4" style="vertical-align:middle;"/></td>
+                                                                                <td>
+                                                                                    <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','txaCountry','7');return false;" onmouseover="setPosition('{!rec.position}');setColumn('Countries_Description__c')" style="margin-top:2px;padding-left:5px">
+                                                                                        <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                    </apex:commandLink>   
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+   
+                                                       </td>
+                                                       <td align="center" class="colContent" style="padding-left: 10px;" width="60px">
+                                                        
+                                                       </td>
+                                                       <td align="center" class="colContent" style="padding-left: 5px;" width="427px" >
+                                                            <table cellspacing= "0" cellpadding= "0">
+                                                                <tr>
+                                                                    <td>
+                                                                        <apex:commandButton id="btnCities" value="Select" onclick="openTargetingTreePopup(this.id,'myPage:myForm:MyPageBlock:myRepeat6:{!rec.position}:hidTargetId','CitiesButton'); return false;"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <table cellspacing= "0" cellpadding= "0">
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <apex:inputTextArea disabled="true" id="txaCities" value="{!rec.item.City_description__c}" cols="48" rows="4" style="vertical-align:middle;"/>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <apex:commandLink onclick="checkValidationCopyField('{!rec.position}','txaCities','7');return false;" onmouseover="setPosition('{!rec.position}');setColumn('City_Description__c')" style="margin-top:2px;padding-left:5px">
+                                                                                        <apex:image value="{!$Resource.Copy}" title="{!$Label.ColumnCopy}" />
+                                                                                    </apex:commandLink>   
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                        
+                                                            
+                                                                    </td>
+                                                                </tr>
+                                                            </table>    
+                                                       </td>
+                                                                                                                           
+                                                       <td class="colContent">&nbsp;</td>
+                                                        
+                                                    </tr>                       
+                                            </apex:repeat>  
+                              
+                                        </table>
+                                        </div>  
+                                        <script>
+                                                                        
+                                            $$('table.multiSelectPicklistTable tr.multiSelectPicklistRow select').each(function(i) { i.style.height = "55px";i.style.width = "130px"; });                           
+                                            //setWidthDiv('mydev2');
+                                            
+                                        </script>   
+                                                                            
+                                    </apex:tab>                                     
+                                      
+                        </apex:tabPanel>            
+                                        
+                    </td>           
+                </tr>
+            </table>
+        </div>
+        </apex:pageBlock>
+              <apex:actionStatus id="status">
+                <apex:facet name="start">
+                    <c:Load BackColor="#efefef" borderColor="#efefef" borderSize="3" height="50px" width="180px" Message="Please, wait..." messageStyle="color:darkred;font-size:10pt;font-family:arial;font-weight:bold;" imageUrl="/img/loading.gif"/>
+                </apex:facet>
+            </apex:actionStatus>  
+           
+    <div id="InlineEditDialog" class="overlayDialog inlineEditDialog" style="width:400px; top:40%; display: none; visibility: visible;margin-left: 340px">
+        <div class="topRight">
+            <div class="topLeft">
+                <img id="InlineEditDialogX" class="dialogClose" src="/s.gif" onclick="cancel();" title="{!$Label.Close}" onmouseout="this.className = 'dialogClose'" onmouseover="this.className = 'dialogCloseOn'"/>
+                <h2 id="InlineEditDialogTitle">Editable Text</h2>
+            </div>
+        </div>
+        <div class="middle">
+            <div id="InlineEditDialogContent" class="innerContent">
+                <div class="activeField">
+                    <div class="inlineEditCompoundDiv" align="center"> 
+                        <div style="border:0px solid #888888;" id="content">
+                       </div>  
+                    </div>
+                </div> 
+                <div></div>
+                <div style="display: none;"></div>
+                <div class="buttons">
+                    <apex:CommandButton value="{!$Label.Button_Ok}"   title="{!$Label.Button_Ok}" onclick="checkValidationSplit();cancel();return false;"/>
+                    <apex:CommandButton value="{!$Label.Button_Cancel}" title="{!$Label.Button_Cancel}" onclick="cancel();return false;"/>
+                </div>
+             </div>
+            <div class="bottomRight">
+                <div class="bottomLeft"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="InlineCopyDialog" class="overlayDialog inlineEditDialog" style="width:400px; top:40%; display: none; visibility: visible;margin-left: 340px">
+        <div class="topRight">
+            <div class="topLeft">
+                <img id="InlineCopyDialogX" class="dialogClose" src="/s.gif" onclick="cancel();" title="{!$Label.Close}" onmouseout="this.className = 'dialogClose'" onmouseover="this.className = 'dialogCloseOn'"/>
+                <h2 id="InlineCopyDialogTitle">Editable Text</h2>
+            </div>
+        </div>
+        <div class="middle">
+            <div id="InlineCopyDialogContent" class="innerContent">
+                <div class="activeField">
+                    <div class="inlineCopyCompoundDiv" align="center"> 
+                        <div style="border:0px solid #888888;" id="contentCopy">
+                       </div>  
+                    </div>
+                </div> 
+                <div></div>
+                <div style="display: none;"></div>
+                <div class="buttons">
+                    <apex:CommandButton value="{!$Label.Button_Ok}"   title="{!$Label.Button_Ok}" onclick="checkValidationCopy();cancelCx();return false;"/>
+                    <apex:CommandButton value="{!$Label.Button_Cancel}" title="{!$Label.Button_Cancel}" onclick="cancelCx();return false;"/>
+                </div>
+             </div>
+            <div class="bottomRight">
+                <div class="bottomLeft"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="overlayBackground" class="overlayBackground" style="width: 100%; height: 100%; display: none; left: 0; top: 0px"></div>
+    </apex:form>
+    <script>
+        if(!isIE()){
+            var ag = document.getElementById('header');
+            ag.style.height='64px';
+            var hr = document.getElementById('myPage:myForm:uAgent');
+            hr.value='64px';
+        }
+
+        function openTargetingTreePopup(fromId,hiddenId,source)
+        {
+        
+            var width  = 850;
+            var height = 640;
+            var left   = (screen.width  - width)/2;
+            var top    = (screen.height - height)/2;
+            var params = 'width='+width+', height='+height;
+            params += ', top='+top+', left='+left;
+            params += ', directories=no';
+            params += ', location=no';
+            params += ', menubar=no';
+            params += ', resizable=no';
+            params += ', scrollbars=no';
+            params += ', status=no';
+            params += ', toolbar=no';
+            var url = '';
+            var vTargetId = document.getElementById(hiddenId);
+            if(source == 'TargetingButton' )
+            {
+                url = '/apex/apex/ContentHierarchyPage?fromId='+ fromId + '&targetId='+  vTargetId.value + '&isConf=true';
+            }
+            if(source == 'KeyValueButton')
+            {
+                url = '/apex/KeyValueHierachyPage?fromId='+ fromId + '&targetId='+  vTargetId.value  + '&isConf=true';
+            }      
+            if(source == 'AreacodesButton')
+            {
+                url = '/apex/TreeAreaCodes?fromId='+ fromId + '&targetId='+  vTargetId.value+ '&hidId='+hiddenId + '&isConf=true';
+            }   
+            if(source == 'CitiesButton'){
+                url = '/apex/CitiesHierachyPage?fromId='+ fromId + '&targetId='+  vTargetId.value+ '&hidId='+hiddenId + '&isConf=true';
+            } 
+             
+            if(source == 'CountriesButton'){
+                url = '/apex/TreeCountries?fromId='+ fromId + '&targetId='+  vTargetId.value+ '&hidId='+hiddenId + '&isConf=true';
+            }   
+            var newwin=window.open(url,'TreeProduct', params);
+            if (window.focus) {newwin.focus();}
+        }
+
+        function openTargetingTreePopup2(fromId,hiddenId,source,proId)
+        {
+        
+            var width  = 850;
+            var height = 640;
+            var left   = (screen.width  - width)/2;
+            var top    = (screen.height - height)/2;
+            var params = 'width='+width+', height='+height;
+            params += ', top='+top+', left='+left;
+            params += ', directories=no';
+            params += ', location=no';
+            params += ', menubar=no';
+            params += ', resizable=no';
+            params += ', scrollbars=no';
+            params += ', status=no';
+            params += ', toolbar=no';
+            var url = '';
+            var vTargetId = document.getElementById(hiddenId);
+            if(source == 'TargetingButton' )
+            {
+                url = '/apex/apex/ContentHierarchyPage?fromId='+ fromId + '&targetId='+  vTargetId.value + '&isConf=true&proId=' + proId;
+            }
+            if(source == 'KeyValueButton')
+            {
+                url = '/apex/KeyValueHierachyPage?fromId='+ fromId + '&targetId='+  vTargetId.value  + '&isConf=true';
+            }      
+            if(source == 'AreacodesButton')
+            {
+                url = '/apex/TreeAreaCodes?fromId='+ fromId + '&targetId='+  vTargetId.value+ '&hidId='+hiddenId + '&isConf=true';
+            }   
+            if(source == 'CitiesButton'){
+                url = '/apex/CitiesHierachyPage?fromId='+ fromId + '&targetId='+  vTargetId.value+ '&hidId='+hiddenId + '&isConf=true';
+            } 
+             
+            if(source == 'CountriesButton'){
+                url = '/apex/TreeCountries?fromId='+ fromId + '&targetId='+  vTargetId.value+ '&hidId='+hiddenId + '&isConf=true';
+            }   
+            var newwin=window.open(url,'TreeProduct', params);
+            if (window.focus) {newwin.focus();}
+        }
+    </script>   
+    
+</apex:page>

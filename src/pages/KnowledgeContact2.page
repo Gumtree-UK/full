@@ -1,0 +1,53 @@
+<apex:page controller="KnowledgeController" showHeader="false" title="Public Knowledge Base" cache="true" expires="{!cacheMaxAge}">
+    <apex:composition template="{!$Site.Template}">
+    <apex:define name="content">
+
+       <apex:variable var="productUrlVar" value="{!productUrl}" />
+       <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+       <apex:variable var="cpt" value="{!0}" />
+       <apex:variable var="categoryDescriptionsVar" value="{!categoryDescriptions}" />
+       <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+       
+
+                    <div class="page-content">
+                        <apex:outputPanel styleClass="pkbHpMaincs" layout="block">
+                            <apex:outputPanel styleClass="pkbResultPanelcs" layout="block">
+                                <apex:outputPanel styleClass="pkbResultInnercs" layout="block">
+                
+                                    <apex:outputPanel styleClass="pkbResultSummarycs" layout="block">
+                                       Possible answers to your question:
+                                    </apex:outputPanel>
+                                        <ul>
+                                            <apex:variable var="anyDocument" value="false" />
+                                            <apex:variable var="hasMore" value="" />
+                    
+                                            <knowledge:articleList articleVar="article"  hasMoreVar="hasMore"
+                                                pageSize="3"
+                                                keyword="{!subject}"
+                                                sortBy="mostViewed"
+                                            >
+                                                <li class="pkbSearchResult"> <a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a></li>
+                                                <div class="pkbResultArticleAbstract">{!article.abstract}</div>
+                                                <apex:variable var="anyDocument" value="true" /> 
+                                            </knowledge:articleList>
+                                        </ul>                  
+                                        <apex:outputText value="No Result found for '{!subject}' in the selected category" rendered="{!anyDocument=='false'}" />&nbsp;
+                                     <apex:outputPanel styleClass="pkbResultSummarycs" layout="block">  
+                                            Still have a question?
+                                    </apex:outputPanel>
+                                     
+                                    <apex:pageMessage severity="error" strength="3" summary="{!errorMessage}"/>              
+                
+                                    
+                                     <apex:form >
+                                        <apex:commandButton action="{!doSearchContact}" value="Next" id="searchButtonContactNext"  rendered="{!!spam}" styleClass="search-button-Contact"/>
+                                        <apex:commandButton action="{!doSaveCase}"  value="Submit" id="searchButtonContact" rendered="{!spam}" styleClass="search-button-Contact"/>
+                                                    </apex:form>
+                                         </apex:outputPanel>                    
+                                    </apex:outputPanel>
+                                </apex:outputPanel>                
+                            </div>
+
+    </apex:define>
+    </apex:composition>
+</apex:page>

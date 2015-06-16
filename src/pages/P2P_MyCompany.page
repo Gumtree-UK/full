@@ -1,0 +1,2292 @@
+<!--
+
+Change log;
+- 2015-05-06 - GTCRM-1886 - Credits remaining don't tally with Salesforce - calculate initial credits on the fly - Steve Paul
+- 2015-05-11 - GTCRM-1988 - Package Length not correct as per Salesforce - calculate end date - 1 - Steve Paul
+
+-->
+
+<apex:page controller="P2P_MyCompanyController" standardStylesheets="false" showHeader="false" sidebar="false">
+    <html>
+          <head>
+              <link rel="icon" type="image/png" href="{!$Resource.FavouriteSiteIcon}" />
+                <style>
+                    body{
+                        font-family: "SourceSansPro Regular", "Arial", sans-serif;
+                        line-height: 1.428571429;
+                    }
+                    .contentInfoEmail a{
+                        
+                    }
+                    .hideMe{
+                        display: none;
+                    }
+                    .nextButton {
+                        float: left;
+                    }
+                    .modal-dialog{
+                        max-width: 380px;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                    .wrapTab{
+                       margin-top: 15px;
+                    }
+                    
+                    .wrapFullBlock{
+                        background-color: #ffffff;
+                        border-radius: 0 0 0 0;
+                        float: left;
+                        padding: 10px 15px;
+                        width: 100%;
+                    }
+                    .wrapFormAddNewContact{
+                        float: left;
+                        width: 100%;
+                        padding-bottom: 10px;
+                    } 
+                    .myCValue textarea{
+                        border: 2px solid #cfcece;
+                        border-radius: 5px;
+                        padding: 5px 10px;
+                        height: 73px;
+                    }
+                    .wrapTitleCompanyProfile .title{
+                        font-size: 20px;
+                        float: left;
+                    }
+                    .wrapTitleCompanyProfile .editBlock{
+                        float: right;
+                    }
+                    .wrapTitleCompanyProfile .makeUpCancel{
+                        float: right;
+                        color: #F47421;
+                        border: none;
+                        background:none;
+                    }
+                    .cancelEditListItem{
+                        float: right;
+                        color: #F47421;
+                        cursor: pointer;
+                    }
+                    .wrapFullBlock .wrapTitleCompanyProfile .makeUpCancel{display: none;}
+                    .activeEditInfo .wrapTitleCompanyProfile .makeUpCancel{display: block;}
+                    .wrapFullBlock .inputData{display: none;}
+                    
+                    .activeEditInfo .btnSaveCompanyProfile,
+                    .activeEditInfo .inputData{display: block;}
+                    .activeEditInfo .displayValue,
+                    .activeEditInfo .editBlock,
+                    .activeEditInfo .btnPayNow{
+                        display: none;
+                    }
+                    
+                    .wrapTitleCompanyProfile{
+                        float:left;
+                        width: 100%;
+                    }
+                    .clearPaddingRight{
+                        padding-right: 0 !important;
+                    }
+                    .clearPaddingLeft{
+                        padding-left: 0;
+                    }
+                    .myCLabel{
+                        float: left;
+                        font-family: "SourceSansPro Bold";
+                        font-size: 15px;
+                        line-height: 18px;
+                        margin-top: 10px;
+                        width: 100%;
+                        margin-bottom: 5px;
+                    }
+                    
+                    .myCValue{
+                        float:left;
+                        width: 100%;
+                        font-size: 20px;
+                        margin-bottom: 10px;
+                    }
+                    .myCValueSmallFont{
+                        font-size: 15px;
+                        /* 16-12-14 update from 15px to 18px */
+                    }
+                    .status{
+                        border-radius: 3px;
+                        color: #fff;
+                        float: left;
+                        font-size: 12px;
+                        min-width: 60px;
+                        padding: 3px 5px;
+                        text-align: center;
+                        text-transform: uppercase;
+                        line-height: 12px;
+                    }
+                    
+                    .sActive, .sLive{
+                        background-color: #7BB74B;
+                    }
+                    .sSuspended, .sExpired, .sOld{
+                        background-color: #f7941e;
+                    }
+                    .sClosed, .sCollection, .sLeft, .sAccounts{
+                        background-color: #EF4136;
+                    }
+                    
+                    .btnPayNow {
+                        float: left;
+                        min-width: 120px;
+                    }
+                    .sizeUrl{
+                        float:left;
+                        width: 100%;
+                        margin-top: 10px;
+                    }
+                    .sizeUrl a{
+                        font-size: 18px;
+                    }
+                    
+                    .comInfoCol1{
+                        width: 25%;
+                        float:left;
+                        padding-right: 15px;
+                    }
+                    .comInfoCol2{
+                        width: 25%;
+                        float:left;
+                        padding-right: 15px;
+                    }
+                    .comInfoCol3{
+                        width: 25%;
+                        float:left;
+                        padding-right: 15px;
+                    }
+                    .comInfoCol4{
+                        width: 25%;
+                        float:left;
+                    }
+                    .contentRow1{
+                        float: left;
+                        width: 30%;
+                        padding-right: 15px;
+                    }
+                    .contentRow2{
+                        background-color: #fff;
+                        border-radius: 3px;
+                        float: left;
+                        margin-top: 15px;
+                        width: 70%;
+                    }
+                    .contentRowBlockRight{
+                        background-color: #fff;
+                        float: left;
+                        margin-right: 15px;
+                        padding: 15px;
+                        width: 100%;
+                        border-radius: 3px;
+                    }
+                    .contentRowBlockRight table{
+                        max-width: inherit;
+                        width: 100%;
+                    }
+                    .contentInfoTitle{
+                        float: left;
+                        width: 100%;
+                        margin: 0 0 5px 0;
+                    }
+                    .contentInfoPhone{
+                        float: left;
+                        width: 100%;
+                        margin: 0 0 5px 0;
+                    }
+                    .contentInfoEmail{
+                        float: left;
+                        width: 100%;
+                        margin: 0 0 5px 0;
+                        display: table-cell;
+                        word-break: break-all;
+                    }
+                    .contentInfoStatus{
+                        float: left;
+                        width: 100%;
+                        margin: 0 0 5px 0;
+                    }
+                    
+                    .fullImageWidth {
+                        float: left;
+                        margin-top: 10px;
+                        width: 100%;
+                    }
+                    .fullImageWidth table{
+                        min-height: 150px;
+                        border:1px solid #cfcece;
+                    }
+                    .fullImageWidth table td{
+                        min-height: 150px;
+                        display: block;
+                    }
+                    .contentRow2Col1{
+                        width: 50%;
+                        float: left;
+                    }
+                    .contentRow2Col2{
+                        width: 50%;
+                        float: left;
+                    }
+                    .wrapListCompanyContact{
+                        border-top: 1px solid #cdcdcd;
+                        float: left;
+                        padding-top: 5px;
+                        width: 100%;
+                    }
+                    .doubleBorder {
+                        border-bottom: 2px solid #cdcdcd;
+                        margin: 0;
+                        padding: 5px 5px 5px 0;
+                    }
+                    .singleBorder {
+                        border-bottom: 1px solid #cdcdcd;
+                        margin: 0;
+                        padding: 5px 5px 5px 0;
+                    }
+                    .listContactCol1{
+                        float:left;
+                        width: 25%;
+                        padding-right: 15px;
+                    }
+                    .listContactCol2{
+                        float:left;
+                        width: 20%;
+                        padding-right: 15px;
+                    }
+                    .listContactCol3{
+                        float:left;
+                        width: 33%;
+                        padding-right: 10px;
+                        word-break: break-all;
+                    }
+                    .listContactCol4{
+                        float:left;
+                        width: 12%;
+                        padding-right: 15px;
+                    }
+                    .listContactCol5{
+                        float:left;
+                        width: 10%;
+                        text-align: right;
+                    }
+                    .rightRow1{
+                    
+                    }
+                    .rightRow2{
+                        position: relative;
+                    }
+                    .wrapRightRow1{
+                        float: left;
+                        width: 100%;
+                    }
+                    .wrapRightRow2{
+                        float: left;
+                        width: 100%;
+                    }
+                    .wrapAdDescription{
+                        float: left;
+                        width: 100%;
+                    }
+                    .wrapAdImage{
+                        float: left;
+                        width: 100%;
+                    }
+                    .transparent_content{
+                        -khtml-opacity:0.4; 
+                         -moz-opacity:0.4; 
+                         -ms-filter:"alpha(opacity=40)";
+                          filter:alpha(opacity=40);
+                          filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.4);
+                          opacity:0.4; 
+                          pointer-events: none;
+                    }
+                    .colEditInList{
+                        width: 25%;
+                        float: left; 
+                        padding-left: 15px;
+                        min-height: 160px
+                    }
+                    .editListItem .cancelEditListItem,
+                    .editListItem .colEditInList{
+                        display: block;
+                    }
+                    .editListItem .listContactCol1,
+                    .editListItem .listContactCol2,
+                    .editListItem .listContactCol3,
+                    .editListItem .listContactCol4,
+                    .editListItem .listContactCol5{
+                        display: none;
+                    }
+                    .editListItem{
+                        padding-bottom: 20px;
+                    }
+                    .addNewContact{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/add_new_contact.png')}") no-repeat 10px 5px #ddd;
+                        /* 18/12/14 to increase new contact button same as Filter By */
+                        float: left;
+                        padding-left: 37px;
+                    }
+                    .btnUploadImage{
+                        display: inline-block;
+                        height: 18px;
+                        position: relative;
+                        top: 7px;
+                        width: 22px;
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/white_camera.png')}") no-repeat center center transparent;
+                    }
+                   .myCValue select{
+                        width: 100%;
+                    }
+                    .myCValue input{
+                        width: 100%;
+                    }
+                    <!-- 11-Dec-2014 to move text under Company Update to icon -->
+                    .remove-padding-right {
+                        padding-right: 0;
+                        text-align: right;
+                    }
+                    .removePaddingLR{
+                        padding-right: 0;
+                        padding-left: 0;
+                    }
+                     .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+                        border: 0;
+                        padding-bottom: 10px;
+                    }
+                    .nav-tabs{
+                        border-bottom: 0;
+                    }
+                    .nav-tabs > li{
+                        margin-bottom: 0;
+                    }
+                    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+                        border: 0;
+                        padding-bottom: 10px;
+                        background-image: none;
+                        background-color: #fff !important;
+                    }
+                    .nav-tabs{
+                        border-bottom: 0;
+                    }
+                    .nav-tabs > li{
+                        margin-bottom: 0;
+                    }
+                    .nav-tabs > li > a{
+                        background-color: #f2f3f3 !important;
+                        color: inherit;
+                        padding-bottom: 9px;
+                        font-size: 16px;
+                        border-left: 0;
+                        border-right: 0;
+                        border-top: 0;
+                        width: 190px;
+                        background-image: url("{!URLFOR($Resource.P2P_ResMySupport, 'bgTab.png')}");
+                        background-position: left bottom;
+                        background-repeat: repeat-x;
+                        text-align: center;
+                        font-size: 18px;
+                    }
+                    .nav-tabs > li:last-child a{
+                        margin-right: 0;
+                    }
+                    .isSafari .nav-tabs > li:last-child{
+                        position: relative;
+                        right: -1px;
+                     }
+                     .isSafari .nav-tabs > li:first-child{
+                        position: relative;
+                        left: 0;
+                     }
+                    .nav > li > a:hover, .nav > li > a:focus{
+                        border-right: 0;
+                        border-top: 0;
+                        border-left: 0;
+                        outline: none;
+                        border-bottom: 0;
+                    }
+                    .tab-content{
+                    
+                    }
+                    .wrapImageEdit{
+                        min-width: 120px;
+                    }
+                    .package-col{
+                        float: left;
+                        padding-right: 10px;
+                    }
+                    .package-col-1{
+                        width: 35%;
+                    }
+                    .package-col-2{
+                        width: 14%;
+                    }
+                    .package-col-3{
+                        width: 14%;
+                    }
+                    .package-col-4{
+                        width: 11.5%
+                    }
+                    .package-col-5{
+                        width: 11.5%
+                    }
+                    .package-col-6{
+                        width: 14%;
+                    }
+                    .wrapCaseFilter{
+                        float: right;
+                        padding-left: 15px;
+                        padding-right: 15px;
+                    }
+                    .wrapCaseSearch{
+                        float: left;
+                        padding-left: 15px;
+                    }
+                    .searchCase{
+                        float: left;
+                    }
+                    .wrapStatus{
+                        float: right;
+                        width: 100%;
+                    }
+                    .wrapFilter{
+                        float: right;
+                        margin: 0 10px 0 0 !important;
+                        padding: 0 !important;
+                        width: auto !important;
+                    }
+                    .wrapLiistPackages{
+                        background-color: #fff;
+                        float: left;
+                        padding-bottom: 5px;
+                        padding-top: 15px;
+                        width: 100%;
+                    }
+                    .wrapTableList .aTBorder{
+                        padding: 5px 0;
+                    }
+                    .wrapTableList .aTBorder{
+                        border-top: 0;
+                        border-bottom: 1px solid #cdcdcd;
+                    }
+                    @media (max-width: 1024px){
+                        .contentRow1{
+                            width: 100%;
+                        }
+                        .wrapRightRow1{
+                            float: left;
+                            width: 50%;
+                        }
+                        .wrapRightRow2{
+                            float: left;
+                            padding-left: 15px;
+                            width: 50%;
+                        }
+                        .wrapAdImage{
+                            float: left;
+                            width: 100%;
+                        }
+                        .contentRow1{padding-right: 0;}
+                        .contentRow2{
+                            width: 100%;
+                        }
+                    }
+                    @media (max-width: 992px){
+                        .package-col-1{
+                            width: 29%;
+                        }
+                        .package-col-2{
+                            width: 16%;
+                        }
+                        .package-col-3{
+                            width: 16%;
+                        }
+                        .package-col-4{
+                            width: 11.5%
+                        }
+                        .package-col-5{
+                            width: 11.5%
+                        }
+                        .package-col-6{
+                            width: 16%;
+                        }
+                    }
+                    @media (max-width: 767px){
+                        .wrapTableList .tRow{
+                            padding-right: 30px;
+                            position: relative;
+                        }
+                        .pcValueItem,
+                        .pcTitleItem{
+                            line-height: 1.42857;
+                        }
+                        .pcTitleItem{
+                            padding: 10px 10px 10px 15px;
+                        }
+                        .pc_last_col{
+                            position: absolute;
+                            top: -3px;
+                            right: 0;
+                        }
+                        .package-col-1{
+                            width: 49%;
+                        }
+                        .package-col-3{
+                            width: 25%;
+                        }
+                        .package-col-6{
+                            width: 26%;
+                        }
+                        .comInfoCol1{
+                            width: 33.33%;
+                        }
+                        #myTab{
+                            padding-left: 15px;
+                            padding-right: 15px;
+                        }
+                        .comInfoCol2{
+                            width: 33.33%;
+                        }
+                        .comInfoCol3{
+                            width: 33.33%;
+                            padding-right: 0;
+                        }
+                        .comInfoCol4{
+                            border-top: 1px solid #cdcdcd;
+                            margin-top: 15px;
+                            padding-top: 15px;
+                            width: 100%;
+                        }
+                        .wrapAdImage {
+                            padding-right: 0;
+                            width: 100%;
+                        }
+                        .wrapAdDescription {
+                            float: left;
+                            margin-top: 10px;
+                            width: 100%;
+                        }
+                        .listContactCol2{
+                            display: none;
+                        }
+                        .listContactCol1{
+                            width: 30%;
+                            padding-right: 5px;
+                            word-wrap: break-word;
+                        }
+                        .listContactCol3{
+                            width: 40%;
+                            padding-right: 5px;
+                            word-wrap: break-word;
+                        }
+                        .listContactCol4{
+                            width: 17%;
+                            padding-right: 5px;
+                            word-wrap: break-word;
+                        }
+                        .listContactCol5{
+                            width: 13%;
+                            word-wrap: break-word;
+                        }
+                        .colEditInList{width: 50%;}
+                        .clearRightPadding{padding-right: 0;}
+                        .padding-zero {
+                            padding-left:0;
+                        }
+                        .remove-padding-right {
+                            padding-right: 0;
+                            text-align: left;
+                        }
+                        .title-contact-description {
+                            padding-top: 10px;
+                        }
+                        .contact-form-to-right {
+                            float: right;
+                        }
+                        
+                        .hideUnder767{
+                            display: none;
+                        }
+                        .showUnder767{
+                            display: block;
+                        }
+                    }
+                    @media (max-width: 585px){
+                        .profile-image-spacing {
+                            margin: 0 !important;
+                            padding-bottom: 8px !important;
+                        }
+                        
+                        .nav-tabs > li:last-child a{
+                            padding-left: 0;
+                            padding-right: 0;
+                        }
+                     }
+                    @media (max-width: 540px){
+                        .wrapCaseFilter{
+                            width: 100%;
+                            margin-top: 15px;
+                        }
+                        .wrapCaseSearch{
+                            padding-right: 53px;
+                            position: relative;
+                            width: 100%;
+                        }
+                        .labelStatus{
+                            float: left;
+                            margin-bottom: 5px;
+                        }
+                        .wrapStatus select{
+                            width: 100%;
+                        }
+                        .searchCase {
+                            width: 100%;
+                        }
+                        .wrapCaseSearch .btnSearch{
+                            position: absolute;
+                        }
+                    }
+                    @media (max-width: 480px){
+                        
+                        
+                        .comInfoCol1{
+                            width: 100%;
+                            padding-right: 0;
+                        }
+                        .btnPayNow{
+                            margin-bottom: 15px;
+                        }
+                        .comInfoCol2{
+                            width: 50%;
+                        }
+                        .comInfoCol3{
+                            width: 50%;
+                            padding-right: 0;
+                        }
+                        .comInfoCol4{
+                            width: 100%;
+                        }
+                        .wrapRightRow1{
+                            width: 100%;
+                        }
+                        .contactImage{
+                            width: 41.6667%;
+                        }
+                        .contactDescription{
+                            width: 58.3333%;
+                        }
+                        .wrapRightRow2 {
+                            float: left;
+                            padding-left: 0;
+                            width: 100%;
+                        }
+                        .contentRow2Col1 {
+                            width: 100%;
+                        }
+                        .contentRow2Col2 {
+                            width: 100%;
+                        }
+                        .listContactCol1{
+                            width: 50%;
+                        }
+                        .listContactCol3{
+                            display: none;
+                        }
+                        .listContactCol4{
+                            width: 30%;
+                        }
+                        .listContactCol5{
+                            width: 20%;
+                        }
+                        .colEditInList{width: 100%;}
+                        .clearFullRightPadding{padding-right: 0;}
+                        .gumtree-contact-description {
+                            padding-left: 15px;
+                        }
+                        .nav-tabs > li > a {
+                            width: 100%;
+                        }
+                        .nav-tabs > li {
+                            padding-right: 15px;
+                            width: 50%;
+                        }
+                        .nav-tabs > li:last-child{
+                            padding-right: 0;
+                        }
+                      
+                    }
+                    @media (max-width: 479px){
+                        .doubleBorder{
+                            padding-right: 0;
+                        }
+                        .hideFilter{display: none;}
+                        .wrapFilterCom{
+                            width: 100%;
+                        }
+                        .button-active {
+                            width: 49%;
+                        }
+                        .button-active select{
+                            width: 100%;
+                        }
+                        .margin2percent{
+                            margin-left: 2%;
+                        }
+                        .removePaddingRight479{
+                            padding-right: 0 !important;
+                        }
+                        .hideUnder479{
+                            display: none;
+                        }
+                        .showUnder479{
+                            display: block;
+                        }
+                        .package-col-1{
+                            width: 65%;
+                        }
+                        .package-col-3{
+                            width: 35%;
+                            white-space: nowrap;
+                        }
+                    }
+                    @media (max-width: 379px){
+                        
+                        .comInfoCol1{
+                            width: 100%;
+                            padding-right: 0;
+                        }
+                        .comInfoCol2{
+                            width: 100%;
+                            padding-right: 0;
+                        }
+                        .comInfoCol3{
+                            width: 100%;
+                            padding-right: 0;
+                        }
+                        .comInfoCol4{
+                            width: 100%;
+                            padding-right: 0;
+                        }
+                        .contactImage {
+                            padding-right: 0;
+                            width: 100%;
+                        }
+                        .contactDescription{
+                            width: 100%;
+                        }
+                        .listContactCol1{
+                            width: 75%;
+                        }
+                        .listContactCol4{
+                            display: none;
+                        }
+                        .listContactCol5{
+                            width: 25%;
+                        }
+                        .gumtree-contact-description {
+                            padding-left: 0;
+                        }
+                        .nav-tabs > li > a{
+                            font-size: 14px;
+                        }
+                       
+                    }
+                    @media (max-width: 360px){
+                        .addNewContact {
+                            background-position: 5px 6px;
+                            float: left;
+                            font-weight: normal;
+                            padding-left: 38px;
+                            width: 100%;
+                            font-size: 14px;
+                            padding-left: 30px;
+                            padding-right: 5px;
+                        }
+                    }
+                    @media (max-width: 345px){
+                        .title-image-space {
+                            padding-bottom: 0;
+                        }
+                        
+                    }
+                    .input{
+                        width: 100%;
+                        /*color: #969696;*/
+                        padding: 6px 10px;
+                    }
+                    
+                    .contentRow2Col1 img, .contentRow2Col2 img{
+                        width: 100%;
+                    }
+                    
+                    .displayMe{
+                        display: block;
+                    }
+                    
+                    input[type=button]{
+                        
+                    }
+                    .wrapImageEdit .sfdc_richtext img{
+                        margin-top:14px;
+                        width:70px;height:70px;
+                    }
+                    .htmlDetailElementTable{float:left;}
+                    .cameraButton{
+                        display:none;
+                        position: absolute;
+                        bottom: 5%;
+                        left: 5%;
+                        padding: 0 25px 0 55px;
+                        border-bottom: 2px solid #df531b !important;
+                        border: none;
+                        border-radius: 3px;
+                        color: white;
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/icon-camera-white.png')}") no-repeat #f4731e 20% center;
+                    }
+                    .photoUploadSection{
+                        background: none repeat scroll 0 0 rgba(255,255,255,.85);
+                        font-size: 1em;
+                        height: 1.6em;
+                        line-height: 1.6em;
+                        bottom: 1px;
+                        position: absolute;
+                        text-align: center;
+                        width: 100%;
+                    }
+                    .photoUploadSection input[type=submit]{
+                        background:none;
+                        border:none;
+                        color: #015ba7;
+                    }
+                    .input[type=submit]{
+                        pointer-events: none;
+                    }
+                    
+                    .line-height-eighteen-pix {
+                        
+                    }
+                    .hide-button {
+                        display: none;
+                    }
+                    .title-image-space {
+                        padding-bottom: 8px;
+                    }
+                    .btn-next{
+                        position: absolute;
+                        right: -15px;
+                        top: 5px;
+                        width: 58px;
+                    }
+                    body {
+                        overflow-y: scroll;
+                    }
+                    body.modal-open {
+                        overflow-y: scroll;
+                        margin: 0;
+                    }
+                    .modal {
+                        overflow: auto;
+                    }
+                    .clear-float-left {
+                        float: none;
+                    }
+                    
+                    .errorM3{
+                        border-color: #c00;
+                    }
+                    
+                    .myCustomMessage .message {
+
+                    }
+                    .messageText h4{color: #cc0000;}
+                    
+                    .btnSaveBG{
+                        padding-right: 5px;
+                        position: relative;
+                        top: -2px;
+                    }
+                    .requiredInput{
+                        position: relative;
+                        height: 100%;
+                    }
+                    .requiredInput .requiredBlock{
+
+                    }
+                    .btnSaveCompanyProfile{display:none;}
+                    .deleteBtn{float:right;position:absolute;bottom:41%;right:20%;}
+                   
+                    .remainingColorLess5{color: red;}
+                    .remainingColorLess10{color: orange;}
+                    .remainingColorMore10{color: green;}
+                    .delChart{
+                        position:absolute;
+                        padding-right:19px;
+                        top:2px;
+                        right:4px;
+                        font-size: 14px;
+                        display:none; 
+                    }
+                </style>
+                
+                
+           <script>
+              var dataLayer = [{"p": {"t": "MyAdsProCompany","lng": "EN-GB", "pl": "SFDC", "v": "2015-02-25 v1.00"}, 
+                                "u": {"at": "Pro", "li": true },   
+                                "d": {"ua": "{!UA}" }
+                              }];
+    
+    <!-- GTM Pt1 -->
+                     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                     j.async=true;
+                     j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;
+                     f.parentNode.insertBefore(j,f);
+                     })(window,document,'script','dataLayer','GTM-FF7Z');
+              </script>
+     <!-- End GTM Pt1 -->
+
+      </head>
+  
+     <!-- GTM Pt2 -->
+        <noscript>
+            <iframe src="//www.googletagmanager.com/ns.html?id=GTM-FF7Z" height="0" width="0" style="display:none;visibility:hidden">
+            </iframe>
+        </noscript>
+     <!-- End GTM Pt2 -->
+
+          
+        <apex:composition template="P2P_Template">
+        <apex:define name="body">
+          
+          <body id="comp" class="company">
+
+             <!-- 2015-01-02 - Feedback tab integrated with Clicktools by Steve Paul -->
+             <div class="feedback" id="feedback">
+                  <!--- hard code Q1 for testing - replace with {!acc.Id} --->
+                  <a href="http://supportsurvey.gumtree.com/go?iv=18xfknvyio31q&q1={!acc.id}&q2=&q3=Company&q4=Web">Feedback</a>
+            </div>
+    
+            <apex:outputPanel styleClass="popupHeaderInfo">
+                <apex:image value="{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/popup-arrow.png')}" /><br/>
+                <apex:outputLabel value="Test Show info" />
+            </apex:outputPanel>
+          
+            <apex:form >
+            <apex:inputHidden value="{!editedIndex}" id="editedIndex" />
+            <apex:inputHidden value="{!isSuccessSave}" id="isSuccessSave" />
+            
+            <apex:actionFunction name="cancelAddContact" action="{!cancelAddComContact}" oncomplete="saveCancelAddComContact(false, '{!$Component.isSuccessSave}');" rerender="comListContacts" status="cancelAddStatus" immediate="true" />
+            <apex:actionFunction name="cancelEditAcc" action="{!cancelEditProfile}" rerender="profileBlock, isSuccessSave" status="profileStatusChange" oncomplete="saveCancelProfile(this,false);" />
+            <apex:actionFunction name="saveAccPro" action="{!saveProfile}" rerender="profileBlock, isSuccessSave" status="comStatusChange" oncomplete="saveCancelProfile(this,true,'{!$Component.isSuccessSave}');" />
+            <apex:actionFunction name="saveEditedCon" action="{!saveEditedComContact}" rerender="comListContacts, isSuccessSave, primaryContact, financeContact, messages" status="conSaveStatus" oncomplete="saveCancelCompanyContact(this,true,'{!$Component.isSuccessSave}');" />
+            <apex:actionFunction name="saveNewCon" action="{!saveNewContact}" oncomplete="saveCancelAddComContact(true, '{!$Component.isSuccessSave}');" rerender="comListContacts, isSuccessSave, primaryContact, financeContact" status="saveAddStatus" />
+            
+            <apex:actionFunction name="saveAdImage" action="{!saveAdImage}" oncomplete="uploadAdImage();" />
+            <apex:actionFunction name="uploadAdImage" action="{!uploadAdImage}" rerender="comAdImage, adImageMsg" oncomplete="waitingDialog.hide();" />
+            <apex:actionFunction name="deleteAdImage" action="{!deleteAdImage}" rerender="comAdImage, adImageMsg" oncomplete="waitingDialog.hide();" />
+            
+            <div class="container wrapContentBg">
+             <apex:outputPanel id="msgSysPanel" rendered="{!msgErr.size!=0}">
+                <!-- title -->
+                <div class="row blurEditListItem">
+                    <div class="col-md-12">
+                        <div class="accountTitle" style="float: left; width: 100%;">
+                            <div class="col-md-5 col-xs-12 col-sm-5" style="padding-left: 0;">
+                                <img class="imageSignal" src="{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/signal-icon.png')}"/> <h1 style="color: #009BDF;">Update</h1>
+                            </div>
+                            <div class="col-md-7 col-xs-12 col-sm-7 padding-zero remove-padding-right">
+                       <apex:repeat value="{!msgErr}" var="msg">
+                         <span style="margin-top: 3px; font-size: 15px; display: block; line-height: 18px;">  
+                           <apex:outputText value="{!msg.MessageText__c}" escape="false" /> 
+                         </span>
+                       </apex:repeat>
+           
+                    </div>
+                         </div>
+                    </div>
+                </div>
+              </apex:outputPanel>
+                <!--Company profile-->
+                <div class="wrapTab">   
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                         <li role="presentation" class="active"><a href="#overview" role="tab" data-toggle="tab">Overview</a></li>
+                         <li role="presentation"><a href="#package" role="tab" data-toggle="tab">Package Summary</a></li>
+                    </ul>
+                    <div class="tab-content">
+                         <div role="tabpanel" class="tab-pane active" id="overview">
+                                <apex:outputPanel id="profileBlock">
+                                    <div class="row blurEditListItem" id="proBlock">
+                                        <div class="col-md-12">
+                                           <div class="wrapBtnTop">                     
+                                            <div class="wrapFullBlock">
+                                                <div class="wrapTitleCompanyProfile">
+                                                    <div class="setLeft">
+                                                        <h2>Company Profile</h2>
+                                                    </div>
+                                                    <apex:actionStatus id="profileStatusChange">
+                                                        <apex:facet name="start">
+                                                            <img src="/img/loading.gif" style="float:right;" />
+                                                        </apex:facet>
+                                                        <apex:facet name="stop">
+                                                            <apex:outputPanel >
+                                                                <apex:commandButton value="Edit" styleClass="editEven editBlock makeUpEdit" action="{!editProfile}" rendered="{!NOT(isEditedProfile)}"
+                                                                    rerender="profileBlock, isSuccessSave, profileMessage" status="profileStatusChange" oncomplete="editProfile(this);" />
+                                                                <apex:outputText rendered="{!isEditedProfile}">
+                                                                    <input type="button" value="Cancel" class="cancelEven editBlock makeUpCancel cancelIcon" onclick="cancelEditAcc();" />
+                                                                </apex:outputText>
+                                                            </apex:outputPanel>
+                                                        </apex:facet>
+                                                    </apex:actionStatus>
+                                                </div>
+                                                <div class="comInfoCol1 clearPaddingLeft">
+                                                    <div class="iLabel inputFullWidth">
+                                                        Company Name
+                                                    </div>
+                                                    <div class="myCValue profileData25px">
+                                                        <apex:outputField value="{!acc.Name}" />
+                                                    </div>
+                                                    
+                                                    <div class="iLabel inputFullWidth">
+                                                        Account Number
+                                                    </div>
+                                                    <div class="myCValue profileData25px">
+                                                        <apex:outputField value="{!acc.AccountNumber}" />
+                                                    </div>
+                                                    
+                                                    <div class="iLabel inputFullWidth">
+                                                       Outstanding Debt
+                                                    </div>
+                                                    <apex:variable var="isOutDeptFiqas" value="{!AND(NOT(ISNULL(acc.Outstanding_Debt_Fiqas__c)), acc.Outstanding_Debt_Fiqas__c>0)}"/>
+                                                    <div class="myCValue profileData25px" sytle="{!IF(isOutDeptFiqas, 'color:#EF4136;','')}">
+                                                        <apex:outputField value="{!acc.Outstanding_Debt_Fiqas__c}"/>
+                                                    </div>
+                                                    <!-- <a href="/apex/P2P_MyFinancials?scontrolCaching=1&id={!acc.Id}" class="{!IF(acc.Outstanding_Debt_Fiqas__c>0, 'btnPayNow btnOrange spacingTop', 'hide-button')}" style="color:white;">Pay Now</a> -->
+                                                    <a href="{!URLFOR($Page.P2P_MyFinancials)}" class="{!IF(isOutDeptFiqas, 'btnPayNow btnOrange spacingTop', 'hide-button')}" style="color:white;">Pay Now</a>
+                                                </div>
+                                                <div class="comInfoCol2">
+                                                    <div class="iLabel inputFullWidth">
+                                                        Account Status:
+                                                    </div>
+                                                    <div class="myCValue myCValueSmallFont">
+                                                        <span class="status s{!acc.Account_Status__c}"><apex:outputField value="{!acc.Account_Status__c}" /></span>
+                                                    </div>
+                                                    
+                                                    <div class="iLabel inputFullWidth">
+                                                        Package Status:
+                                                    </div>
+                                                    <div class="myCValue myCValueSmallFont">
+                                                        <span class="displayValue">
+                                                            <span class="status s{!acc.Package_Status__c}"><apex:outputField value="{!acc.Package_Status__c}" /></span>
+                                                        </span>
+                                                        <span class="status inputData s{!acc.Package_Status__c}"><apex:outputField value="{!acc.Package_Status__c}" /></span>
+                                                    </div>
+                                                    
+                                                    <div class="iLabel inputFullWidth">
+                                                        Active since:
+                                                    </div>
+                                                    <div class="myCValue myCValueSmallFont">
+                                                        {!activeSince}
+                                                    </div>
+                                                    
+                                                    <apex:outputPanel rendered="{!acc.Charity_Number__c != null}">
+                                                    <div class="iLabel inputFullWidth">
+                                                        Charity Number:
+                                                    </div>
+                                                    <div class="myCValue myCValueSmallFont">
+                                                        <span class="displayValue">
+                                                            <apex:outputField value="{!acc.Charity_Number__c}" />
+                                                        </span>
+                                                        <apex:inputField value="{!acc.Charity_Number__c}" html-placeholder="Charity Number" styleClass="input inputData" />
+                                                    </div>
+                                                    </apex:outputPanel>
+                                                </div>
+                                                <div class="comInfoCol3">
+                                                    <div class="iLabel inputFullWidth">
+                                                        Company Address:
+                                                    </div>
+                                                    <div class="myCValue myCValueSmallFont">
+                                                        <span class="displayValue">
+                                                            <apex:outputText value="{!billingAddressDisplay}" escape="false" />
+                                                        </span>
+                                                        <textarea rows="3" name="companyAddress" readonly="readonly" id="companyAddress" class="input inputData" data-toggle="modal" data-target="#myModal">
+                                                            <apex:outputText value="{!billingAddress}" escape="false" />
+                                                        </textarea>
+                                                    </div>
+                                                    
+                                                    <div class="iLabel inputFullWidth">
+                                                        Company Reg number:
+                                                    </div>
+                                                    <div class="myCValue myCValueSmallFont">
+                                                        <apex:outputField value="{!acc.Company_Reg_No__c}" />
+                                                    </div>
+                                                    
+                                                    <div class="iLabel inputFullWidth">
+                                                        Company VAT Number:
+                                                    </div>
+                                                    <div class="myCValue myCValueSmallFont" style="margin-bottom: 0;">
+                                                        <span class="displayValue"><apex:outputField value="{!acc.Company_VAT_No__c}" /></span>
+                                                        <apex:outputPanel styleClass="inputData">
+                                                            <apex:outputField value="{!acc.Company_VAT_No__c}" rendered="{!acc.Company_VAT_No__c!=null}" />
+                                                            <apex:inputField value="{!acc.Company_VAT_No__c}" html-placeholder="Company VAT Number" styleClass="input" rendered="{!acc.Company_VAT_No__c==null}" />
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                                <div class="comInfoCol4 clearPaddingRight">
+                                                    <div class="iLabel inputFullWidth">
+                                                        Company Description:
+                                                    </div>
+                                                    <div class="myCValue myCValueSmallFont line-height-eighteen-pix">
+                                                        <span class="displayValue"><apex:outputField value="{!acc.Description}" /></span>
+                                                        <apex:inputField value="{!acc.Description}" html-placeholder="Company Description" styleClass="input inputData line-height-eighteen-pix" style="height:121px;margin-bottom:22px;" />
+                                                    </div>
+                                                    <div class="sizeUrl">
+                                                        <span class="displayValue" style="word-break: break-all;"><a href="http://{!acc.Website}">{!acc.Website}</a></span>
+                                                        <apex:inputField value="{!acc.Website}" html-placeholder="Company Website" styleClass="inputData" style="width:100%;" />
+                                                        <apex:actionStatus id="comStatusChange">
+                                                            <apex:facet name="start">
+                                                                <img src="/img/loading.gif" />
+                                                            </apex:facet>
+                                                            <apex:facet name="stop">
+                                                                <apex:outputPanel >
+                                                                    <button class="btnSaveCompanyProfile btnOrange spacingTop inputFullWidth" onclick="saveAccPro();return false;">
+                                                                        <span class="btnSaveBG">
+                                                                            <img src="{!URLFOR($Resource.P2P_Resources, 'img/save_icon.png')}"/>
+                                                                         </span>
+                                                                         Save
+                                                                    </button>
+                                                                </apex:outputPanel>
+                                                            </apex:facet>
+                                                        </apex:actionStatus>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    </apex:outputPanel>
+                                    <div class="row blurContent">
+                                        <div class="col-md-12">
+                                        
+                                            <div class="contentRow1 blurEditListItem">
+                                                <div class="wrapRightRow1">
+                                                    <div class="contentRowBlockRight spacingTop rightRow1">
+                                                        <div class="wrapTitleCompanyProfile">
+                                                            <div class="title title-image-space">
+                                                                Gumtree Contact
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-5 col-sm-5 col-xs-12 contactImage clearPaddingLeft">
+                                                            <apex:image style="width:100%;" value="{!acc.Owner.FullPhotoUrl}" 
+                                                            rendered="{!NOT(CONTAINS(acc.Owner.FullPhotoUrl, '/profilephoto/005/F'))}" />
+                                                            
+                                                            <apex:image style="width:100%;" value="{!URLFOR($Resource.P2P_Resources, 'img/avatar.png')}" 
+                                                            rendered="{!CONTAINS(acc.Owner.FullPhotoUrl, '/profilephoto/005/F')}" />
+                                                        </div>
+                                                            <span class="contentInfoTitle clear-float-left">
+                                                                {!acc.Owner.Name} 
+                                                                <br/>{!acc.Owner.Title}
+                                                            </span> 
+                                                            <br />
+                                                            <span class="contentInfoPhone clear-float-left">
+                                                                <apex:outputField value="{!acc.Owner.Phone}" />
+                                                            </span>
+                                                            <br/>
+                                                            <span class="contentInfoEmail clear-float-left" style="margin-bottom: 0;">
+                                                                <apex:outputField value="{!acc.Owner.Email}" />
+                                                            </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="wrapRightRow2">
+                                                    <div class="contentRowBlockRight spacingTop rightRow2">
+                                                        <div class="wrapTitleCompanyProfile">
+                                                            <div class="col-xs-9 title clearPaddingLeft clearPaddingRight" style="padding-right: 70px !important; width: 100%;">
+                                                                Company Default Image
+                                                            </div>
+                                                            <input type="button" value="Edit" class="makeUpEdit" style="float:right; position: absolute; right: 15px; top: 20px;" onclick="openEditAdImage();" />
+                                                            <input type="button" value="Cancel" class="cancelIcon" style="display:none;float:right;font-size:14px; position: absolute; right: 15px;top: 22px;" onclick="closeEditAdImage();" />
+                                                        </div>
+                                                        <apex:outputPanel id="comAdImage">
+                                                        <script>$(document).ready(function(){closeEditAdImage();});</script>
+                                                        <div class="wrapAdImage">
+                                                            <div class="fullImageWidth clearPaddingLeft" style="position:relative;margin-bottom:10px;">
+                                                                <table>
+                                                                    <tr><td valign="middle" align="center">
+                                                                        <apex:image style="max-width:100%; width: 100%;" value="{!IF(adImage.imageURL==null,URLFOR($Resource.P2P_Resources, 'img/Ad-image.png'), adImage.imageURL)}" />  
+                                                                    </td></tr>
+                                                                </table>
+                                                                <apex:outputPanel rendered="{!adImage.imageURL!=null}">
+                                                                    <input type="button" value="Delete" class="delChart" onclick="deleteAdImageClick();" />
+                                                                    <!-- <img onclick="deleteAdImageClick();" class="close_popup" style="width:inherit;" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/> -->
+                                                                </apex:outputPanel>
+                                                                <input type="button" value="Replace" class="cameraButton btnOrange" onclick="openFileBrowser(this, true);" /> 
+                                                                <apex:inputHidden value="{!acc.Company_Logo__c}" />
+                                                            </div>
+                                                            * The image will appear as the default image on all adverts.
+                                                        </div>
+                                                        </apex:outputPanel>
+                                                    </div> 
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="contentRow2">
+                                                <apex:outputPanel id="primaryContact">
+                                                
+                                                <apex:outputPanel rendered="{!primaryCon!=null}">
+                                                <div class="contentRow2Col1">
+                                                    <div class="contentRowBlockRight">
+                                                        <div class="wrapTitleCompanyProfile">
+                                                            <div class="title title-image-space">
+                                                                Account Contact
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-5 col-sm-5 col-xs-5 contactImage clearPaddingLeft profile-image-spacing" style="position:relative;">
+                                                                <!-- <apex:outputField value="{!primaryCon.Profile_Photo__c}" rendered="{!primaryCon.Profile_Photo__c!=null}" /> -->
+                                                                <apex:outputText rendered="{!primaryCon.Profile_Photo__c!=null}" >
+                                                                    <img src="{!PrimaryConProfilePhoto}"/>
+                                                                </apex:outputText>
+                                                                <apex:image value="{!URLFOR($Resource.P2P_Resources, 'img/avatar.png')}" rendered="{!primaryCon.Profile_Photo__c==null}" title="No Image" />
+                                                        </div>
+                                                        <div class="col-md-7 col-sm-7 col-xs-7 contactDescription clearPaddingLeft">
+                                                            <span class="contentInfoTitle">
+                                                                {!primaryCon.Name}
+                                                                <br/>{!primaryCon.Title}
+                                                            </span>
+                                                            <br />
+                                                            <span class="contentInfoPhone">
+                                                                <apex:outputField value="{!primaryCon.Phone}" />
+                                                            </span>
+                                                            <br />
+                                                            <span class="contentInfoEmail">
+                                                                <apex:outputField value="{!primaryCon.Email}" />
+                                                            </span>
+                                                            <br />
+                                                            <span class="contentInfoStatus">
+                                                                <span class="status s{!primaryCon.Contact_Status__c}" style="margin-top:2px;"><apex:outputField value="{!primaryCon.Contact_Status__c}" /></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </apex:outputPanel>
+                                                
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel id="financeContact">
+                                                <apex:outputPanel rendered="{!financeCon!=null}">
+                                                <div class="contentRow2Col2">
+                                                    <div class="contentRowBlockRight">
+                                                        <div class="wrapTitleCompanyProfile">
+                                                            <div class="title title-image-space">
+                                                                Finance Contact
+                                                            </div> 
+                                                        </div>
+                                                        <div class="col-md-5 col-sm-5 col-xs-5 contactImage clearPaddingLeft profile-image-spacing">
+                                                                <!-- <apex:outputField value="{!financeCon.Profile_Photo__c}" rendered="{!financeCon.Profile_Photo__c!=null}" /> -->
+                                                                <apex:outputText rendered="{!financeCon.Profile_Photo__c!=null}" >
+                                                                    <img src="{!FinanceConProfilePhoto}"/>
+                                                                </apex:outputText>
+                                                                <apex:image value="{!URLFOR($Resource.P2P_Resources, 'img/avatar.png')}" rendered="{!financeCon.Profile_Photo__c==null}" title="No Image" />
+                                                        </div>
+                                                        <div class="col-md-7 col-sm-7 col-xs-7 contactDescription clearPaddingLeft">
+                                                            <span class="contentInfoTitle clear-float-left">
+                                                                {!financeCon.Name}<br/>
+                                                                {!financeCon.Title}
+                                                            </span>
+                                                            <br />
+                                                            <span class="contentInfoPhone">
+                                                                <apex:outputField value="{!financeCon.Phone}" />
+                                                            </span>
+                                                            <br />
+                                                            <span class="contentInfoEmail">
+                                                                <apex:outputField value="{!financeCon.Email}" />
+                                                            </span>
+                                                            <br />
+                                                            <span class="contentInfoStatus">
+                                                                <span class="status s{!financeCon.Contact_Status__c}" style="margin-top:2px;"><apex:outputField value="{!financeCon.Contact_Status__c}" /></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </apex:outputPanel>
+                                                </apex:outputPanel>
+                                                
+                                                
+                                                <!--List-->
+                                                <div class="col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="wrapListCompanyContact">
+                                                        <apex:outputPanel id="comListContacts">
+                                                        <script>
+                                                            $(document).ready(function(){
+                                                                $('[data-toggle="tooltip"]').bind({
+                                                                    mouseover : function(){
+                                                                        var title = $(this).attr('title');
+                                                                        var data_title = $(this).attr('data-title');
+                                                                        $(this).attr('title','');
+                                                                        if(!data_title){
+                                                                            data_title = title;
+                                                                            $(this).attr('data-title',title);
+                                                                        }
+                                                                        helperDialog.show($(this).get(0), data_title);
+                                                                    },
+                                                                    mouseout : function(){
+                                                                        helperDialog.hide();
+                                                                    }
+                                                                });
+                                                            });
+                                                        </script>
+                                                        <div class="row doubleBorder">
+                                                            <div class="wrapTitleCompanyProfile">
+                                                                <div class="title title-image-space profile-image-spacing" style="margin:10px 0;">
+                                                                    All Company Contacts
+                                                                </div>
+                                                                <apex:actionStatus id="conStatusChange">
+                                                                    <apex:facet name="start">
+                                                                        <img src="/img/loading.gif" style="float:right;" />
+                                                                    </apex:facet>
+                                                                    <apex:facet name="stop">
+                                                                        <apex:outputPanel styleClass="wrapFilterCom" style="float:right;" rendered="{!NOT(isAddNewMode)}">
+                                                                            <div style="float:left;margin:10px 0;padding-right:15px" class="button-active removePaddingRight479">
+                                                                                <span class="hideFilter">Filter by : &nbsp;&nbsp;</span>
+                                                                                <apex:selectList value="{!filterType}" size="1">
+                                                                                    <apex:selectOptions value="{!ContactStatus}" />
+                                                                                    <apex:actionSupport event="onchange" action="{!filterChange}" reRender="comListContacts" status="conStatusChange"/>
+                                                                                </apex:selectList>
+                                                                            </div>
+                                                                            <div style="float:right;margin:10px 0;" class="button-active margin2percent">
+                                                                                <apex:commandButton action="{!addComContact}" status="conStatusChange" styleClass="addNewContact btnGrey"
+                                                                                    oncomplete="addNewComContact();" rerender="comListContacts" value="New Contact" />
+                                                                            </div>
+                                                                         </apex:outputPanel>
+                                                                    </apex:facet>
+                                                                </apex:actionStatus>
+                                                            </div>
+                                                            <apex:outputPanel id="messages" styleClass="myCustomMessage">
+                    <!--                                             <apex:pageMessages /> -->
+                                                            </apex:outputPanel>
+                                                            <div class="listContactCol1">
+                                                                <apex:panelGrid columns="2">
+                                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Contact_Column1}"></span>
+                                                                    <apex:commandLink action="{!sortComContact}" reRender="comListContacts" status="" styleClass="{!IF(sortByField!='Name','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                                        Name
+                                                                        <apex:param value="Name" assignTo="{!sortByField}"/>
+                                                                    </apex:commandLink>
+                                                                </apex:panelGrid>
+                                                            </div>
+                                                            <div class="listContactCol2">
+                                                                <apex:panelGrid columns="2">
+                                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Contact_Column2}"></span>
+                                                                    <apex:commandLink action="{!sortComContact}" reRender="comListContacts" status="" styleClass="{!IF(sortByField!='Title','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                                        Job title
+                                                                        <apex:param value="Title" assignTo="{!sortByField}"/>
+                                                                    </apex:commandLink>
+                                                                </apex:panelGrid>
+                                                            </div>
+                                                            <div class="listContactCol3">
+                                                                <apex:panelGrid columns="2">
+                                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Contact_Column3}"></span>
+                                                                    <apex:commandLink action="{!sortComContact}" reRender="comListContacts" status="" styleClass="{!IF(sortByField!='Email','headSort',(IF(isDESC==true,'headSortDESC','headSortASC')))}">
+                                                                        Email
+                                                                        <apex:param value="Email" assignTo="{!sortByField}"/>
+                                                                    </apex:commandLink>
+                                                                </apex:panelGrid>
+                                                            </div>
+                                                            <div class="listContactCol4">
+                                                                <apex:panelGrid columns="2">
+                                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.Contact_Column4}"></span>
+                                                                    Type
+                                                                </apex:panelGrid>
+                                                            </div>
+                                                            <div class="listContactCol5">
+                                                                &nbsp;
+                                                            </div>
+                                                        </div>
+                                                            <apex:repeat value="{!lstComContacts}" var="dtoComCon">
+                                                            <div class="row singleBorder">
+                                                                <apex:outputPanel rendered="{!NOT(dtoComCon.isEdited)}">
+                                                                    <div class="listContactCol1">
+                                                                        {!dtoComCon.contact.Name}&nbsp;
+                                                                    </div>
+                                                                    <div class="listContactCol2">
+                                                                        {!dtoComCon.contact.Title}&nbsp;
+                                                                    </div>
+                                                                    <div class="listContactCol3">
+                                                                        <apex:outputField value="{!dtoComCon.contact.Email}" />&nbsp;
+                                                                    </div>
+                                                                    <div class="listContactCol4">
+                                                                        <apex:outputText value="{!mConType[dtoComCon.contact.id]}" />&nbsp;
+                                                                    </div>
+                                                                    <apex:actionStatus id="editStatus">
+                                                                        <apex:facet name="start">
+                                                                            <img src="/img/loading.gif" style="float:right;" />
+                                                                        </apex:facet>
+                                                                        <apex:facet name="stop">
+                                                                            <apex:commandButton value="Edit" styleClass="listContactCol5 makeUpEdit EventEditItem" action="{!editedComContact}"
+                                                                                rerender="comListContacts" status="editStatus" oncomplete="editCompanyContact(this);"
+                                                                                rendered="{!AND(NOT(isEditedContact), NOT(isAddNewMode))}"
+                                                                                onclick="setSaveIndex({!dtoComCon.index},'{!$Component.editedIndex}');" />
+                                                                        </apex:facet>
+                                                                    </apex:actionStatus>
+                                                                </apex:outputPanel>
+                                                                
+                                                                <!-- Edit in list -->
+                                                                <apex:outputPanel rendered="{!dtoComCon.isEdited}">
+                                                                    <div style="float:left;width:100%;">
+                                                                        <apex:actionStatus id="cancelEditStatus">
+                                                                             <apex:facet name="start">
+                                                                                 <img src="/img/loading.gif" style="float:right;" />
+                                                                             </apex:facet>
+                                                                             <apex:facet name="stop">
+                                                                                 <apex:outputPanel >
+                                                                                    <apex:commandLink value="Cancel" action="{!cancelEditedComContact}" styleClass="cancelIcon" oncomplete="saveCancelCompanyContact(this,false,'{!$Component.isSuccessSave}');" rerender="comListContacts" status="cancelEditStatus" immediate="true" />
+                                                                                 </apex:outputPanel>
+                                                                             </apex:facet>
+                                                                        </apex:actionStatus>
+                                                                    </div>
+                                                                    <div class="colEditInList clearFullRightPadding">
+                                                                        <div class="myCLabel">Name</div>
+                                                                        <div class="myCValue myCValueSmallFont">{!dtoComCon.contact.Name}</div>
+                                                                        <div class="wrapImageEdit">
+                                                                        
+                                                                            <!-- <apex:outputField value="{!dtoComCon.contact.Profile_Photo__c}" rendered="{!dtoComCon.contact.Profile_Photo__c!=null}" /> -->
+                                                                            <apex:outputText rendered="{!dtoComCon.contact.Profile_Photo__c!=null}" >
+                                                                                <img src="{!dtoComCon.ProfilePhoto}"/>
+                                                                            </apex:outputText>
+                                                                            <apex:image style="width:70px;height:70px;margin-top:14px;background:url({!URLFOR($Resource.P2P_Resources, 'img/avatar.png')}) #e6e7e8 no-repeat center; background-size: 100%;" value="{!dtoComCon.contact.Profile_Photo__c}" rendered="{!dtoComCon.contact.Profile_Photo__c==null}" />
+                                                                            
+                                                                            <a href="javascript:void(0)" onclick="openFileBrowser(this, false);">
+                                                                                <apex:image style="vertical-align: bottom;margin-bottom: -4px;" value="{!URLFOR($Resource.P2P_Resources, 'img/icon_camera.png')}" />
+                                                                            </a>
+                                                                            <apex:inputHidden value="{!dtoComCon.contact.Profile_Photo__c}" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="colEditInList clearRightPadding">
+                                                                        <div class="myCLabel">Job Title</div>
+                                                                        <div class="myCValue myCValueSmallFont">
+                                                                            <apex:inputField value="{!dtoComCon.contact.Title}" html-placeholder="Contact Title" />
+                                                                        </div>
+                                                                        <div class="myCLabel">Email*</div>
+                                                                        <div class="myCValue myCValueSmallFont">
+                                                                            <apex:inputField value="{!dtoComCon.contact.Email}" required="true" html-placeholder="Contact Email" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="colEditInList clearFullRightPadding">
+                                                                        <div class="myCLabel">Phone Number*</div>
+                                                                        <div class="myCValue myCValueSmallFont">
+                                                                            <apex:inputField value="{!dtoComCon.contact.Phone}" required="true" html-placeholder="Contact Phone" />
+                                                                        </div>
+                                                                        <div class="myCLabel">Type</div>
+                                                                        <div class="myCValue myCValueSmallFont">
+                                                                            <apex:selectList value="{!mConType[dtoComCon.contact.id]}" size="1" styleClass="input">
+                                                                                <apex:selectOptions value="{!ContactType}" />
+                                                                            </apex:selectList>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="colEditInList clearPaddingRight contact-form-to-right">
+                                                                        <div class="myCLabel">Status</div>
+                                                                        <div class="myCValue myCValueSmallFont">
+                                                                            <apex:selectList value="{!dtoComCon.contact.Contact_Status__c}" styleClass="input {!IF(dtoComCon.errorStatus != '', 'error','')}" size="1">
+                                                                                <apex:selectOptions value="{!ContactStatus}" />
+                                                                            </apex:selectList>
+                                                                            <apex:outputText rendered="{!dtoComCon.errorStatus != ''}">
+                                                                                <div class="errorMsg"><strong>Error: </strong>{!dtoComCon.errorStatus}</div>
+                                                                            </apex:outputText>
+                                                                        </div>
+                                                                        <div class="myCLabel">&nbsp;</div>
+                                                                        <apex:actionStatus id="conSaveStatus">
+                                                                            <apex:facet name="start">
+                                                                                <img src="/img/loading.gif" />
+                                                                            </apex:facet>
+                                                                            <apex:facet name="stop">
+                                                                                <apex:outputPanel >
+                                                                                    <button class="btnSaveEditContact btnOrange inputFullWidth" onclick="setSaveIndex({!dtoComCon.index},'{!$Component.editedIndex}');saveEditedCon();return false;">
+                                                                                        <span class="btnSaveBG">
+                                                                                            <img src="{!URLFOR($Resource.P2P_Resources, 'img/save_icon.png')}"/>
+                                                                                        </span>
+                                                                                        Save
+                                                                                    </button>
+                                                                                </apex:outputPanel>
+                                                                            </apex:facet>
+                                                                        </apex:actionStatus>
+                                                                    </div>
+                                                                </apex:outputPanel>
+                                                                <!-- End edit -->
+                                                            </div>
+                                                            </apex:repeat>
+                                                        
+                                                            <!-- New Contact -->
+                                                            <div class="inputFullWidth spacingTop setLeft"></div>
+                                                            <apex:outputPanel rendered="{!NOT(isEditedContact)}">
+                                                                <apex:outputPanel rendered="{!NOT(isAddNewMode)}">
+                                                                    <!-- Paging -->
+                                                                    <apex:outputText rendered="{!lstComContacts.size > 0}">
+                                                                    <div class="listViewport" style="display:block;">
+                                                                        <div class="bottomNav">
+                                                                            <div class="paginator" style="padding-bottom:8px;">
+                                                                                <div class="iWrapPagination removePaddingLR">
+                                                                                    <div class="wrapShowPerPage">
+                                                                                        <div class="invListSizeChange" style="float:left;">
+                                                                                            <apex:actionStatus id="invListSizeChange">
+                                                                                                <apex:facet name="start">
+                                                                                                    <img src="/img/loading.gif" /> 
+                                                                                                </apex:facet>
+                                                                                                <apex:facet name="stop">
+                                                                                                    <apex:outputPanel >
+                                                                                                        Showing : &nbsp;
+                                                                                                        <apex:outputPanel rendered="{!totalResultSize > listSize}">
+                                                                                                            <apex:selectList value="{!listSize}" size="1">
+                                                                                                                <apex:selectOptions value="{!listSizeOptions}"/>
+                                                                                                                <apex:actionSupport event="onchange" action="{!loadComContacts}" reRender="comListContacts," status="invListSizeChange"/>
+                                                                                                            </apex:selectList>
+                                                                                                            &nbsp;&nbsp;&nbsp;of
+                                                                                                        </apex:outputPanel>
+                                                                                                        {!totalResultSize} contact <apex:outputText rendered="{!totalResultSize>1}" value="s" />
+                                                                                                    </apex:outputPanel>
+                                                                                                </apex:facet>
+                                                                                            </apex:actionStatus>
+                                                                                        </div>  
+                                                                                    </div>
+                                                                                    <div class="wrapPaginationAction">
+                                                                                        <div class="prevNextLinks">
+                                                                                            <span class="prevNext">
+                                                                                                <apex:commandLink action="{!goPreviousPage}" rendered="{!PrevRequired}" value="Previous" status="navigateStatus" reRender="comListContacts" styleClass="previousButton"><img src="/s.gif" class="prev" alt="Previous"/></apex:commandLink>
+                                                                                            </span>
+                                                                                            <apex:repeat value="{!pageNumList}" var="pnum">
+                                                                                                <apex:commandLink action="{!goToPage}" rendered="{!pageNumList.size>1}" value="{!pnum}" status="navigateStatus" reRender="comListContacts" styleClass="{!IF(pnum == curPage,'activePageNum','pageNum')}" onclick="if('{!pnum}' == '{!curPage}') return false;">
+                                                                                                    <apex:param name="ptoPage" assignTo="{!curPage}" value="{!pnum}"/>
+                                                                                                </apex:commandLink>
+                                                                                            </apex:repeat>
+                                                                                            &nbsp;&nbsp;&nbsp;
+                                                                                            <span class="prevNext">
+                                                                                                <apex:commandLink action="{!goNextPage}" rendered="{!NextRequired}" value="Next" status="navigateStatus" reRender="comListContacts" styleClass="nextButton"><img src="/s.gif" class="next" alt="Next"/></apex:commandLink>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                     </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="clearingBox"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </apex:outputText>
+                                                                </apex:outputPanel>
+                                                                
+                                                                <!-- Create New Contact -->
+                                                                <apex:outputPanel rendered="{!isAddNewMode}">
+                                                                    <div class="wrapFormAddNewContact">
+                                                                        <div style="float:left;width:100%;">
+                                                                            <apex:actionStatus id="cancelAddStatus">
+                                                                                 <apex:facet name="start">
+                                                                                     <img src="/img/loading.gif" style="float:right;" />
+                                                                                 </apex:facet>
+                                                                                 <apex:facet name="stop">
+                                                                                     <apex:outputPanel >
+                                                                                        <input type="button" value="Cancel" class="cancelIcon" onclick="cancelAddContact();" />
+                                                                                     </apex:outputPanel>
+                                                                                 </apex:facet>
+                                                                            </apex:actionStatus>
+                                                                        </div>
+                                                                        <div class="colEditInList clearFullRightPadding displayMe">
+                                                                            <div class="wrapImageEdit">
+                                                                                <apex:image style="width:100px;height: 100px;margin-top: 14px ;border:none;background:url({!URLFOR($Resource.P2P_Resources, 'img/avatar.png')}) #e6e7e8 no-repeat center;background-size:100%;"  
+                                                                                value="{!contactAdd.Profile_Photo__c}" />
+                                                                                <a href="javascript:void(0)" onclick="openFileBrowser(this, false);" class="btnOrange" style="width: 100px; margin-top: 10px; text-align: center;"><span class="btnUploadImage"></span></a>
+                                                                                <apex:inputHidden value="{!contactAdd.Profile_Photo__c}" />
+                                                                                <input type="file" onchange="showImage(this,null);" style="visibility:hidden; height: 0;" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="colEditInList clearRightPadding displayMe">
+                                                                            <div class="myCLabel">First Name*</div>
+                                                                            <div class="myCValue myCValueSmallFont">
+                                                                                <apex:inputField value="{!contactAdd.FirstName}" html-placeholder="Contact First Name" required="true" />
+                                                                            </div>
+                                                                            <div class="myCLabel">Last Name*</div>
+                                                                            <div class="myCValue myCValueSmallFont">
+                                                                                <apex:inputField value="{!contactAdd.LastName}" html-placeholder="Contact LastName" required="true" />
+                                                                            </div>
+                                                                            
+                                                                        </div>
+                                                                        <div class="colEditInList clearFullRightPadding displayMe">
+                                                                            <div class="myCLabel">Email*</div>
+                                                                            <div class="myCValue myCValueSmallFont">
+                                                                                <apex:inputField value="{!contactAdd.Email}" html-placeholder="Contact Email" required="true" />
+                                                                            </div>
+                                                                            <div class="myCLabel">Job Title</div>
+                                                                            <div class="myCValue myCValueSmallFont">
+                                                                                <apex:inputField value="{!contactAdd.Title}" html-placeholder="Contact Job Title" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="colEditInList clearPaddingRight displayMe contact-form-to-right">
+                                                                            <div class="myCLabel">Phone Number*</div>
+                                                                            <div class="myCValue myCValueSmallFont">
+                                                                                <apex:inputField value="{!contactAdd.Phone}" html-placeholder="Contact Phone Number" required="true" />
+                                                                            </div>
+                                                                            
+                                                                            <div class="myCLabel">Type</div>
+                                                                            <div class="myCValue myCValueSmallFont">
+                                                                                <apex:selectList value="{!mConType[acc.id]}" size="1" styleClass="input">
+                                                                                    <apex:selectOptions value="{!ContactType}" />
+                                                                                </apex:selectList>
+                                                                            </div>
+                                                                            
+                                                                            <div class="myCLabel">&nbsp;</div>
+                                                                            
+                                                                            <apex:actionStatus id="saveAddStatus">
+                                                                                <apex:facet name="start">
+                                                                                    <img src="/img/loading.gif" />
+                                                                                </apex:facet>
+                                                                                <apex:facet name="stop">
+                                                                                    <apex:outputPanel >
+                                                                                        <button class="btnSaveEditContact btnOrange inputFullWidth" onclick="saveNewCon();return false;">
+                                                                                            <span class="btnSaveBG">
+                                                                                                <img src="{!URLFOR($Resource.P2P_Resources, 'img/save_icon.png')}"/>
+                                                                                            </span>
+                                                                                            Save
+                                                                                        </button>
+                                                                                    </apex:outputPanel>
+                                                                                </apex:facet>
+                                                                            </apex:actionStatus>
+                                                                        </div>
+                                                                    </div>
+                                                                </apex:outputPanel>
+                                                            </apex:outputPanel>
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                          </div>
+                                        <!-- Package summary -->
+                                         
+                                                
+                                </div>
+                         </div>
+                         <div role="tabpanel" class="tab-pane" id="package">
+                            <!-- Package -->
+                            <apex:outputPanel id="packagelist">
+                                <apex:actionFunction name="searchPck" action="{!doPackageSearch}" rerender="packagelist" status="searchPkgStatus"/>
+                                <apex:actionFunction name="getPackages" action="{!retrievePackages}" rerender="packagelist" />
+                                <apex:actionFunction name="filterPckChanged" action="{!filterPackageChanged}" rerender="packagelist" status="changePckStatus"/>
+                                
+                                <div class="wrapContentBg">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="wrapLiistPackages">
+                                                <div class="wrapCaseSearch">
+                                                    <apex:inputText id="textSearch" html-placeholder="Search Packages" value="{!searchPkgKey}" styleClass="searchCase"/>
+                                                    <apex:actionStatus id="searchPkgStatus">
+                                                        <apex:facet name="start">
+                                                            <img style="padding: 8px 15px;" src="/img/loading.gif" />
+                                                        </apex:facet>
+                                                        <apex:facet name="stop">
+                                                            <apex:outputPanel >
+                                                                <button class="btnOrange btnSearch" onclick="searchPck(); return false;">
+                                                                    <i class="fa fa-search"></i>
+                                                                </button>
+                                                            </apex:outputPanel>
+                                                        </apex:facet>
+                                                    </apex:actionStatus>
+                                                 </div>
+                                                 <div class="wrapCaseFilter">
+                                                     <div class="wrapStatus">    
+                                                         <span class="labelStatus">Filter by: </span>
+                                                         <apex:actionStatus id="changePckStatus">
+                                                             <apex:facet name="start">
+                                                                 <img style="padding: 5px 10px;" src="/img/loading.gif" />
+                                                             </apex:facet>
+                                                             <apex:facet name="stop">
+                                                                 <apex:outputPanel >
+                                                                     <apex:selectList value="{!pkgStatus}" onchange="filterPckChanged();" size="1">
+                                                                         <apex:selectOptions value="{!lpkgOptions}"/>
+                                                                     </apex:selectList>
+                                                                 </apex:outputPanel>
+                                                             </apex:facet>
+                                                         </apex:actionStatus>
+                                                     </div>
+                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="wrapTableList rmPaddingBottom">
+                                                <!-- Package list header -->
+                                                <div class="tRow doubleTBorder" style="border-bottom: 2px solid #cdcdcd;">
+                                                    <div class="package-col package-col-1">
+                                                        <apex:panelGrid columns="2">
+                                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col1}"></span>
+                                                                Product
+                                                        </apex:panelGrid>
+                                                    </div>
+                                                        
+                                                    <div class="package-col hideUnder767 package-col-2">
+                                                        <apex:panelGrid columns="2">
+                                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col2}"></span>
+                                                                Start Date
+                                                        </apex:panelGrid>
+                                                    </div>
+                                                                        
+                                                    <div class="package-col package-col-3">
+                                                        <apex:panelGrid columns="2">
+                                                            <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col3}"></span>
+                                                                End Date
+                                                        </apex:panelGrid>
+                                                    </div>
+                                                    
+                                                    <div class="package-col hideUnder767 package-col-4">
+                                                       <apex:panelGrid columns="2">
+                                                           <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col4}"></span>
+                                                               Total
+                                                       </apex:panelGrid>
+                                                   </div>
+                                                   
+                                                   <div class="package-col hideUnder767 package-col-5">
+                                                       <apex:panelGrid columns="2">
+                                                           <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col5}"></span>
+                                                               Used
+                                                       </apex:panelGrid>
+                                                   </div>
+                                                   
+                                                   <div class="package-col hideUnder479 package-col-6" style="white-space: nowrap;">
+                                                       <apex:panelGrid columns="2">
+                                                           <span class="headerIcon"  data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col6}"></span>
+                                                               Remaining
+                                                       </apex:panelGrid>
+                                                   </div>
+                                                        
+                                                </div>
+                                                           
+                                                <apex:outputText rendered="{!errPkgRetrieveMsg != ''}">
+                                                    <div class="tRow aTBorder">
+                                                        <span class="errorMsg">{!errPkgRetrieveMsg}</span>&nbsp;<a href="#" onclick="getPackages();return false;">Retry</a>
+                                                    </div>
+                                                </apex:outputText>                                                                          
+                                                    
+                                               <!-- Package list value -->
+                                               <apex:repeat value="{!lstPackages}" var="package">
+                                                    <div class="tRow aTBorder">
+                                                        <div class="package-col package-col-1">
+                                                            {!package.pkgName}
+                                                        </div>
+                                                        <div class="package-col hideUnder767 package-col-2">
+                                                            <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                               <apex:param value="{!package.start_date}" />
+                                                            </apex:outputText>
+                                                        </div>
+                                                                          
+                                                        <div class="package-col package-col-3">
+                                                            <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                                <!--- 2015-05-11 - GTCRM-1988 - Package Length not correct as per Salesforce - calculate end date - 1 - Steve Paul --->
+                                                                <apex:param value="{!package.end_date-1}" />
+                                                            </apex:outputText>
+                                                        </div>
+                                                        <div class="package-col hideUnder767 package-col-4">
+                                                            <!-- {!package.initial_credits} -->
+                                                            <!--- 2015-05-06 - GTCRM-1886 - Credits remaining don't tally with Salesforce - calculate initial credits on the fly --->
+                                                            {!package.Available}
+                                                        </div>
+                                                        <div class="package-col hideUnder767 package-col-5">
+                                                            {!package.used_credits}
+                                                        </div>
+                                                          
+                                                        <div class="package-col hideUnder479 package-col-6">
+                                                            <apex:outputText value="{!package.Remaining}" styleClass="remainingColorLess5" rendered="{!package.RemainingIdentity == '1'}"/>
+                                                            <apex:outputText value="{!package.Remaining}" styleClass="remainingColorLess10" rendered="{!package.RemainingIdentity == '2'}"/>
+                                                            <apex:outputText value="{!package.Remaining}" styleClass="remainingColorMore10" rendered="{!package.RemainingIdentity == '3'}"/>
+                                                        </div>
+                                                        <div class="pc_last_col inActive showUnder767 hideMe">&nbsp;</div>
+                                                        <div class="pc_more_item">
+                                                            <div class="pcTitleItem hideMe showUnder767">
+                                                                <apex:panelGrid columns="2">
+                                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col2}"></span>
+                                                                    Start Date
+                                                                </apex:panelGrid>
+                                                            </div>
+                                                            <div class="pcValueItem hideMe showUnder767" style="padding: 10px 10px 10px 0;">
+                                                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                                    <apex:param value="{!package.start_date}" />
+                                                                </apex:outputText>
+                                                            </div>
+                                            
+                                                            <div class="pcTitleItem hideMe showUnder767">
+                                                                <apex:panelGrid columns="2">
+                                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col4}"></span>
+                                                                    Total
+                                                                </apex:panelGrid>
+                                                            </div>
+                                                            <div class="pcValueItem hideMe showUnder767" style="padding: 10px 10px 10px 0;">
+                                                                <!-- {!package.initial_credits} -->
+                                                                <!--- 2015-05-06 - GTCRM-1886 - Credits remaining don't tally with Salesforce - calculate initial credits on the fly --->
+                                                                {!package.Available}
+                                                            </div>
+                                            
+                                                            <div class="pcTitleItem hideMe showUnder767">
+                                                                <apex:panelGrid columns="2">
+                                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col5}"></span>
+                                                                    Used
+                                                                </apex:panelGrid>
+                                                            </div>
+                                                            <div class="pcValueItem hideMe showUnder767" style="padding: 10px 10px 10px 0;">
+                                                                {!package.used_credits}
+                                                            </div>
+                                            
+                                                            <div class="pcTitleItem hideMe showUnder479" style="white-space: nowrap;">
+                                                                <apex:panelGrid columns="2">
+                                                                    <span class="headerIcon" data-toggle="tooltip" title="{!$Label.P2P_CompanyPackage_Col6}"></span>
+                                                                    Remaining
+                                                                </apex:panelGrid>
+                                                            </div>
+                                                            <div class="pcValueItem hideMe showUnder479" style="padding: 10px 10px 10px 0;">
+                                                                <apex:outputText value="{!package.Remaining}" styleClass="remainingColorLess5" rendered="{!package.RemainingIdentity == '1'}"/>
+                                                                <apex:outputText value="{!package.Remaining}" styleClass="remainingColorLess10" rendered="{!package.RemainingIdentity == '2'}"/>
+                                                                <apex:outputText value="{!package.Remaining}" styleClass="remainingColorMore10" rendered="{!package.RemainingIdentity == '3'}"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </apex:repeat>
+                                                <script>
+                                                        $(document).ready(function(){
+                                                            $('.disableMe').each(function(){
+                                                                $(this).removeAttr('onclick');
+                                                            });
+                                                            $('.disableMe').off().on('click',function(){return false;});
+                                                            
+                                                            $('[data-toggle="tooltip"]').bind({
+                                                                mouseover : function(){
+                                                                    var title = $(this).attr('title');
+                                                                    var data_title = $(this).attr('data-title');
+                                                                    $(this).attr('title','');
+                                                                    if(!data_title){
+                                                                        data_title = title;
+                                                                        $(this).attr('data-title',title);
+                                                                    }
+                                                                    helperDialog.show($(this).get(0), data_title);
+                                                                },
+                                                                mouseout : function(){
+                                                                    helperDialog.hide();
+                                                                }
+                                                            });
+                                                        });
+                                                </script>
+                                                <script>
+                                                      $('.inActive').off('click').on('click',function(){
+                                                          var that = $(this);
+                                                          var fadeActive = that.attr('class');
+                                                          if(fadeActive.match(/open/gi)){
+                                                              that.removeClass('open');
+                                                          }else{
+                                                              that.addClass('open');
+                                                          }
+                                                      });
+                                                </script>
+                                            </div>
+                                            <!-- Pagination -->
+                                            <apex:outputText rendered="{!lstPackages.size > 0}">
+                                                <div class="listViewport" style="display:block;">
+                                                    <div class="bottomNav">
+                                                        <div class="paginator" style="padding-bottom:8px;">
+                                                            <div class="iWrapPagination">
+                                                                <div class="wrapShowPerPage">
+                                                                    <div style="float:left;">
+                                                                        Showing : &nbsp;
+                                                                        <apex:actionStatus id="invListSizeChangePackage">
+                                                                            <apex:facet name="start">
+                                                                                <apex:outputPanel >
+                                                                                    <img src="/img/loading.gif"/>
+                                                                                    of
+                                                                                </apex:outputPanel>
+                                                                            </apex:facet>
+                                                                            <apex:facet name="stop">
+                                                                                <apex:outputPanel >
+                                                                                    <apex:outputPanel rendered="{!totalResultSizePackage > listSizePackage}">
+                                                                                        <apex:selectList value="{!listSizePackage}" size="1">
+                                                                                            <apex:selectOptions value="{!listSizeOptionsPackage}"/>
+                                                                                            <apex:actionSupport event="onchange" action="{!loadPackageToList}" reRender="packagelist" status="invListSizeChangePackage"/>
+                                                                                        </apex:selectList>
+                                                                                        of
+                                                                                    </apex:outputPanel>
+                                                                                </apex:outputPanel>
+                                                                            </apex:facet>
+                                                                        </apex:actionStatus>
+                                                                        {!totalResultSizePackage} Package 
+                                                                        <apex:outputText rendered="{!totalResultSizePackage>1}" value="s" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="wrapPaginationAction">
+                                                                    <span class="prevNextLinks">
+                                                                        <span class="prevNextLeft">
+                                                                            <apex:commandLink action="{!goPreviousPagePackage}" rendered="{!PrevRequiredPackage}" value="Previous" status="navigateStatusPackage" reRender="packagelist" styleClass="previousButton"><img src="/s.gif" class="prev" alt="Previous"/></apex:commandLink>
+                                                                        </span>
+                                                                        <apex:repeat value="{!pageNumListPackage}" var="pnum">
+                                                                            <apex:commandLink action="{!goToPagePackage}" value="{!pnum}" status="navigateStatusPackage" reRender="packagelist" rendered="{!pageNumListPackage.size>1}" styleClass="{!IF(pnum == curPagePackage,'activePageNum','pageNum')}" onclick="if('{!pnum}' == '{!curPagePackage}') return false;">
+                                                                                <apex:param name="ptoPage" assignTo="{!curPagePackage}" value="{!pnum}"/>
+                                                                            </apex:commandLink>
+                                                                        </apex:repeat>
+                                                                        <span class="prevNext">
+                                                                            <apex:commandLink action="{!goNextPagePackage}" rendered="{!NextRequiredPackage}" value="Next" status="navigateStatusPackage" reRender="packagelist" styleClass="nextButton"><img src="/s.gif" class="next" alt="Next"/></apex:commandLink>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="clearingBox"></div>
+                                                    </div>
+                                                </div>
+                                            </apex:outputText>
+                                            <!-- End pagination -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </apex:outputPanel>   
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popup Edit Address -->
+            <!-- Added Kakada Khan 03-Nov-2014 -->  
+            <apex:outputPanel id="myPopup">     
+            <div class="modal fade" id="myModal">
+                  <div class="modal-dialog" style="width:53%;">
+                    <div class="modal-content">
+                    
+                      <div class="modal-header">
+                        <h4 class="modal-title">Company Address</h4>
+                      </div>
+                      
+                      <div class="modal-body">
+                        <div role="form" class="form-horizontal">
+                          
+                          <div class="form-group">
+                            <label for="Street" class="col-sm-5 control-label">Billing Street*</label>
+                            <div class="col-sm-5">
+                                <apex:inputField value="{!acc.BillingStreet}" id="street" styleClass="form-control" html-placeholder="Billing Street" style="resize: none;height:50px;"/>
+                            </div>
+                          </div>
+                          
+                          <div class="form-group">
+                            <label for="Street" class="col-sm-5 control-label">Billing City*</label>
+                            <div class="col-sm-5">
+                                <apex:inputField value="{!acc.BillingCity}" id="city" styleClass="form-control" html-placeholder="Billing City"/>
+                            </div>              
+                          </div>    
+                          
+                          <div class="form-group">
+                            <label for="Street" class="col-sm-5 control-label">Billing County</label>
+                            <div class="col-sm-5">
+                                <apex:inputField value="{!acc.BillingState}" id="state" styleClass="form-control" html-placeholder="Billing County"/>    
+                            </div>  
+                          </div>                  
+                          <div class="form-group">
+                            <label for="Street" class="col-sm-5 control-label">Billing Postal Code*</label>
+                            <div class="col-sm-5">                              
+                                <apex:inputField value="{!acc.BillingPostalCode}" id="code" html-placeholder="Postal Code" styleClass="form-control"/>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="Street" class="col-sm-5 control-label">Billing Country*</label>
+                            <div class="col-sm-5">
+                                <apex:inputField value="{!acc.BillingCountry}" id="country" styleClass="form-control" html-placeholder="Billing Country"/>
+                            </div>
+                          </div>            
+                        </div>
+                      </div>
+                      
+                      <div class="modal-footer">
+                        <button type="button" class="btnOrange full-width-480" onclick="changeAddress();return false;"><span class="btnSaveBG"><img src="{!URLFOR($Resource.P2P_Resources, 'img/save_icon.png')}"/></span>Save</button>
+                      </div>
+                      <img class="close_popup" onclick="$('#myModal').modal('hide');" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                    </div>
+                  </div>
+            </div>
+            </apex:outputPanel>         
+            
+            <!-- Popup Ad image error -->
+            <apex:outputPanel id="adImageMsg">
+                <div class="modal fade" id="adImageMsg">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Request Ad Image Fail</h4>
+                          </div>
+                          <div class="row" style="padding:15px">
+                            <div class="col-md-12">
+                                <apex:outputText value="{!adImage.errMsg}" />
+                            </div>
+                          </div>
+                          <img class="close_popup" onclick="$('#adImageMsg').modal('hide');" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function(){
+                        if('{!adImage.isSuccess}' == 'false' && '{!adImage.errMsg}'.trim() != ''){
+                            $('#adImageMsg').modal('show');
+                        }
+                    });
+                </script>
+            </apex:outputPanel>
+            
+            <!-- Popup change image -->
+            <div class="modal fade" id="popupUploadImage">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Upload Image Photo</h4>
+                      </div>
+                      
+                      <div class="row" style="padding:10px 15px;">
+                        <div class="col-md-12">
+                            <apex:outputText value="You can upload a JPG, GIF, or PNG file. Maximum file size is 1 MB." /><br/>
+                        </div>
+                      </div>
+                      
+                      <div class="row" style="padding:10px 15px 0;">
+                        <div class="col-md-12">
+                            <input type="file" id="inputFile" accept="image/*" />
+                        </div>
+                      </div>
+                      
+                      <div class="modal-footer" style="padding:10px 15px;">
+                        <button type="button" class="btnOrange full-width-480" id="saveBtn"><span class="btnSaveBG"><img src="{!URLFOR($Resource.P2P_Resources, 'img/save_icon.png')}"/></span>Save</button>
+                      </div>
+                      <img class="close_popup" onclick="$('#popupUploadImage').modal('hide');" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                    </div>
+                  </div>
+                  
+            </div>
+            </apex:form>        
+        </body>
+        
+        </apex:define>
+        </apex:composition>
+    <script>
+    
+        function openEditAdImage(){
+            $('.wrapRightRow2 .makeUpEdit').hide();
+            $('.wrapRightRow2 .cancelIcon').show();
+            $('.wrapRightRow2 .delChart').show();
+            $('.wrapRightRow2 .cameraButton').show();
+        }
+        
+        function closeEditAdImage(){
+            $('.wrapRightRow2 .makeUpEdit').show();
+            $('.wrapRightRow2 .cancelIcon').hide();
+            $('.wrapRightRow2 .delChart').hide();
+            $('.wrapRightRow2 .cameraButton').hide();
+        }
+    
+        function deleteAdImageClick(){
+            waitingDialog.show("Please wait while deleting...");
+            deleteAdImage();
+        }
+    
+        function openFileBrowser(ele, isAdImage){
+            
+            if(isAdImage && '{!acc.AccountNumber}'.trim() == ''){
+                alert("No Account Number found !!");
+                return;
+            }
+        
+            $("#popupUploadImage #inputFile").val('');
+            
+            //for company adimage change
+            var imageTag = null;
+            if(isAdImage){
+                $(ele).next().val(this.src);
+            }else{
+                imageTag = $(ele).prev().is('img') ? $(ele).prev() : $(ele).prev().find('img');
+            }
+            
+            $("#popupUploadImage #saveBtn").off('click');
+            $("#popupUploadImage #saveBtn").click(function(){
+                showImage($("#popupUploadImage #inputFile"), isAdImage, $(ele).next(), imageTag);
+            });
+            
+            $('#popupUploadImage').modal('show');
+        }
+        
+        function showImage(ele, isAdImage, inputHidden, imageTag){
+            
+            if (ele[0].files && ele[0].files[0]) {
+            
+                var reader = new FileReader();
+                var image  = new Image();
+                
+                reader.onload = function (e) {
+                    //set nearest img tag src
+                    image.src    = e.target.result;
+                    image.onload = function() {
+                        
+                        var imageData = this.src;
+                        if(isAdImage){
+                            waitingDialog.show("Please wait while uploading...");
+                        }else{
+                            imageData = resizeImage(this);
+                        }
+                        
+                        if(inputHidden != null) inputHidden.val(imageData);
+                        if(imageTag != null) imageTag.attr('src', imageData);
+                        if(isAdImage) saveAdImage();
+                        
+                        $('#popupUploadImage').modal('hide');
+                    };
+                };
+                reader.readAsDataURL(ele[0].files[0]);
+            }else{
+                $('#popupUploadImage').modal('hide');
+            }
+        }
+        
+        //resize image to max image size
+        function resizeImage(imageObj){
+            var MAX_WIDTH = 140;
+            var MAX_HEIGHT = 140;
+            
+            var tempW = imageObj.width;
+            var tempH = imageObj.height;
+            if (tempW > tempH) {
+                if (tempW > MAX_WIDTH) {
+                   tempH *= MAX_WIDTH / tempW;
+                   tempW = MAX_WIDTH;
+                }
+            } else {
+                if (tempH > MAX_HEIGHT) {
+                   tempW *= MAX_HEIGHT / tempH;
+                   tempH = MAX_HEIGHT;
+                }
+            }
+     
+            var canvas = document.createElement('canvas');
+            canvas.width = tempW;
+            canvas.height = tempH;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(imageObj, 0, 0, tempW, tempH);
+            return canvas.toDataURL("image/jpeg");
+        }
+        
+        function addNewComContact(){
+            $('.blurEditListItem').each(function(){
+                $(this).addClass('transparent_content');
+            });
+            $("html, body").animate({ scrollTop: $('.wrapFormAddNewContact').offset().top }, 1000);
+        }
+        
+        function saveCancelAddComContact(isSave, eleId){
+            if(isSave && document.getElementById(eleId).value == 'false') return;
+        
+            $('.blurEditListItem').each(function(){
+                $(this).removeClass('transparent_content');
+            });
+        }
+        
+        function editCompanyContact(ele){
+            
+            $(ele).closest('.singleBorder').addClass('editListItem');
+            $('.blurEditListItem').each(function(){
+                $(this).addClass('transparent_content');
+            });
+        }
+        
+        function setSaveIndex(index, eleId){
+            document.getElementById(eleId).value = index;
+        }
+        
+        function saveCancelCompanyContact(ele, isSave, eleId){
+            
+            if(isSave && document.getElementById(eleId).value == 'false') return;
+            
+            $(ele).closest('.singleBorder').removeClass('editListItem');
+            
+            if($('.editListItem').length == 0){
+                $('.blurEditListItem').each(function(){
+                    $(this).removeClass('transparent_content');
+                });
+            }
+        }
+        
+        function editProfile(ele){
+            $('#proBlock .wrapFullBlock').addClass('activeEditInfo');
+            $('.blurContent').addClass('transparent_content');
+        }
+        
+        function saveCancelProfile(ele, isSave, eleId){
+            
+            if(isSave && document.getElementById(eleId).value == 'false') return;
+        
+            $('#proBlock .wrapFullBlock').removeClass('activeEditInfo');
+            $('.blurContent').removeClass('transparent_content');
+        }
+        
+        var countryCodeList = "AF:AX:AL:DZ:AS:AD:AO:AI:AQ:AG:AR:AM:" +
+                            "AW:AU:AZ:BS:BH:BD:BB:BY:BE:BZ:BJ:BM:BT:BO:" +
+                            "BA:BW:BV:BR:IO:BN:BG:BF:BI:KH:CM:CA:CV:KY:" +
+                            "CF:TD:CL:CN:CX:CC:CO:KM:CG:CD:CK:CR:CI:HR:" +
+                            "CU:CY:CZ:DK:DJ:DM:DO:EC:EG:SV:GQ:ER:EE:ET:FK:" +
+                            "FO:FJ:FI:FR:GF:PF:TF:GA:GM:GE:DE:GH:GI:GR:GL:" +
+                            "GD:GP:GU:GT:GG:GN:GW:GY:HT:HM:VA:HN:HK:HU:" +
+                            "IS:IN:ID:IR:IQ:IE:IM:IL:IT:JM:JP:JE:JO:KZ:KE:KI:" +
+                            "KP:KR:KW:KG:LA:LV:LB:LS:LR:LY:LI:LT:LU:MO:MK:" +
+                            "MG:MW:MY:MV:ML:MT:MH:MQ:MR:MU:YT:MX:FM:MD:MC:" +
+                            "MC:MN:ME:MS:MA:MZ:MM:MA:NR:NP:NL:AN:NC:NZ:NI:" +
+                            "NE:NG:NU:NF:MP:NO:OM:PK:PW:PS:PA:PG:PY:PE:PH:" +
+                            "PN:PL:PT:PR:QA:RE:RO:RU:RW:SH:KN:LC:PM:VC:WS:" +
+                            "SM:ST:SA:SN:RS:SC:SL:SG:SK:SI:SB:SO:ZA:GS:ES:" +
+                            "LK:SD:SR:SJ:SZ:SE:CH:SY:TW:TJ:TZ:TH:TL:TG:TK:" +
+                            "TO:TT:TN:TR:TM:TC:TV:UG:UA:AE:GB:US:UM:UY:UZ:" +
+                            "VU:VE:VN:VG:VI:WF:EH:YE:ZM:ZW";
+                        
+        function changeAddress(){
+            
+            var address = '';
+            var isValidInput = true;
+            
+            $('#myModal textarea, #myModal input').each(function(){
+                
+                $(this).parent().find('.errorMsg').remove();
+                $(this).removeClass('error');
+                var inputId = $(this).attr('id');
+                
+                //validation rule Address_Fields_Required
+                if('{!acc.RecordTypeId}' != '01220000000Y83Z' && '{!acc.RecordTypeId}' != '01220000000YDMy' && $(this).val().trim() == ''){
+                    $(this).toggleClass('error');
+                    
+                    var errBlock = $("<div class='errorMsg'><strong>Error: </strong>You must enter a value</div>");
+                    $(this).parent().append(errBlock);
+                    isValidInput = false;
+                }
+                
+                inputId = inputId == undefined ? '' : inputId;
+                
+                //validation rule ISO_Code_Country
+                if('{!acc.RecordTypeId}' != '01220000000Y83Z' && '{!acc.RecordTypeId}' != '01220000000YDMy' && inputId.indexOf('country') != -1){
+                    var inputVal = $(this).val();
+                    
+                    if(inputVal.length == 1 || countryCodeList.indexOf(inputVal) == -1){
+                        $(this).toggleClass('error');
+                        
+                        var errBlock = $("<div class='errorMsg'><strong>Error: </strong>A valid two-letter ISO 3166 country code is required. United Kingdom = GB / Spain = ES / Ireland = IE etc. Full list here | https://c.eu0.content.force.com/servlet/servlet.FileDownload?file=01520000000u97k</div>");
+                        $(this).parent().append(errBlock);
+                        isValidInput = false;
+                    }
+                }
+                
+                address += $(this).val() + '\n';
+            });
+            
+            if(isValidInput){
+                $('#myModal').modal('hide');   
+                $('#companyAddress').val(address)
+            }
+             
+        }
+        $(document).ready(function(){
+            $.browser.safari = ($.browser.webkit && !(/chrome/.test(navigator.userAgent.toLowerCase())));
+            if ($.browser.safari) {
+                $('.container').addClass('isSafari');
+            }
+        });
+    </script>
+  </html>
+</apex:page>

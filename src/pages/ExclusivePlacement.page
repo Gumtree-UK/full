@@ -1,0 +1,141 @@
+<apex:page StandardController="Opportunity" extensions="ExclusivePlacement" sidebar="false" cache="false" tabstyle="Exclusive_Placement__tab">
+    <script>
+        function setFocusOnLoad() {}
+        
+        function openReport(url) {
+          Report = window.open(url, "_blank");
+          Report.focus();
+        }
+    </script>
+    <style>
+        table { border: 0px #d79900 solid; }
+        .activeTab {background-color: #236FBD; color:black; font-weight: bold; background-image:none}
+        .inactiveTab { background-color: lightgrey; color:black; font-weight: normal; background-image:none}
+    </style>
+
+<div class="bPageTitle">
+        <div class="ptBody secondaryPalette">
+            <div class="content">
+            <apex:image id="theImage" value="/s.gif" styleClass="pageTitleIcon"/>
+            <apex:outputPanel >
+            <h2 class="pageType"><apex:outputText value="Calendar"/></h2>
+            <h1 class="pageDescription"><apex:outputText value="Sponsorship"/></h1>
+            </apex:outputPanel>
+            </div> 
+        </div> 
+    </div>
+    
+    <apex:pageMessages />
+    <div style="size:110em;">
+        <apex:form >
+            <apex:pageBlock title="Report Options">
+                <apex:actionStatus id="OptionenStatus">
+                    <apex:facet name="start">
+                        <c:Load BackColor="#efefef" borderColor="#efefef" borderSize="3" height="60px" width="300px" Message="please wait ..."
+                                messageStyle="color:darkred;font-size:10pt;font-family:arial;font-weight:bold;" ImageUrl="/img/loading.gif" />
+                    </apex:facet>
+                </apex:actionStatus>
+                <!--
+                <apex:pageBlockButtons location="bottom" >
+                    <apex:commandButton action="{!generateReport}" value="Generate Report" status="ReportStatus" reRender="ReportResults"/>
+                </apex:pageBlockButtons>
+                -->
+                <apex:pageBlockSection columns="2">
+                    <apex:pageBlockSectionItem >
+                        <apex:PanelGrid columns="2" style="text-align:left">
+                            <apex:outputPanel layout="block" style="text-align:right">
+                                <apex:outputLabel styleclass="labelCol" value="{!$ObjectType.exclusivePlacementOption__c.Fields.Startdate__c.label}" for="startdate"/>
+                            </apex:outputPanel>
+                            <apex:inputField id="startdate" value="{!Optionen.Startdate__c}">
+                                <apex:actionSupport event="onchange" action="{!updateCW}" status="OptionenStatus" rerender="CWResults,ReportResults"/>
+                            </apex:inputField>
+                            <apex:outputPanel layout="block" style="text-align:right">
+                                <apex:outputLabel styleclass="labelCol" value="{!$ObjectType.exclusivePlacementOption__c.Fields.Enddate__c.label}" for="enddate"/>
+                            </apex:outputPanel>
+                            <apex:inputField id="enddate" value="{!Optionen.Enddate__c}">
+                                <apex:actionSupport event="onchange" action="{!updateCW}" status="OptionenStatus" rerender="CWResults,ReportResults"/>
+                            </apex:inputField>
+                            <apex:outputPanel />
+                            <apex:outputPanel id="CWResults" style="font-size: 2.0em; color: orange;">{!CW}</apex:outputPanel>
+                        </apex:PanelGrid>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:PanelGrid columns="3" style="text-align:left">
+                            <apex:outputPanel layout="block" style="text-align:left">
+                                <apex:outputLabel styleclass="labelCol" value="{!$ObjectType.exclusivePlacementOption__c.Fields.Platform__c.label}" for="WebsiteResults"/>
+                            </apex:outputPanel>
+                            <apex:outputPanel layout="block" style="text-align:left">
+                                <apex:outputLabel styleclass="labelCol" value="{!$ObjectType.exclusivePlacementOption__c.Fields.Placement__c.label}" for="PlacementResults"/>
+                            </apex:outputPanel>
+                            <apex:outputPanel layout="block" style="text-align:left">
+                                <apex:outputLabel styleclass="labelCol" value="{!$ObjectType.exclusivePlacementOption__c.Fields.Advertising_Medium__c.label}" for="MediumResults"/>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="WebsiteResults">
+                                <apex:selectList value="{!Optionen.Platform__c}" size="5">
+                                    <apex:actionSupport event="onchange" action="{!updateWebsite}" status="OptionenStatus" rerender="PlacementResults,MediumResults,ReportResults"/>
+                                    <apex:selectOptions value="{!WebsiteOptionList}"/>
+                                </apex:selectList>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="PlacementResults">
+                                <apex:selectList value="{!Optionen.Placement__c}" size="5">
+                                    <apex:actionSupport event="onchange" action="{!updatePlacement}" status="OptionenStatus" rerender="MediumResults,ReportResults"/>
+                                    <apex:selectOptions value="{!PlacementOptionList}"/>
+                                </apex:selectList>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="MediumResults">
+                                <apex:selectList value="{!Optionen.Advertising_Medium__c}" size="5">
+                                    <apex:actionSupport event="onchange" action="{!updateMedium}" status="OptionenStatus" rerender="ReportResults"/>
+                                    <apex:selectOptions value="{!MediumOptionList}"/>
+                                </apex:selectList>
+                            </apex:outputPanel>
+                        </apex:PanelGrid>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:form>
+                    
+        <apex:pageBlock title="Report">
+            <apex:actionStatus id="ReportStatus">
+                <apex:facet name="start">
+                    <c:Load BackColor="#efefef" borderColor="#efefef" borderSize="3" height="60px" width="300px" Message="In processing ..."
+                            messageStyle="color:darkred;font-size:10pt;font-family:arial;font-weight:bold;" ImageUrl="/img/loading.gif" />
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:outputPanel id="ReportResults" layout="block" style="{!IF(Ready==false,'display: none;','')}">
+                <table bgcolor="#ddddee" border="0" cellpadding="2" cellspacing="1">
+                    <tr valign="top" align="left" bgcolor="#aaaacc">
+                        <th rowspan="2" bgcolor="#9999cc" style="text-align: center; width: 150px"><strong>Platform</strong></th>
+                        <th rowspan="2" bgcolor="#9999cc" style="text-align: center; width: 300px"><strong>Placement</strong></th>
+                        <th rowspan="2" bgcolor="#9999cc" style="text-align: center; width: 300px"><strong>Advertising Medium</strong></th>
+                        <th colspan="{!WeekDays.size}"  style="text-align: center;"><strong>Date</strong></th>
+                    </tr>
+                    <tr valign="top" align="left" bgcolor="#aaaacc">
+                        <apex:repeat value="{!WeekDays}" var="days">
+                            <th style="text-align: center; width: 60px;">
+                                <apex:repeat value="{!days}" var="day">{!day}<br/></apex:repeat>
+                            </th>
+                        </apex:repeat>
+                    </tr>
+                    <apex:repeat value="{!Websites}" var="ws">
+                        <apex:repeat value="{!ws.Placements}" var="pl">
+                            <apex:repeat value="{!pl.Mediums}" var="md">
+                                <tr valign='top' align='left' bgcolor='#ddddee'>
+                                    <td bgcolor='#d0d0ee'>{!ws.name}</td>
+                                    <td bgcolor='#d0d0ee'>{!pl.name}</td>
+                                    <td bgcolor='#d0d0ee'>{!md.name}</td>
+                                    <apex:repeat value="{!md.ReservationDays}" var="bt" rows="99">
+                                        <td style="cursor: default; text-align: center; background-color: {!bt.ProbabilityColor}"
+                                            onMouseOver="this.style.cursor='pointer'" onMouseOut="this.style.cursor='default'"
+                                            onclick="openReport('/00O20000005KY2m?pv0={!ws.NameEncoded}&pv1={!pl.NameEncoded}&pv2={!md.NameEncoded}&pv3={!StartDate}&pv4={!EndDate}')">
+                                        {!bt.Count}
+                                        </td>
+                                    </apex:repeat>
+                                </tr>
+                            </apex:repeat>
+                        </apex:repeat>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </div>
+</apex:page>

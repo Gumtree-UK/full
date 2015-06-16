@@ -1,0 +1,93 @@
+<apex:page controller="Test_CreateCUandCC" showHeader="false" action="{!actionMethod}">
+    <html>
+        <head>  
+            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        </head>
+    
+        <body>
+        	<div id="content">
+            <div class="wrapTableList wrap-max" style="padding: 0;">
+                
+                <div class="col-md-12 clearPadding">
+                    <apex:pageMessages escape="false"/>
+                    <div class="error-msg red"><apex:outputText value="{!message}" escape="false"/></div>
+                </div>
+                <div class="col-md-12 clearPadding">
+                    <form action="Test_CreateCUandCC?{!accIdParamName}={!accId}" method="post" id="braintree-payment-form">
+                        <div class="row">
+                            <div class="label">Name on card:</div>
+                            <input type="text" name="holderName" autocomplete="off"/>
+                        </div>
+                        <div class="row">
+                            <div class="label">Card number:</div>
+                            <input type="text" class="largeInput required" data-braintree-name="number" id="card-number" maxlength="19" autocomplete="off"/>
+                        </div>
+                        <div class="row">
+                            <div class="smallrow">
+                                <div class="label">Expires on:</div>
+                                <input type="hidden" id="cardDateMonth" class="required" data-braintree-name="expiration_month" autocomplete="off"/>
+                                <select id="month" onchange="copyValueTo(this.value, 'cardDateMonth');">
+                                    <option value="">MM</option>
+                                </select>                                
+                                <input type="hidden" class="required" id="cardDateYear" data-braintree-name="expiration_year" autocomplete="off"/>
+                                <select id="year" onchange="copyValueTo(this.value, 'cardDateYear');">
+                                    <option value="">Year</option>                                    
+                                </select>
+                            </div>
+                            <div class="smallrow">
+                                <div class="label">Security code:</div>
+                                <input type="text" class="smallInput adjust-width required" style="margin-bottom: 0;" data-braintree-name="cvv" id="cvv" maxlength="4" autocomplete="off"/>
+                                <span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Payment_CVV}"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="submit" class="btnOrange inputFullWidth spacingTop btnConfirmPay iconpayByCard" value="Create Card" id="submitButton"/>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <apex:form >
+            	<apex:commandButton action="{!createCustomer}" value="Create Customer"/>
+            </apex:form>
+            
+            
+            <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+            <script>
+                braintree.setup("{!client_Token}", "custom", {id: "braintree-payment-form"});
+            </script>
+            <script>
+    
+                $(document).ready(function(){
+                	addYear();
+                	addMonth();          
+                });
+                function copyValueTo(val, toId){
+                    var toInput = document.getElementById(toId);
+                    toInput.value = val; 
+                }
+				
+				
+				function addYear(){
+			        var currentYear = new Date().getFullYear();
+			        for (var i = 1; i <= 10; i++) {
+			            $("#year").append( $("<option></option>")
+			                    .attr("value", currentYear)
+			                    .text(currentYear)
+			            );
+			            currentYear++;
+			        }
+			    }
+			    function addMonth(){			        
+			        for (var i = 1; i <= 12; i++) {
+			            $("#month").append( $("<option></option>")
+		                    .attr("value", i)
+		                    .text(i)
+			            );
+			        }
+			    }
+            </script>
+            </div>
+        </body>
+    </html>
+</apex:page>

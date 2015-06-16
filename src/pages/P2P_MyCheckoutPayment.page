@@ -1,0 +1,1547 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" id="thePage" docType="html-5.0" controller="P2P_MyCheckOutPaymentController">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    
+    
+    <style> 
+                    .wrapMeByBlock{
+                        background-color: #fff;
+                        float: left;
+                        padding: 15px;
+                        width: 100%;
+                    }
+                    .iMiniMarginTop{
+                        margin-top: 20px;
+                        float: left;
+                    }
+                    .iMarginTop{
+                        margin-top: 15px;
+                        float: left;
+                    }
+                    .iHiden{
+                        display: none;
+                    }
+                    .effectSelect select{
+                        padding-top: 6px;
+                        padding-bottom: 6px;
+                    }
+                    .iNoWrap{
+                        white-space: nowrap;
+                    }
+                    .addPayMentMethod{
+                        cursor: pointer;
+                        font-size: 18px;
+                    }
+                    .iColorOrange:hover {
+                        text-decoration: none;
+                    }
+                    
+                    #my_popup{
+                        background-color: #fff;
+                        max-width: 1150px;
+                        padding: 15px;
+                        width: 95%;
+                        display: none;
+                        position: relative;
+                        border: 2px solid #cdcdcd;
+                        border-radius: 5px;
+                    }
+                    #pay_by_invoice_popup{
+                        max-width: 350px;
+                        width: 100%;
+                    }
+                    .popup{
+                        background-color: #fff;
+                        max-width: 1150px;
+                        padding: 15px;
+                        width: 95%;
+                        display: none;
+                        position: relative;
+                        border: 2px solid #cdcdcd;
+                        border-radius: 5px;
+                    }
+                    .transparent_content{
+                        -khtml-opacity:0.4; 
+                         -moz-opacity:0.4; 
+                         -ms-filter:"alpha(opacity=40)";
+                          filter:alpha(opacity=40);
+                          filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.4);
+                          opacity:0.4; 
+                          pointer-events: none;
+                    }
+                    .wrapConfirm{
+                        float: left;
+                        margin-top: 15px;
+                        padding-left: 10px;
+                        width: 100%;    
+                    }
+                    .wrapConfirm .checkbox-checked{
+                        float: left;
+                    }
+                    .termCondition{
+                        float: left;
+                        margin-top: 5px;
+                        padding-left: 10px;
+                    }
+                    .itemInCart{
+                        float: left;
+                        font-size: 25px;
+                        margin-top: 2px;
+                        padding-left: 50px;
+                    }
+                    input[type="date"]{
+                        border: 2px solid #cfcece;
+                        border-radius: 5px;
+                        padding: 5px 10px;
+                        line-height: 21px;
+                    }
+                    .clearPadding{
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                    .clearPaddingRight{
+                        padding-right: 0;
+                    }
+                    .clearPaddingLeft{
+                        padding-left: 0;
+                    }
+                    
+                    .inputFullWidth{
+                        width: 100%;
+                    }
+                   
+                    .hideAllSize{
+                        display: none;
+                    }
+                    
+                    .clearMe{
+                        float: left;
+                        width: 100%;
+                        clear: both;
+                    }
+                    .btnAcceptTermCondiction{
+                        
+                    }
+                    .btnCancelTermCondiction{
+                        float: none;
+                    }
+                    .paddingTop{
+                        padding-top: 15px;
+                    }
+                    
+                    .paddingLeft{
+                        padding-left: 15px;
+                    }
+                    .paddingRight{
+                        padding-right: 15px;
+                    }
+                   
+                    .iColorBlue{
+                        color: #2A5DB0;
+                    }
+                    .iColorGrey{
+                        color: #939598;
+                    }
+                    .iBold{
+                        font-family: "SourceSansPro Bold";
+                    }
+                    .iRadius{
+                        -webkit-border-radius: 5px;    
+                        border-radius: 5px; 
+                        -moz-border-radius:5px;
+                        -khtml-border-radius:5px;
+                    }
+                    
+                    .iRadiusMini{
+                        -webkit-border-radius: 3px;    
+                        border-radius: 3px; 
+                        -moz-border-radius:3px;
+                        -khtml-border-radius:3px;
+                    }
+                    .spacingTop{
+                        margin-top: 15px;
+                    }
+                    .spacingBottom{
+                        margin-bottom: 15px;
+                    }
+                    
+                    .btnContinue{
+                        padding-left: 0;
+                        padding-right: 0;
+                        margin-top: 0;
+                    }
+                    .alert {
+                        background-color: #f0f0f0;
+                        border: 1px solid transparent;
+                        border-radius: 4px;
+                        float: left;
+                        margin-bottom: 0;
+                        margin-top: 15px;
+                        padding: 15px;
+                        width: 100%;
+                    }
+                    .setRight{
+                        float: right;
+                    }
+                    .removeBackground{
+                        background-color: transparent;
+                    }
+                    .whiteBg{
+                        background-color: #fff;
+                    }
+                    .removeAllPadding{
+                        padding: 0;
+                    }
+                    .paddingTB{
+                        padding-bottom: 10px;
+                        padding-top: 10px;
+                        position: relative;
+                    }
+                    .logoCart{
+                        left: 15px;
+                        position: absolute;
+                    }
+                    .wrapItemRightByBlock{
+                        background-color: #fff;
+                        float: left;
+                        padding: 15px;
+                        width: 100%;
+                    }
+                    .lb{
+                        background-color: #f0f0f0;
+                        padding-bottom: 10px;
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        padding-top: 10px;
+                    }
+                    .vl{
+                        background-color: #f0f0f0;
+                        padding-bottom: 10px;
+                        padding-left: 10px;
+                        padding-top: 10px;
+                        padding-right: 10px;
+                        border-left: 1px solid #cdcdcd;
+                    }
+                    .radiusTopLeft{
+                        border-radius: 5px 0 0 0;
+                    }
+                    .radiusBottomLeft{
+                        border-radius: 0 0 0 5px;
+                    }
+                    .radiusTopRight{
+                        border-radius: 0 5px 0 0;
+                    }
+                    .radiusBottomRight{
+                        border-radius: 0 0 5px 0;
+                    }
+                    .lblVat{
+                        font-size: 15px;
+                        line-height: 23px;
+                    }
+                    .vatPrice{
+                        font-size: 15px;
+                        line-height: 23px;
+                        word-wrap: break-word;
+                    }
+                    .promoPrice{
+                        font-size: 15px;
+                        line-height: 23px;
+                        color: red;
+                        word-wrap: break-word;
+                    }
+                    .lblTotal{
+                        font-family: "SourceSansPro Bold";
+                        font-size: 23px;
+                        line-height: 23px;
+                        word-wrap: break-word;
+                    }
+                    .totalPrice{
+                        font-family: "SourceSansPro Bold";
+                        font-size: 23px;
+                        line-height: 23px;
+                        word-wrap: break-word;
+                    }
+                    .iSeperateBorder{
+                        border-bottom: 1px solid #cdcdcd;
+                        padding-bottom: 10px;
+                        width: 100%;
+                    }
+                    .btnPayByCard{
+                        
+                    }
+                    .btnLoginPayPal{
+                        background: none repeat scroll 0 0 #0079c1;
+                        border-color: #0079c1;
+                        border-radius: 5px;
+                        box-sizing: border-box;
+                        color: #fff;
+                        cursor: pointer;
+                        display: inline-block;
+                        font-size: 15px;
+                        font-weight: bold;
+                        height: 40px;
+                        line-height: 1.4545em;
+                        margin-bottom: 0;
+                        padding: 9px 15px 10px;
+                        text-align: center;
+                        vertical-align: middle;
+                        position: relative;
+                        transition: border-color 0.3s ease 0s;
+                        border: none;
+                    }
+                    .btnLoginPayPal:HOVER{
+                        background: none repeat scroll 0 0 #0285d2;
+                        color: #fff;
+                        text-decoration: none;
+                    }
+                    .iconpayByCard{
+                        background-image: url("{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'white_lock.png')}");
+                        background-position: left -2px;
+                        background-repeat: no-repeat;
+                        padding-bottom: 4px;
+                        padding-left: 30px;
+                        padding-top: 4px;
+                    }
+                    
+                    .btnPayByInvoice{
+                        background-image: url("{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'invoice_white.png')}");
+                        background-position: left -2px;
+                        background-repeat: no-repeat;
+                        padding-bottom: 4px;
+                        padding-left: 30px;
+                        padding-top: 4px;
+                    }
+                    
+                    .iconPayPal{
+                        background-image: url("{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'paypal.png')}");
+                        background-position: left 1px;
+                        background-repeat: no-repeat;
+                        padding-bottom: 4px;
+                        padding-left: 30px;
+                        padding-top: 4px;
+                     }
+                    .btnPayPal{
+                        background-color: #4e9cdc;
+                        border-bottom: 2px solid #4987d5 !important;
+                        border-left: 1px solid #4e9cdc;
+                        border-right: 1px solid #4e9cdc;
+                        border-top: 1px solid #4e9cdc;
+                    }
+                    .btnPayPal:HOVER{
+                        background-color: #0c8dc4;
+                        cursor: pointer;
+                    }
+                    .wrapAvailablePaymentMethod{
+                        padding-right: 50px;
+                        position: relative;
+                    }
+                    .payment_method{
+                        margin-top: 5px;
+                        max-width: 100%;
+                    }
+                    .grey_lock{
+                        bottom: 15px;
+                        position: absolute;
+                        right: 0;
+                    }
+                    .wrapContact{
+                        padding-right: 115px;
+                        position: relative;
+                        min-height: 95px;
+                    }
+                    .profilePic{
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                        width: 100px;
+                    }
+                    .labelPackageDetail{
+                        left: 0;
+                        position: absolute;
+                        top: 8px;
+                    }
+                    .rowFeedPackage{
+                        min-height: 30px;
+                        padding-left: 0;
+                        padding-right: 15px;
+                        padding-top: 25px;
+                        position: relative;
+                        border-top: 1px solid #cdcdcd;
+                        padding-bottom: 15px;
+                    }
+                    .removeFeedPackage{
+                        position: absolute;
+                        right: 0;
+                        bottom: 14px;
+                        cursor: pointer;
+                    }
+                    .rowFeedPackage .col-md-2{
+                        min-height: 80px;
+                        float: none;
+                        display: table-cell;
+                        width: 1%;
+                        vertical-align: top;
+                        padding-left: 0;
+                    }
+                    .subProItemValue3,
+                    .subProItemValue2,
+                    .subProItemValue1{
+                        float: left;
+                        margin-top: 10px;
+                    }
+                    .rowFeedPackage .col-md-2 .iLabel{
+                         margin-top: 15px;
+                    }
+                    .iTopBoder{
+                        padding-bottom: 20px;
+                        line-height: 30px;
+                    }
+                    .iTopBoder:last-child{
+                        padding-bottom: 0;
+                    }
+                    .btnApplyDiscount{
+                        background-color: #ddd;
+                        float: none;
+                        width: auto;
+                        margin-left: 5px;
+                    }
+                    .alignDiscountBlock{
+                        text-align: right;
+                    }
+                    .userNoPayment{
+                        
+                    }
+                    .userHavePayment{
+                        display: none;
+                    }
+                    .plusIconSize{
+                        float: left;
+                        font-size: 27px;
+                        padding-right: 15px;
+                    }
+                    .titleHasPayment{
+                        float: left;
+                    }
+                    
+                    .doneEditPayment{
+                        float: right;
+                        cursor: pointer;
+                        background: url("{!URLFOR($Resource.P2P_ResMyCheckout, 'tick_icon.png')}") no-repeat scroll right center / auto 18px transparent;
+                        padding-right: 25px;
+                    }
+                    .cancelEditPayment{
+                        float: left;
+                        cursor: pointer;
+                    }
+                    
+                    .wrapActionPayment{
+                        border: 1px solid #cdcdcd;
+                        border-radius: 5px;
+                        float: left;
+                        margin: 15px 0 0;
+                        overflow: hidden;
+                        padding: 0;
+                        width: 100%;
+                    }
+                    .wrapActionPayment li{
+                        position: relative;
+                    }
+                    .wrapActionPayment li{
+                        list-style: none;
+                        border-bottom: 1px solid #cdcdcd;
+                        min-height: 50px;
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        padding-top: 9px;
+                    }
+                    .wrapActionPayment li:last-child{
+                        border-bottom: 0;
+                    }
+                    .wrapActionPayment label{
+                        float: left;
+                    }
+                    .iconPayment{
+                        float: left;
+                    }
+                    .lbCheck{
+                        float: left;
+                        font-family: "SourceSansPro Bold";
+                        font-size: 16px;
+                        line-height: 18px;
+                        width: 100%;
+                    }
+                    .valueCheck{
+                        float: left;
+                        line-height: 10px;
+                        width: 100%;
+                    }
+                    .wrapLbBlCheck{
+                        float: left;
+                        padding-left: 10px;
+                        width: 60%;
+                    }
+                    
+                    .activeEditPayment .showEdit{
+                        display: inherit;
+                    }
+                    .activeEditPayment .hideEdit{
+                        display: none;
+                    }
+                    .activeEditPayment .wrapActionPayment li label{
+                        background-image: none;
+                    }
+                    .activeEditPayment .wrapActionPayment li .deletePayment{
+                        cursor: pointer;
+                        left: 10px;
+                        position: absolute;
+                        top: 12px;
+                        display: inherit;
+                    }
+                    
+                    .wrapBtnCancel{
+                        float: left;
+                        margin-right: 15px;
+                    }
+                    .wrapBtnAccept{
+                        float: left;
+                    }
+                    input[type="password"] {
+                        border: 2px solid #cfcece;
+                        border-radius: 5px;
+                        padding: 5px 10px;
+                    }
+                    #creditCard_popup{
+                        max-width: 430px;
+                    }
+                    #confirm_trans{
+                        max-width: 500px;
+                    }
+                    
+                    #paypal_popup{
+                        max-width: 380px;
+                    }
+                    #paypal_popup input,
+                    #paypal_popup button{
+                        width: 100%;
+                        max-width: 350px;
+                    }
+                    .blockLogin{
+                    
+                    }
+                    .blockTerm{
+                    
+                    }
+                    .thanksInfoRow1{
+                        float: left;
+                        margin-top: 20px;
+                        padding-right: 10px;
+                        width: 50%;
+                    }
+                    .thanksInfoRow2{
+                        float: left;
+                        margin-top: 20px;
+                        padding-left: 10px;
+                        width: 50%;
+                    }
+                    .wrapThanksInfo{
+                    
+                    }
+                    .btnDownload{
+                        padding-bottom: 7px;
+                        padding-top: 11px;
+                    }
+                    .wrapPaymentInfo{
+                        background-color: #f0f0f0;
+                        border-bottom: 2px solid #cdcdcd;
+                        -webkit-border-radius: 5px;    
+                          border-radius: 5px; 
+                          -moz-border-radius:5px;
+                          -khtml-border-radius:5px;
+                        float: left;
+                        width: 100%;
+                    }
+                    .wrapPaymentInfoByBlock{
+                        border-bottom: 2px solid #cdcdcd;
+                        float: left;
+                        width: 100%;
+                    }
+                    .iTopBoder{
+                        margin-top: 0;
+                    }
+                    @media (max-width: 1200px){
+                        .rowFeedPackage .col-md-2{
+                            width: 33.3333%;
+                            float: left;
+                        }
+                        .subProItemValue3,
+                        .subProItemValue2,
+                        .subProItemValue1{
+                            float: left;
+                            margin-top: 5px;
+                        }
+                        .iTopBoder{
+                            margin-top: 0;
+                        }
+                    }
+                    @media (max-width: 1024px){
+                        /*default border-bottom of button #df531b*/
+                        .hideUnder1024{
+                            display: none;
+                        }
+                        .iTopBoder{
+                            margin-top: 0;
+                        }
+                        .showUnder1024{
+                            display: inline-block;
+                        }
+                        .rowFeedPackage .col-md-2{
+                            width: 33.3333%;
+                            float: left;
+                        }
+                        .removeFeedPackage{
+                            bottom: 4px;
+                        }
+                        .alignDiscountBlock{
+                            text-align: left;
+                        }
+                        .overideColMd6 .col-md-6{
+                            width: 100%;
+                            float: left;
+                            margin-top: 10px;
+                        }
+                        .thanksInfoRow1{
+                            width: 100%;
+                            padding-right: 0;
+                        }
+                        .thanksInfoRow2{
+                            padding-left: 0;
+                            width: 100%;
+                        }
+                    }
+                    @media (max-width: 1023px){
+                        .rowFeedPackage .col-md-2{
+                            width: 50%;
+                        }
+                        .iTopBoder{
+                            margin-top: 0;
+                        }
+                        .subProItemValue1{
+                            float: left;
+                            margin-top: 10px;
+                        }
+                    }
+                    
+                    @media (max-width: 768px){
+                        .hideUnder768{
+                            display: none;
+                        }
+                        .showUnder768{
+                            display: block;
+                        }
+                        .rowFeedPackage .col-md-2{
+                            width: 50%;
+                        }
+                        .rowFeedPackage .col-md-2:nth-child(1n){
+                            padding-left: 0;
+                        }
+                        .rowFeedPackage .col-md-2:nth-child(2n){
+                            padding-left: 15px;
+                        }
+                        .rowFeedPackage {
+                            min-height: 30px;
+                            padding-left: 0;
+                            padding-right: 0;
+                            padding-top: 30px;
+                        }
+                        .labelPackageDetail {
+                            left: 0;
+                            position: absolute;
+                            top:10px;
+                        }
+                        .removeFeedPackage {
+                            bottom: auto;
+                            position: absolute;
+                            right: 0;
+                            top: 10px;
+                        }
+                    }
+                    @media (max-width: 767px){
+                        .clearPadding767{
+                            padding-left: 0;
+                            padding-right: 0;
+                        }
+                        .hideUnder767{
+                            display: none;
+                        }
+                        .showUnder767{
+                            display: block;
+                        }
+                        .fullWidth767{
+                            width: 100%;
+                        }
+                        .clearPaddingLeft767{
+                            padding-left: 0;                        
+                        }
+                        .marginTop767{
+                            margin-top: 15px;
+                        }
+                    }
+                    @media (max-width: 550px){
+                    
+                    }
+                    @media (max-width: 480px){
+                        
+                        .hideUnder480{
+                            display: none;
+                        }
+                        .showUnder480{
+                            display: block;
+                        }
+                        .fullWidth480{
+                            width: 100%;
+                        }
+                        .overideColMd6 .col-md-6 input{
+                            width: 48%;
+                        }
+                        .overideColMd6 .col-md-6 button{
+                            float: right;
+                            margin-top: 1px;
+                            width: 48%;
+                        }
+                    }
+                    @media (max-width: 479px){
+                        .inputSubmitCode{
+                            width: 60%;
+                        }
+                        .btnApplyDiscount{
+                            width: 38%;
+                            margin-left: 2%;
+                        }
+                    }
+                    @media (max-width: 379px){
+                        .hideUnder379{
+                            display: none;
+                        }
+                        .showUnder379{
+                            display: block;
+                        }
+                        .fullWidth379{
+                            width: 100%;
+                        }
+                        .overideColMd6 .col-md-6 input{
+                            width: 100%;
+                   
+                        }
+                        .overideColMd6 .col-md-6 button{
+                            float: right;
+                            margin-top: 10px;
+                            width: 100%;
+                        }
+                    }
+                    .container{
+                        min-width: 320px;
+                    }
+                    .iMiniMarginBottom{
+                        margin-bottom: 5px;
+                    }
+                    
+                    .error{
+                        border-color:red !important;
+                    }
+                    .errorMsg{
+                        display:none;
+                    }
+                    .miniPaddingTop{
+                        padding-top: 5px;
+                    }
+                    .orderComplete .showAfterOrderComplete{
+                        display: inherit;
+                    }
+                    .orderComplete .hideAfterOrderComplete{
+                        display: none;
+                    }              
+                </style>
+                
+
+         <!-- 2015-01-02 - Feedback tab integrated with Clicktools by Steve Paul -->
+         <div class="feedback" id="feedback">
+             <!--- hard code Q1 for testing - replace with {!acc.Id} --->
+             <a href="http://supportsurvey.gumtree.com/go?iv=18xfknvyio31q&q1=:accountId&q2=&q3=Store Payment&q4=Web">Feedback</a>
+         </div>
+     <apex:composition template="P2P_Template">
+      <apex:define name="body" > 
+          <body id="comp" class="store">              
+               <apex:form id="theForm">
+                    <apex:inputHidden value="{!invoiceBillingFrequency}" id="invBillingFreq"/>
+                    <apex:inputHidden value="{!indexProGroupSel}" id="indexProGroupSelected"/>
+                    <apex:inputHidden value="{!indexSubPro}" id="indexSubPro"/>
+                    
+                    <apex:actionFunction name="calculatePrice" action="{!reCalculateAndUpdateMedia}" rerender="theForm"/>
+                    <apex:actionFunction name="removeMediabasket" action="{!removeMediabasket}" rerender="theForm"/>
+                    <apex:actionFunction name="changeFeedSetUp" action="{!feedSetupUpdateMB}" rerender="theForm"/>
+                    
+                    <apex:actionFunction name="payByCard" action="{!doPayByCard}" oncomplete="showUserPayment('card','');" rerender="theForm"/>                    
+                    <apex:actionFunction name="payByPayPal" action="{!doPayByPaypal}" oncomplete="showUserPayment('paypal','');" rerender="theForm"/>
+                    <apex:actionFunction name="payByInvoice" action="{!doPayByInvoice}" rerender="theForm"/>
+                    <apex:actionFunction name="createTransaction" action="{!doTransaction}" oncomplete="finishTrans({!isErrorTrans});" rerender="script, conf_trans">
+                        <apex:param name="payId" assignTo="{!paymentId}" value=""/>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="deletePaymentMethod" action="{!doDeletePayment}" rerender="deletePayment">
+                        <apex:param name="payId" assignTo="{!paymentId}" value=""/>
+                    </apex:actionFunction> 
+                    <apex:actionFunction name="createPaymentPaypal" action="{!createPaymentPaypal}" oncomplete="showUserPayment('paypal','{!selectPaypal}');" rerender="methodList,script,braintreeScript">
+                        <apex:param name="methodnonce" assignTo="{!methodnonce}" value=""/>
+                        <apex:param name="paypal_email" assignTo="{!paypal_email}" value=""/>
+                    </apex:actionFunction>   
+                    
+                    <div class="container wrapContentBg">
+                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="wrapMeByBlock clearPadding spacingTop iRadius paddingRight removeBackground removeAllPadding">
+                                    <div class="blurEditListItem clearPaddingLeft col-md-8 col-sm-7 col-xs-6 clearPaddingRight fullWidth767">
+                                        <div class="col-md-12 col-sm-12 col-xs-12 whiteBg paddingTB iRadius hideAfterOrderComplete">
+                                            <span class="logoCart">
+                                                <img src="{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'cart.png')}" />
+                                            </span>
+                                            <span class="itemInCart">{!numberItems} Items in your Cart</span>
+                                        </div>
+                                        
+                                        <div class="col-md-12 col-sm-12 col-xs-12 whiteBg paddingTB iRadius showAfterOrderComplete iHiden">
+                                            <span class="logoCart">
+                                                <img src="{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'cart.png')}" />
+                                            </span>
+                                            <span class="itemInCart">Thanks, your order is complete</span>
+                                            <div class="wrapThanksInfo">
+                                                <div class="thanksInfoRow1">
+                                                    <div class="iBold setLeft miniPaddingTop">
+                                                        Urgent:
+                                                    </div>
+                                                    <div class="miniTitle setRight">
+                                                        ?150.60
+                                                    </div>
+                                                    <div class="setLeft inputFullWidth">
+                                                        <span>Quantity: <span class="iBold">50</span>, Start Date: <span class="iBold">12/10/2014</span>, Duration: <span class="iBold">7 Days</span>, End Date: <span class="iBold">12/10/2014</span>, Location: <span class="iBold">London</span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="thanksInfoRow2">
+                                                    <div class="iBold setLeft miniPaddingTop">
+                                                        Subscription:
+                                                    </div>
+                                                    <div class="miniTitle setRight">
+                                                        ?150.60
+                                                    </div>
+                                                    <div class="setLeft inputFullWidth">
+                                                        <span>Quantity: <span class="iBold">50</span>, Start Date: <span class="iBold">12/10/2014</span>, Duration: <span class="iBold">7 Days</span>, End Date: <span class="iBold">12/10/2014</span>, Location: <span class="iBold">London</span></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     
+                                    <div class="col-md-4 col-sm-5 col-xs-6 setRight clearPaddingRight fullWidth767 clearPaddingLeft767 marginTop767">
+                                        <div class="wrapItemRightByBlock iRadius">
+                                            <div class="wrapPaymentInfo">
+                                                <div class="wrapPaymentInfoByBlock">
+                                                    <div class="col-md-6 col-sm-6 col-xs-6 clearPadding lb radiusTopLeft">
+                                                        <span class="lblVat">Subtotal</span>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 col-xs-6 clearPadding vl radiusTopRight">
+                                                        <apex:outputText styleclass="vatPrice" value="£{0, number, ###,##0.00}">
+                                                           <apex:param value="{!totalSub}"/>
+                                                        </apex:outputText>
+                                                    </div>
+                                                </div>    
+                                                <apex:outputText rendered="{!showPromoCode}">
+                                                    <div class="wrapPaymentInfoByBlock">
+                                                        <div class="col-md-6 col-sm-6 col-xs-6 clearPadding lb radiusTopLeft">
+                                                            <span class="lblVat">Promo code</span>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 col-xs-6 clearPadding vl radiusTopRight">
+                                                            <apex:outputText styleclass="promoPrice" value="-£{0, number, ###,##0.00}">
+                                                               <apex:param value="{!totalPromo}" />
+                                                            </apex:outputText>
+                                                        </div>
+                                                    </div>
+                                                </apex:outputText>
+                                                <div class="wrapPaymentInfoByBlock">
+                                                    <div class="col-md-6 col-sm-6 col-xs-6 clearPadding lb">
+                                                        <span class="lblVat">VAT</span>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 col-xs-6 clearPadding vl">
+                                                        <apex:outputText styleclass="vatPrice" value="£{0, number, ###,##0.00}">
+                                                            <apex:param value="{!totalVat}" />
+                                                        </apex:outputText>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-6 clearPadding lb radiusBottomLeft" style="border-bottom: 0;">
+                                                    <span class="lblTotal">Total</span>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-6 clearPadding vl radiusBottomRight" style="border-bottom: 0;">
+                                                    <apex:outputText styleclass="totalPrice" value="£{0, number, ###,##0.00}">
+                                                        <apex:param value="{!totalPrice}" />
+                                                    </apex:outputText>
+                                                </div>
+                                            </div>
+                                            <div class="showAfterOrderComplete iHiden">
+                                             <button class="btn btnDownload"><i class="fa fa-download" style="margin-right: 8px;"></i>Download Invoice</button>
+                                            </div>
+                                            <div class="userNoPayment hideAfterOrderComplete trans-hide">
+                                                <div class="iBold iMiniMarginTop">
+                                                    Select a payment option:
+                                                </div>
+                                                <button class="btnOrange inputFullWidth btnPayByCard spacingTop" onclick="payByCard(); return false;"><span class="iconpayByCard">Pay by Debit/Credit card</span></button>
+                                                <button class="btnOrange spacingTop inputFullWidth btnPayPal" onclick="return false;"><span class="iconPayPal">Pay by PayPal</span></button>
+                                                <button class="btnOrange inputFullWidth spacingTop btnPayByInvoiceAction"><span class="btnPayByInvoice">Pay by invoice</span></button>
+                                            </div>
+                                            <!-- 2015-01-15 - Commented out by Steve Paul for user testing -->
+                                            <apex:outputPanel id="methodList">
+                                            <div class="userHavePayment hideAfterOrderComplete trans-hide">
+                                                <div class="iBold iMiniMarginTop inputFullWidth">
+                                                    <span class="showEdit iHiden cancelEditPayment iColorOrange cancelIcon">Cancel</span>
+                                                    <span class="hideEdit titleHasPayment">Select a payment method:</span>
+                                                    <span class="hideEdit editPayment makeUpEdit setRight">Edit</span>
+                                                    <span class="showEdit iHiden doneEditPayment iColorOrange">Done</span>
+                                                </div>
+                                                
+                                                <ul class="wrapActionPayment">
+                                                
+                                                    <apex:repeat value="{!lstBV}" var="item">
+                                                        <li>
+                                                            <input id="{!item.id}" type="radio" name="checkPayment" data-value="{!item.id}"/> 
+                                                            <label for="{!item.id}">
+                                                                <span class="iconPayment">
+                                                                        <apex:outputText value="{!item.PaymentType__c}" escape="false"/>
+                                                                </span>
+                                                                <div class="wrapLbBlCheck">
+                                                                    <span class="lbCheck">{!item.Payment_Type_Value__c}</span>
+                                                                    <span class="valueCheck">{!item.Masked_card_number__c}</span>
+                                                                    <span class="valueCheck">{!item.PayPal_email__c}</span>
+                                                                </div>
+                                                            </label>
+                                                            <span class="deletePayment iHiden">
+                                                                <img style="background: #fff;width: 30px;" src="{!URLFOR($Resource.P2P_ResMyCheckout, 'close_warning.png')}" data-value="{!item.id}"/>
+                                                            </span>
+                                                        </li>
+                                                    </apex:repeat>
+                                                    <li>
+                                                        <div id="future-payment"></div>
+                                                        <a class="addPayMentMethod">
+                                                            <span class="iColorGrey plusIconSize fa fa-plus-circle"></span> Add payment method
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                               
+                                                <div>
+                                                    <button class="btnOrange inputFullWidth spacingTop btnConfirmPay">
+                                                        <span class="iconpayByCard" id="btnConfirmPay">
+                                                            Confirm and pay 
+                                                            <apex:outputText value=" £{0, number, ###,##0.00}">
+                                                                <apex:param value="{!totalPrice}" />
+                                                            </apex:outputText>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                                 
+            
+                                            </div>
+                                            </apex:outputPanel>
+                                            <!-- --->
+                                        </div>
+                                        <div class="wrapItemRightByBlock iRadius spacingTop blurEditListItem hideAfterOrderComplete">
+                                            <div class="miniTitle inputFullWidth">Secure Payments</div>
+                                            <div class="iBold inputFullWidth">We accept these secure payments:</div>
+                                            <div class="wrapAvailablePaymentMethod">
+                                                <img class="payment_method" src="{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'payment_method.png')}"/>
+                                                <img class="grey_lock" src="{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'grey_lock.png')}"/>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="wrapItemRightByBlock iRadius spacingTop blurEditListItem showAfterOrderComplete iHiden">
+                                            <div class="setLeft inputFullWidth">
+                                                <div class="miniTitle inputFullWidth">Pay now via BACS</div>
+                                                <div class="setLeft inputFullWidth">
+                                                    <div class="setLeft inputFullWidth">
+                                                        <div class="iBold setLeft iMiniMarginTop">
+                                                            Sort Code
+                                                        </div>
+                                                        <div class="iBold setRight iMiniMarginTop">
+                                                            Acc Number
+                                                        </div>
+                                                    </div>
+                                                    <div class="setLeft inputFullWidth">
+                                                        <div class="miniTitle setLeft">
+                                                            30-16-35
+                                                        </div>
+                                                        <div class="miniTitle setRight">
+                                                            23921027
+                                                        </div>
+                                                    </div>
+                                                    <div class="setLeft inputFullWidth">
+                                                        <p class="iMiniMarginTop">Bank of America - 5 Canada Square London.</p>
+                                                        <p class="setLeft inputFullWidth" style="margin-bottom: 0;">You must list the invoice numbers as the reference</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="wrapItemRightByBlock iRadius spacingTop blurEditListItem">
+                                            <div class="wrapContact">
+                                                <div class="iBold inputFullWidth">Questions?</div>
+                                                <div class="miniTitle inputFullWidth">0208 334 8180</div>
+                                                
+                                                <div class="iMiniMarginTop inputFullWidth">
+                                                    <span class="">9am - 6pm, 5 days a week</span>
+                                                </div>
+                                                <img class="profilePic" src="{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'test.png')}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <apex:repeat value="{!lstBasketRows}" var="itemBasketRow">
+                                        <div class="blurEditListItem clearPaddingLeft col-md-8 col-sm-7 col-xs-6 clearPaddingRight fullWidth767 hideAfterOrderComplete">
+                                            <div class="wrapItemRightByBlock iRadius spacingTop">
+                                                <div class="iSeperateBorder"><h2 style="margin: 0;">{!itemBasketRow.productGroupName}</h2></div>
+                                                
+                                                <apex:repeat value="{!itemBasketRow.basketItems}" var="basketItem">
+                                                    <div class="col-xs-12 rowFeedPackage">
+                                                        <div class="miniTitle labelPackageDetail">Details</div>
+                                                        <img class="removeFeedPackage" src="{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'cross.png')}" onclick="assignVal2remove('{!itemBasketRow.index}', '{!basketItem.index}')"/>
+                                                        
+                                                        <div class="col-md-2">
+                                                            <div class="iLabel iNoWrap"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col1}"></span> Quantity</div>
+                                                            <div>
+                                                                <apex:inputField value="{!basketItem.mb.Quantity__c}" style="margin-top: 5px;"  styleclass="inputFullWidth iMarginTop" onchange="assignVal2Cal('{!itemBasketRow.index}', '{!basketItem.index}')" rendered="{!basketItem.isEnableQty}"/>
+                                                                <apex:outputField value="{!basketItem.mb.Quantity__c}" style="margin-top: 5px;" styleclass="inputFullWidth iMiniMarginTop" rendered="{!!basketItem.isEnableQty}"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="iLabel iNoWrap"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col2}"></span> Start date</div>
+                                                            <div>
+                                                                <input type="text" id="{!itemBasketRow.index}_{!basketItem.index}" name="datePicker" class="inputFullWidth iMarginTop" style="margin-top: 5px;"  readonly="readonly" />
+                                                                <input type="hidden" value="{!basketItem.mb.from_Date__c}"/>
+                                                                <apex:inputHidden value="{!basketItem.startDate}"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="iLabel iNoWrap"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col3}"></span> Valid (months)</div>
+                                                            <div class="effectSelect">
+                                                                <apex:selectList id="duration" value="{!basketItem.mb.Length_Months__c}" size="1" styleClass="inputFullWidth iMarginTop" style="margin-top: 5px;" onchange="assignVal2Cal('{!itemBasketRow.index}', '{!basketItem.index}')">
+                                                                    <apex:selectOptions value="{!lstCustomDuration}"/>
+                                                                </apex:selectList> 
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="iLabel iNoWrap"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col4}"></span> End date</div>
+                                                            <div>
+                                                                <apex:outputText value="{0, date, dd/MM/yyyy}" id="endDate" styleclass="subProItemValue1 inputFullWidth iMiniMarginTop">
+                                                                    <apex:param value="{!basketItem.mb.until_Date__c}" />
+                                                                </apex:outputText> 
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="iLabel iNoWrap"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col5}"></span> Location</div>
+                                                            <div>
+                                                                <apex:outputText value="{!basketItem.mb.Location__c}" styleclass="subProItemValue2 inputFullWidth iMiniMarginTop"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="iLabel iNoWrap"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col6}"></span> Price</div>
+                                                            <div>
+                                                                <apex:outputText styleclass="inputFullWidth iMiniMarginTop subProItemValue3" value="£{0, number, ###,##0.00}">
+                                                                    <apex:param value="{!basketItem.mb.Net_Net_Net__c}" />
+                                                                </apex:outputText>
+                                                            </div>
+                                                        </div>                                            
+                                                    </div>
+                                                    
+                                                    <apex:outputPanel layout="block" styleclass="col-xs-12 clearPadding iTopBoder" rendered="{!basketItem.isFeedSetup}">
+                                                        <apex:image style="float: left;" styleClass="{!IF(basketItem.mb.Feed_setup__c == true, 'checkbox-checked', 'checkbox-unchecked')}" url="{!URLFOR($Resource.P2P_Resources, IF(basketItem.mb.Feed_setup__c == true, 'gumtree-icons/checkbox-32x32.png', 'gumtree-icons/unchecked-32x32.png'))}" onmouseover="setIndexProductGroupANDProduct('{!itemBasketRow.index}', '{!basketItem.index}')" onclick="changeFeedSetUp()"/>
+                                                        <span style="padding: 0 10px; float: left;">Use a feed for this package</span>
+                                                        <span class="headerIcon" style="margin-top: 6px;" data-toggle="tooltip" data-placement="top" title="{!$Label.Use_a_feed_for_this_package_tooltip}"></span>
+                                                    </apex:outputPanel>
+            
+                                                </apex:repeat>
+                                            </div>
+                                        </div>
+                                    </apex:repeat>
+                                     
+                                    
+                                    <div class="blurEditListItem clearPaddingLeft col-md-8 col-sm-7 col-xs-6 clearPaddingRight fullWidth767 alignDiscountBlock">
+                                        <div class="wrapItemRightByBlock iRadius spacingTop overideColMd6">
+                                            <div class="setLeft clearPadding">
+                                                <img style="float: left;" src="{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'tag.png')}" />
+                                                <span style="padding-top: 3px; padding-left: 10px; padding-right: 10px;" class="miniTitle">Promo code</span>
+                                                <span style="float: left; margin-bottom: 10px; padding-top: 8px;">enter code (if applicable) then click update</span>
+                                            </div>
+                                            <div class="setRight clearPadding">
+                                                <apex:inputText styleClass="setLeft inputSubmitCode" value="{!promoCode}" html-placeholder="e.g. SUMMER20OFF"/>
+                                                <apex:commandButton value="Update" styleClass="btnGrey btnApplyDiscount" action="{!validatePromoCode}" rerender="theForm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <apex:outputText rendered="{!displayStatusPromoCode}">
+                                        <div class="blurEditListItem clearPaddingLeft col-md-8 col-sm-7 col-xs-6 clearPaddingRight fullWidth767">
+                                            <div class="wrapItemRightByBlock iRadius spacingTop overideColMd6">
+                                                <apex:outputText rendered="{!errorPromoCode != ''}">
+                                                    <div class="col-md-12 clearPadding">
+                                                        <apex:outputText style="color:red;" value="{!errorPromoCode}"/>
+                                                    </div>
+                                                </apex:outputText>
+                                                <apex:outputText rendered="{!successPromoCode != ''}">
+                                                    <div class="col-md-12 clearPadding">
+                                                        <apex:outputText value="{!UPPER(successPromoCode)}"/> <span style="color:green">ACCEPTED</span>
+                                                    </div>
+                                                </apex:outputText>
+                                            </div>
+                                        </div>
+                                    </apex:outputText>
+                                </div>
+                            </div>        
+                        </div>
+                    </div>
+                    <div id="my_popup" class="modal-dialog">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="iBold miniTitle iSeperateBorder spacingBottom">Terms &amp; Conditions <span class="pull-right"><a class="fontSize15px iColorOrange" href="#" >Download</a></span></div>
+                                <div class="col-md-12 col-sm-12 col-xs-12 clearPadding iSeperateBorder" style="overflow: auto; height: 380px;">
+                                    <p>                        
+                                        <!-- 2015-01-12 - Added by Steve Paul - Self serve Terms & Conditions -->
+                                        <c:P2P_IO_SelfServe />
+                                    </p>
+                                </div>
+                                <div class="wrapBtnCancel">
+                                    <button class="btnGrey spacingTop btnCancelTermCondiction">Cancel</button>
+                                </div>
+                                <div class="wrapBtnAccept">
+                                    <button class="btnOrange spacingTop btnAcceptTermCondiction" onclick="doTransaction();">I accept, please confirm order</button>
+                                </div>
+                            </div>
+                        </div>
+                        <img class="close_popup" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                    </div>
+                    
+<!--                popup creditcard -->
+                    <script>
+                        /*function autoResize(id){
+                            var newheight;
+                            var newwidth;
+                        
+                            if(document.getElementById){
+                                newheight=document.getElementById(id).contentWindow.document .body.scrollHeight;
+                                newwidth=document.getElementById(id).contentWindow.document .body.scrollWidth;
+                            }
+                        
+                            document.getElementById(id).height= (newheight) + "px";
+                        }*/
+                    </script>
+                    <div id="creditCard_popup" class="popup">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12 clearPadding767">
+                                <iframe id="pay-frame" scrolling="no" src="{!URLFOR('apex/P2P_PayToBraintree?ccregaccid=')}{!accid}" width="100%" height="100%" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                        <img class="close_popup" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                    </div>
+
+<!--                    end creditcard -->
+
+<!--                popup confirm-->
+                    <apex:outputPanel id="conf_trans">
+                        <div id="confirm_trans" class="popup">
+                             <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="miniTitle iSeperateBorder spacingBottom">Confirm Transaction</div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12 clearPadding" style="overflow: auto;">
+                                         <apex:outputText value="{!errorMsg}" rendered="{!isErrorTrans}" escape="false" style="color:#F00;"/>
+                                         <apex:outputText rendered="{!NOT(isErrorTrans)}">Successful!</apex:outputText>
+                                    </div>                                  
+                                </div>
+                            </div>
+                            <img class="close_popup" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                        </div>
+                    </apex:outputPanel>
+
+<!--                    end confirm-->
+
+                    <div id="paypal_popup" class="popup">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="iSeperateBorder spacingBottom">
+                                    <img src="{!URLFOR($Resource.P2P_ResMyCheckoutPayment, 'paypal_logo.gif')}"/>
+                                </div>
+                                <div class="blockLogin">
+                                    <div class="iBold miniTitle">Log in to PayPal</div>
+                                    <div class="iBold iMiniMarginBottom setLeft clearMe spacingTop">Email</div>
+                                    <div class="inputFullWidth setLeft"><input type="text" name="email"/></div>
+                                    
+                                    <div class="clearMe spacingTop iBold iMiniMarginBottom setLeft">Password</div>
+                                    <div class="inputFullWidth setLeft"><input type="password" name="email"/></div>
+                                    <div class="setLeft inputFullWidth">
+                                        <button class="btnLoginPayPal spacingTop">Log In</button>
+                                    </div>
+                                    <div class="spacingTop setLeft inputFullWidth clearMe iSeperateBorder spacingBottom">
+                                        <a href="#">Forget your password?</a>
+                                    </div>
+                                </div>
+                                <div class="blockTerm">
+                                    <div class="iBold miniTitle">`</div>
+                                    <div class="setLeft iSeperateBorder inputFullWidth">
+                                        <div class="setLeft inputFullWidth"><p><span class="iBold">Acme Widgets, Ltd. (Sandbox)</span> asks that you:</p></div>
+                                        <ul style="padding-left: 15px;">
+                                            <li><a href="#">Preapprove</a> future payments made from your PayPal account.</li>
+                                            <li>Agree to the <a href="#">privacy policy</a> and <a href="#">user agreement.</a></li>
+                                        </ul>
+                                        <p>PayPal protects your <a href="#">privacy</a> and financial information.</p>
+                                    </div>
+                                    <div class="setLeft inputFullWidth">
+                                        <button class="btnLoginPayPal spacingTop">Agree</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <img class="close_popup" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                    </div>
+                    
+                    <div id="pay_by_invoice_popup" class="popup modal-dialog">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="iBold inputFullWidth miniTitle">Pay by invoice</div>
+                                <ul class="wrapActionPayment wrapOption">
+                                    <li>
+                                        <input id="option1" value="One Invoice" type="radio" name="chooseOption"/> 
+                                        <label for="option1">
+                                            One Invoice
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <input id="option2" value="Monthly in arrears" type="radio" name="chooseOption"/> 
+                                        <label for="option2">
+                                            Monthly in arrears
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="setLeft inputFullWidth">
+                                    <button class="btnOrange inputFullWidth spacingTop btnChosen">Ok</button>
+                                </div>
+                            </div>
+                        </div>
+                        <img class="close_popup" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                    </div>
+                    
+                    <apex:outputPanel id="deletePayment"></apex:outputPanel>
+                    
+                    <apex:outputPanel id="braintreeScript">
+                        <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+                        <script>
+                            braintree.setup("{!client_Token}", "paypal", {container: "future-payment",
+                                onPaymentMethodReceived: function (obj){
+                                    createCopy(obj.nonce,obj.details.email)
+                                    //createPaymentPaypal(obj.nonce,obj.details.email);
+                                    $("#braintree-paypal-loggedin").hide();
+                                    $(".addPayMentMethod").show();
+                                    $("input:radio[name='checkPayment']:checked").each(function(){
+                                        $(this).attr('checked', false);  
+                                    });
+                                    $('.btnConfirmPay').removeClass("btnOrange").addClass("btnGrey");
+                                }
+                            });
+                            
+                            var isCreate = false;
+                            function createCopy(nonce,email){
+                                if(isCreate){
+                                    createPaymentPaypal(nonce,email);
+                                }
+                                isCreate = false;
+                            }
+                            $("#braintree-paypal-button").click(function(){isCreate = true;});
+                        </script> 
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel id="script">
+                    <script>
+                        var invoiceBillingFrequencyId = "{!$Component.theFrom.invBillingFreq}";
+                        console.log(invoiceBillingFrequencyId);
+                        function assignVal2Cal(parentIndex, subIndex){
+                            setIndexProductGroupANDProduct(parentIndex, subIndex);
+                            calculatePrice();
+                           // return false;
+                        }
+                        
+                        function assignVal2remove(parentIndex, subIndex){
+                            setIndexProductGroupANDProduct(parentIndex, subIndex);
+                            removeMediabasket();
+                        }
+                        
+                        function setIndexProductGroupANDProduct(parentIndex, subIndex){
+                            document.getElementById("{!$Component.theForm.indexProGroupSelected}").value = parentIndex;
+                            document.getElementById("{!$Component.theForm.indexSubPro}").value = subIndex;
+                        }
+                        
+                        function showPaypalPopup(){
+                            alert('popup');
+                            $('#paypal_popup').popup('show');
+                            return false;
+                        }
+                        
+                        //=== kakada edit Task #4829=====
+                        $("pay-frame").load(function(){
+                            autoResize(frame);
+                        });
+                        var frame;
+                        window.resizeFrame = function(h){
+                            frame = h;
+                            autoResize(h);
+                        }
+                        function autoResize(h){                             
+                            document.getElementById("pay-frame").height= (h) + "px";
+                        }
+                        
+                        var selectCard;
+                        window.closePupup = function(token){
+                            selectCard = token;                           
+                            payByCard();    
+                            $('#creditCard_popup').popup('hide');
+                        }
+                                                    
+                        function showPaypalPopup(){
+                            alert('popup');
+                            $('#paypal_popup').popup('show');
+                            return false;
+                        }
+                        
+                        function showUserPayment(type,selectId){
+                            $('.userHavePayment').show();
+                            if(type == 'card'){
+                                $('.addPayMentMethod').show();
+                                $('#future-payment').hide();
+                                autoSelectRadio(selectCard);
+                            }else{
+                                autoSelectRadio(selectId);
+                                $("#braintree-paypal-button").html($('.addPayMentMethod').html()).css({"width":"auto","height":"auto","font-size":"18px"});
+                                $('#future-payment').show();
+                                $('.addPayMentMethod').hide();
+                            }
+                        }
+                        
+                        function autoSelectRadio(id){
+                            if(id != null && id != ""){
+                               $("#"+id).attr("checked",true);
+                               var checked = $("input:radio[name='checkPayment']:checked");
+                               if(checked.val()){
+                                   $('.btnConfirmPay').removeClass("btnGrey");
+                                   $('.btnConfirmPay').addClass("btnOrange");
+                               }else{
+                                   $('.btnConfirmPay').removeClass("btnOrange");
+                                   $('.btnConfirmPay').addClass("btnGrey");
+                               }
+                            }
+                        }
+                        
+                        function doTransaction(){
+                            var checked = $("input:radio[name='checkPayment']:checked");
+                            createTransaction(checked.attr('data-value'));
+                            return false;
+                        }
+                        function finishTrans(isErrorTrans){
+                            if(!isErrorTrans){
+                                $(".trans-hide").hide(); 
+                                $(".itemInCart").text("Thanks, your payment is complete");
+                                //$(".okStatus").removeClass("sOverdue").addClass("sPaid").text("Pending");
+                                //receiveInvoices();
+                            }
+                            $('#my_popup').popup('hide');
+                            $('#confirm_trans').popup('show');
+                        }
+                        $(".deletePayment img").click(function(){
+                            var ans = confirm("Are you sure you would like to remove this payment method?");
+                            if(ans){
+                                deletePaymentMethod($(this).attr('data-value'));
+                                $(this).parent().parent().hide();
+                            }
+                        });
+                        //=== end edit Task #4829===== 
+                                
+                        $(document).ready(function(){
+                            $('[name="datePicker"]').datepicker({format: 'dd/mm/yyyy'});
+                             $('[name="datePicker"]').each(function(){
+                                 var defaultDate = $(this).next().val(),
+                                 
+                                     dateObj = new Date(defaultDate),
+                                     dateStr = $.datepicker.formatDate("dd/mm/yy", dateObj);
+                                 if(defaultDate != ''){
+                                     $(this).val(dateStr);
+                                     $(this).datepicker('setValue', dateObj);
+                                     $(this).datepicker('update');
+                                 }
+                             });
+                             
+                             $('[name="datePicker"]').datepicker().on('changeDate', function(ev){
+                                 var pickDate = new Date(ev.date),
+                                     dateStr = $.datepicker.formatDate("dd/mm/yy", pickDate),
+                                     elemId = $(this).attr('id'); 
+                                 
+                                 $(this).next().next().val(dateStr);
+                                 
+                                 $(this).datepicker('hide'); 
+                                 
+                                 var parentId = elemId.split("_")[0];
+                                 var subId = elemId.split("_")[1];
+                                 assignVal2Cal(parentId, subId);
+                             });
+                        });
+                    </script>
+                                   
+                    <script>
+                            $(document).ready(function(){
+                                function addNewComContact(){
+                                    $('.userHavePayment').addClass('activeEditPayment');
+                                    $('.blurEditListItem').each(function(){
+                                        $(this).addClass('transparent_content');
+                                    });
+                                }
+                                
+                                function saveCancelAddComContact(){
+                                    $('.userHavePayment').removeClass('activeEditPayment');
+                                    $('.blurEditListItem').each(function(){
+                                        $(this).removeClass('transparent_content');
+                                    });
+                                }
+                                $('.editPayment').click(function(){
+                                    addNewComContact();
+                                    $('.addPayMentMethod').parent().hide();
+                                    $('.btnConfirmPay').parent().hide();
+                                });
+                                $('.cancelEditPayment').click(function(){
+                                    saveCancelAddComContact();
+                                    $('.addPayMentMethod').parent().show();
+                                    $('.btnConfirmPay').parent().show();
+                                });
+                                $('.doneEditPayment').click(function(){
+                                    saveCancelAddComContact();
+                                    $('.addPayMentMethod').parent().show();
+                                    $('.btnConfirmPay').parent().show();
+                                });
+                                
+                                $('#my_popup .close_popup, .btnCancelTermCondiction').off('click')
+                                  .on('click',function(){
+                                      $('#my_popup').popup('hide');
+                                  });
+                                $('#paypal_popup .close_popup').off('click')
+                                  .on('click',function(){
+                                      $('#paypal_popup').popup('hide');
+                                });
+                                
+                                
+                                //=== kakada edit Task #4829=====
+                                $('.btnPayPal').off('click')
+                                    .on('click',function(){
+                                        payByPayPal();
+                                        return false;
+                                });
+                                
+                                $('.addPayMentMethod').off('click')
+                                .on('click',function(){
+                                    $('#pay-frame').attr("src", $('#pay-frame').attr("src"));
+                                    $('#creditCard_popup').popup('show');
+                                    return false;
+                                });
+                                
+                                $('#creditCard_popup .close_popup').off('click')
+                                  .on('click',function(){
+                                      $('#creditCard_popup').popup('hide');
+                                });
+                                $('#confirm_trans .close_popup').off('click')
+                                  .on('click',function(){
+                                      $('#confirm_trans').popup('hide');
+                                });
+                                
+                                var checked = $("input:radio[name='checkPayment']:checked");
+                                if (!checked.val()){
+                                    $('.btnConfirmPay').removeClass("btnOrange");
+                                    $('.btnConfirmPay').addClass("btnGrey");
+                                }
+                                
+                                $("input:radio[name='checkPayment']").click(function(){
+                                    $('.btnConfirmPay').removeClass("btnGrey");
+                                    $('.btnConfirmPay').addClass("btnOrange");
+                                });
+                                
+                                $('.btnConfirmPay').hover(function(){
+                                        if($(this).hasClass("btnGrey")){
+                                            $(this).html('<span id="btnConfirmPay" class="iconpayByCard">Please select a payment method</span>');
+                                        }
+                                    },function(){
+                                        if($(this).hasClass("btnGrey")){
+                                            $(this).html('<span id="btnConfirmPay" class="iconpayByCard">Confirm and pay 
+                                                            <apex:outputText value=" £{0, number, ###,##0.00}">
+                                                                <apex:param value="{!totalPrice}" />
+                                                            </apex:outputText></span>');
+                                        }
+                                });
+                                $('.btnConfirmPay').off('click').on('click',function(){
+                                    if ($(this).hasClass("btnGrey")){
+                                       return false;
+                                    }else if("{!totalPrice}" <= 0){
+                                        alert('Cannot pay Total = '+"{!totalPrice}");
+                                    }
+                                    else {
+                                      $('#my_popup').popup('show',{scrolllock: true});
+                                    }
+                                    return false;
+                                });
+                                
+                                //=========End edit Task #4829==========
+                                
+                                $('#pay_by_invoice_popup .close_popup').off('click')
+                                  .on('click',function(){
+                                      $('#pay_by_invoice_popup').popup('hide');
+                                });
+                                $('.btnPayByInvoiceAction').off('click')
+                                .on('click',function(){
+                                    $('#pay_by_invoice_popup').popup('show');
+                                    return false;
+                                });
+                                
+                                $('.btnChosen').off('click')
+                                .on('click',function(){
+                                    var wrapOption = $('.wrapOption');
+                                    wrapOption.find('input[type="radio"]').each(function(){
+                                        if($(this).is(':checked')){
+                                            document.getElementById(invoiceBillingFrequencyId).value = $(this).val();
+                                            payByInvoice();
+                                        }
+                                    });
+                                    $('#pay_by_invoice_popup').popup('hide');
+                                });
+                                
+                                $('[data-toggle="tooltip"]').bind({
+                                    mouseover : function(){
+                                        var title = $(this).attr('title');
+                                        var data_title = $(this).attr('data-title');
+                                        $(this).attr('title','');
+                                        if(!data_title){
+                                            data_title = title;
+                                            $(this).attr('data-title',title);
+                                        }
+                                        helperDialog.show($(this).get(0), data_title);
+                                    },
+                                    mouseout : function(){
+                                        helperDialog.hide();
+                                    }
+                                });
+                            });
+                        </script>
+                        </apex:outputPanel>
+                </apex:form>
+                
+                <script type="text/javascript">
+                    setTimeout(function(){var a=document.createElement("script");
+                    var b=document.getElementsByTagName("script")[0];
+                    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0012/7064.js?"+Math.floor(new Date().getTime()/3600000);
+                    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+                </script>
+                
+            </body>
+          </apex:define> 
+     </apex:composition>
+</apex:page>

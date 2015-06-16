@@ -1,0 +1,319 @@
+<apex:page controller="KnowledgeController" standardStylesheets="false" cache="true" expires="{!cacheMaxAge}" showheader="false" >
+<html lang="en">
+
+    <apex:stylesheet value="{!$Page.knowledgeCss}" />
+    <apex:stylesheet value="{!$Resource.pkb_gumtreecss}" />
+    <apex:includeScript value="{!$Resource.pkb_js_prototype}" />
+    <apex:includeScript value="{!$Resource.pkb_js_base}" />
+    
+    <apex:variable var="currentCategoryVar" value="{!currentCategory}" />
+    <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+    <apex:variable var="categoryToDisplay" value="{!currentCategoryName}" />
+
+
+    <head>
+    <meta name="google-site-verification" content="LHfANfJBGb1mBu8Nju_-I_tKNnz54pyWCf0u3UFE87E" />
+    <meta name="msvalidate.01" content="65649C695C59AC887DC49585DA52D1EC" />
+        <title>Gumtree - {!PageTitle}</title>
+           </head>
+
+    
+    <body class="home location">
+
+    <div id="skip">
+        <a href="#main-content" accesskey="1" title="Skip to main content">Skip to main content</a>
+    </div>
+    <div id="head"> 
+         <apex:variable var="securityOK" value="false" />
+         <knowledge:categoryList categoryGroup="{!categoryGroupName}" ancestorsOf="{!currentCategoryVar}" rootCategory="{!rootCategoryName}" categoryVar="ancestor" >
+                <apex:variable var="securityOK" value="true" rendered="{!ancestor.name = rootCategoryName}" />
+         </knowledge:categoryList>
+        
+        <div id="logo_container" class="container">
+            <div class="wrapper">
+                <p id="logo">
+                    <a title="Gumtree.com" rel="home" href="http://www.gumtree.com/">Gumtree.com</a>
+                </p>
+            </div>
+            
+        </div>
+
+        <div id="main-actions">
+            <div class="container">
+                <ul>    
+                    <li>
+                    <ol id="location-breadcrumb">
+                        <li><a href="http://help.gumtree.com/knowledgeHome" rel="nofollow">Help home</a>
+                        </li>
+                    </ol>
+                    <ul id="utilities">
+                    <li class="topli">
+                        <a id="post-link" href="http://www.gumtree.com/add_posting.html?button=0#cat-2477" title="Post an ad" class="toplink">Post an ad</a>
+                        <a href="http://help.gumtree.com/knowledgeSafe" title="Stay safe" id="help-link" class="toplink">Stay safe</a>
+                        <a href="http://help.gumtree.com/knowledgeContactOptions" title="Contact us" class="toplink">Contact us</a>   
+                    
+                    </li>
+                    </ul>
+                    </li>
+                </ul>
+            </div> 
+        </div>
+    </div>
+    <script> 
+    
+
+                     
+       function clearsearchtext(box) {
+       if (box.value == "Example: 'email alerts'") {
+        box.value = "";
+        box.style.color = "#333333";
+       }
+        box.style.color = "#333333";
+      }
+     
+      function setsearchtext(box) {
+       if (box.value == "") {
+        box.value = "Example: 'email alerts'";
+        box.style.color = "#CCCCCC";
+        }
+      } 
+      function clearsearchtexty(box) {
+       if (box.value == "Example: 'I can’t find my ad'") {
+        box.value = "";
+        box.style.color = "#333333";
+       }
+        box.style.color = "#333333";
+      }
+     
+      function setsearchtexty(box) {
+       if (box.value == "") {
+        box.value = "Example: 'I can’t find my ad'";
+        box.style.color = "#CCCCCC";
+        }
+      }
+       function clearPhoneNumber(box) {
+       if (box.value == "In case we need to call you to find out more information about the issue.") {
+        box.value = "";
+        box.style.color = "#333333";
+       }
+        box.style.color = "#333333";
+      }
+     
+      function setPhoneNumber(box) {
+       if (box.value == "") {
+        box.value = "In case we need to call you to find out more information about the issue.";
+        box.style.color = "#CCCCCC";
+        }
+      } 
+      function clearIssueDescription(box) {
+       if (box.value.indexOf("1) on which part of the site you experienced the issue, and")>0 && box.value.indexOf("lease let us know")>0 &&  box.value.indexOf("what the issue was")>0) {
+        box.value = "";
+        box.style.color = "#333333";
+       }
+        box.style.color = "#333333";
+      }
+     
+      function setIssueDescription(box) {
+       if (box.value == "") {
+        box.value = "Please let us know: \n1) on which part of the site you experienced the issue, and \n2) what the issue was.";
+        box.style.color = "#CCCCCC";
+        }
+      }
+     
+      function clearInternetBrowser(box) {
+       if (box.value == "E.g. Internet Explorer 8 or Mozilla Firefox 3") {
+        box.value = "";
+        box.style.color = "#333333";
+       }
+        box.style.color = "#333333";
+      }
+     
+      function setInternetBrowser(box) {
+       if (box.value == "") {
+        box.value = "E.g. Internet Explorer 8 or Mozilla Firefox 3";
+        box.style.color = "#CCCCCC";
+        }
+      }
+      
+                                                
+    </script>
+
+    <div id="search-head" class="container">
+
+    </div>
+        <div id="page">
+            <div id="main-wrapper">
+                 
+                    <div id="main-content" class="container inner-page">
+                            <div class="primary">
+                                <div class="content-header">
+                                    <div class="inner">
+                                        <h1>
+                                            {!IF(categoryToDisplay!='All',categoryToDisplay,IF(isHomepage,'Gumtree Help',IF(isProductPage||isSearchPage || isFaqPage || isGiPage || isKiPage ,'Topics',IF(isContactPage||isContactPage2||isContactOptionsPage||isSearchContactPage||isThanksPage,'Contact us','Stay safe'))))} 
+                                        </h1>
+                                    </div>
+                                </div>
+                                <apex:outputPanel rendered="{!isFaqPage || isGiPage || isKiPage }" layout="none">
+                                    <apex:outputPanel styleClass="pkbSearchBox2" layout="block">
+                                        <apex:form id="searchBox2"> 
+                                             <div class="pkbSearchText1">
+                                                   Search help for 
+                                             </div>                 
+                                             <div class="search-input">
+                                                 <apex:inputText style="color:#CCCCCC;" styleClass="search-input-text" value="{!currentKeyword}"  size="25" onblur="setsearchtext(this);" onclick="clearsearchtext(this);" onfocus="clearsearchtext(this);" onkeypress="return submitEnter2(event);" />
+                                             </div>
+                                             <apex:commandButton onclick="return updateCategoryField2(event)" id="searchButton" styleClass="search-button" />
+                                         </apex:form>  
+                                     </apex:outputPanel>
+                               </apex:outputPanel>
+                                <apex:outputPanel rendered="{!ishomepage || isproductpage || isSearchPage}" layout="none">
+                                    <apex:outputPanel styleClass="pkbSearchBox2" layout="block">
+                                         <apex:form id="searchBox">
+                                            
+                                                <div class="pkbSearchText1">
+                                                      Search help for 
+                                                </div>                 
+                                                <div class="search-input">
+                                                    <apex:inputText style="color:#CCCCCC;" styleClass="search-input-text" value="{!currentKeyword}"  size="25" onblur="setsearchtext(this);" onclick="clearsearchtext(this);" onfocus="clearsearchtext(this);" onkeypress="return submitEnter(event);" />
+                                                </div>
+                                                <apex:actionFunction name="searchJs" action="{!doSearch}" />
+                                                <apex:commandButton action="{!doSearch}" onclick="return updateCategoryField(event)" id="searchButton" styleClass="search-button" />
+                                         </apex:form>   
+                                    </apex:outputPanel>
+                                 </apex:outputPanel> 
+                                <apex:insert name="content" />
+                            </div>
+                            <apex:outputPanel rendered="{!isFaqPage || isGiPage || isKiPage || isproductpage || isSearchPage || isContactPage||isContactPage2||isContactOptionsPage||isSearchContactPage || isThanksPage}" layout="none">  
+                                <div class="secondary">
+                                    <div class="content-header">
+                                        <div class="inner"><h2>Help topics</h2>
+                                        </div>
+                                    </div>
+                                    <div class="block bottom-block">
+                                        <div class="block">
+                                             <c:knowledgeCategories />
+                                        </div>                                  
+                                    </div>
+                                </div>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!ishomepage}" layout="none">
+                                <div class="secondary">
+                                    <div class="content-header">
+                                        <div class="inner"><h2>Top questions</h2>
+                                        </div>
+                                    </div>
+                                        
+                                    <div class="block bottom-block">
+                                        <div class="block">
+                                        <ul>
+                                               <knowledge:articleList articleVar="article"
+                                                   articleTypes="FAQ__kav"
+                                                   categories="{!categoryGroupNameVar}:{!rootCategoryName}"
+                                                   sortBy="mostViewed"
+                                                   pageSize="10"
+                                               >
+                                                   
+                                                  <li>
+                                                
+                                                  <a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a></li>
+                                                  
+                                               </knowledge:articleList>
+                                         </ul>
+                                        </div>                                  
+                                    </div>
+                                </div> 
+                            </apex:outputPanel>
+                             <apex:outputPanel rendered="{!isStaySafePage}" layout="none">     
+                           <div class="secondary">
+                                <div class="content-header">
+                                    <div class="inner"><h2></h2>
+                                    </div>
+                                </div>
+                        
+                                <div class="block bottom-block">
+                                    <div class="block">
+                                        <apex:outputPanel styleClass="pkbGrayBoxsf" layout="block">
+                                            <apex:outputPanel styleClass="pkbGrayBoxTitlesf" layout="block">
+                                                <h3>We are a proud sponsor of:</h3>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel styleClass="pkbGrayBoxInnersf" layout="block">
+                                                 <ul>   
+                                                     <li>                                             
+                                                        <a href="http://www.getsafeonline.org"><apex:image value="{!$Resource.sponsor}" /></a>
+                                                     </li>
+                                                 </ul>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                
+                                
+                                        <object width="240" height="180"><param name="movie" value="http://www.youtube.com/v/qe8fRAMueXI&amp;hl=fr_FR&amp;fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/qe8fRAMueXI&amp;hl=fr_FR&amp;fs=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="240" height="180"></embed></object>
+                                        
+                                        <apex:outputPanel styleClass="pkbGrayBox" layout="block">
+                                            <apex:outputPanel styleClass="pkbGrayBoxTitle" layout="block">
+                                              <h3>Latest threads from our safety forum</h3>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel styleClass="pkbGrayBoxInner" layout="block">
+                                                 <ul>   
+                                                     <li>                                             
+                                                        <script language="JavaScript" src="http://convert.rss-to-javascript.com/?src=http://forums.gumtree.com/feed.php?f=29&desc=1&desc_max=10&chan=0&simple_chan=0&font=&fgcolor=&bgcolor=&date=0&target=http://forums.gumtree.com/viewforum_f_29_Scam_Watch&num=3&target=http://forums.gumtree.com/viewforum_f_29_Scam_Watch&use_lists=0&font_size=" ></script><noscript>Your browser does not support JavaScript. <a title='RSS-to-JavaScript.com: Free RSS to JavaScript Converter' href=http://convert.rss-to-javascript.com/?src=http://forums.gumtree.com/feed.php?f=29&desc=1&desc_max=10&chan=0&simple_chan=0&font=&fgcolor=&bgcolor=&date=0&target=http://forums.gumtree.com/viewforum_f_29_Scam_Watch&num=3&target=http://forums.gumtree.com/viewforum_f_29_Scam_Watch&use_lists=0&font_size=&as_html=1 >Click to read the latest news</a>.</noscript></a>
+                                                     </li>
+                                                 </ul>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>         
+                                    </div>                                  
+                                </div>
+                           </div>   
+                           
+                        </apex:outputPanel> 
+                    </div>
+
+                    <div id="footer-simple" class="container">
+        <div class="copyright">
+            <p> Copyright 2000-2013 Gumtree.com. &nbsp;<span>All rights reserved</span></p></div>
+
+        <ul class="group-a">
+                    <li><a href="http://www.gumtree.com/contactus" title="Contact us">Contact us</a></li>
+                    <li class="li-last"><a href="http://blog.gumtree.com/aboutus/">About Gumtree</a></li>
+        </ul>
+                    
+        <ul class="group-c">
+                    <li><a href="http://blog.gumtree.com " title="Blog">Blog</a></li>
+                    <li class="icon facebook"><a href="http://www.facebook.com/gumtree" title="Visit Gumtree on Facebook"><img src="{!$Resource.facebook}"/>Facebook</a></li>
+                    <li class="icon twitter li-last"><a href="http://twitter.com/gumtree" title="Follow Gumtree on Twitter"><img src="{!$Resource.twitter}"/>Twitter</a></li>
+        </ul>
+                    
+        <ul class="group-b"><li><a href="http://www.gumtreemedia.co.uk/" title="Business advertising">Business advertising</a></li>
+                    <li><a href="http://www.gumtree.com/privacy_policy" title="Privacy policy">Privacy policy</a></li>
+                    <li><a href="http://www.gumtree.com/disclaimer.html" title="Terms of use">Terms of use</a></li>
+                    <li><a href="http://www.gumtree.com/sitemap.html" title="Site map">Site map</a></li>
+                    <li><a href="http://www.gumtree.com/popular-search" title="Popular searches">Popular searches</a></li>                    
+                    <li class="li-last"><a href="http://www.gumtree.com/cookies" title="Cookie policy">Cookie policy</a></li>
+        </ul>
+                    
+        </div>
+    </div>
+                    
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        var pageTracker = _gat._getTracker("UA-17767847-9");
+        pageTracker._initData();
+        pageTracker._trackPageview();
+    </script>                
+                
+
+    </div>
+ </div>
+
+
+<script type='text/javascript' src='https://c.la1a1.salesforceliveagent.com/content/g/deployment.js'></script>
+<script type='text/javascript'>delete Array.prototype.toJSON;</script>
+<script type='text/javascript'>
+liveagent.init('https://d.la1a1.salesforceliveagent.com/chat', '57220000000CaZh', '00D200000006AK6');
+</script>
+
+    </body>
+</html>
+</apex:page>

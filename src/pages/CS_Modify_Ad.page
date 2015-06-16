@@ -1,0 +1,5 @@
+<apex:page showHeader="false" standardcontroller="Case">
+  <!-- Begin Default Content REMOVE THIS -->
+   <IFRAME height="100%" width="100%" src="https://admin.gumtree.com/cgi-bin/screen_modify_ad.pl?posting_id={!Case.Posting_Reference__c}&maxiscreen=yes&submit=submit"></IFRAME>
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

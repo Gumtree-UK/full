@@ -1,0 +1,70 @@
+<!-- GTCRM-1418-Pass agent name into Live chat CSAT question -->
+<apex:page showHeader="false" cache="false" sidebar="false" controller="PreChatFormController" >
+<script type="text/javascript">
+    
+    //W: 626pxH: 602px  
+     window.onload = function()
+    {
+        var a = "{!$CurrentPage.parameters.disconnectedBy}";
+        if (a != 'error') {
+          //"agent":{"userId":"005w0000002t1l9","agentName":"Test Agent1","transfer":0}
+           var result = {!$CurrentPage.parameters.chatDetails};
+           var agent  = result['agent'];
+           var userId = agent['userId'];
+           var agentName = agent['agentName'];
+           var caseId ='';
+           var conId = '';
+           var email = '';
+           var prechatDetails = result['prechatDetails'];
+             for(var i=0;i<prechatDetails.length;i++){
+             
+                var item = prechatDetails[i];
+                
+                if(item['label']== 'PreChatCaseId'){
+                    caseId = item['value'];             
+                }
+                if(item['label']== 'PreChatConId'){
+                    conId = item['value'];             
+                }
+             }
+             //update IsChatting__c = false,so this contact can chat next time
+             try{                 
+                 Visualforce.remoting.Manager.invokeAction(
+                     '{!$RemoteAction.PreChatFormController.updateContactChatStatus}',
+                     conId,
+                     
+                     function(result, event)
+                     {                        
+                         if (event.status) {
+                              /*if(result['Result'] =='Error'){                                      
+                                 alert('Error= '+result['Error']);                                       
+                              }  */  
+                         }                        
+                     },
+                     {escape: false}
+                 );
+             
+             }catch(ex){
+                 alert(ex.message);              
+                
+             }                 
+             //alert("conId:"+conId);
+             
+            window.resizeTo(626,702);
+            //window.scrollbars.visible = true;
+            //"http://supportsurvey.gumtree.com/go?iv=1rlzjgs632g29&q7=Live Chat"
+            // 2015-01-15 - Steve added record type as question 8 post PRO console rollout
+           //  GTCRM-1418-Pass agent name into Live chat CSAT question 
+          // window.location.replace("http://supportsurvey.gumtree.com/go?iv=1rlzjgs632g29&q1="+caseId+"&q3="+conId+"&q6="+userId+"&q7=Live Chat&q8=012w0000000Qn2J&q9="+agentName);
+          alert("http://supportsurvey.gumtree.com/go?iv=o5748ptq31l44&q1="+caseId+"&q3="+conId+"&q6="+userId+"&q7=Live Chat&q8=012w0000000Qn2J&q9="+agentName.split(" ")[0]);
+          window.location.replace("http://supportsurvey.gumtree.com/go?iv=o5748ptq31l44&q1="+caseId+"&q3="+conId+"&q6="+userId+"&q7=Live Chat&q8=012w0000000Qn2J&q9="+agentName.split(" ")[0]);
+        }
+        else {
+            window.location.replace("http://gumtree.force.com/Help/knowledgeChatError");
+        }
+    }
+    </script>
+
+
+    
+</apex:page>

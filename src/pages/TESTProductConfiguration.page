@@ -1,0 +1,182 @@
+<apex:page standardController="OpportunityLineItem">
+  <style>
+      .activeTab {background-color: #E5C130; color:white; background-image:none}
+      .inactiveTab { background-color: lightgrey; color:black; background-image:none}
+   </style>
+  <script type="text/javascript">
+  function confirmCancel() {
+      var isCancel = confirm("Are you sure you wish to cancel without saving your changes?");
+      if (isCancel) return true;
+  
+     return false;
+  }  
+  </script>
+  <script type="text/javascript">
+  function resizemulti() {
+    $$('table.multiSelectPicklistTable tr.multiSelectPicklistRow select').each(function(i) { i.style.width = "135px"; i.style.height = "65px";});
+    
+    return false;
+  }
+  </script>
+
+ <apex:sectionHeader title="Campaign Name:" subtitle="Account Name:"/>
+       <apex:form >
+                 <apex:pageBlock title="Product Configuration" mode="edit">
+  
+                    <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!save}" rerender="rows" status="outStatus"/>
+                <apex:commandbutton action="{!quicksave}" value="Quick Save"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" onclick="return confirmCancel()" immediate="true"/>
+                <apex:commandButton value="L1/L2 Targeting" action="https://c.eu0.visual.force.com/apex/ContentHierarchyPage?scontrolCaching=1&id={!opportunitylineitem.id}" immediate="true"/>
+                <apex:commandButton value="L3/L4 Category Targeting" action="https://c.eu0.visual.force.com/apex/KeyValueHierachyPage?scontrolCaching=1&id={!opportunitylineitem.id}" immediate="true"/>
+      </apex:pageBlockButtons>
+
+        <apex:pageBlockSection title="Information" />
+        <apex:PageMessages id="messages1"/>
+
+        <apex:tabPanel style="background-color:#f8f8f8;" switchType="client" headerAlignment="center" selectedTab="tabdetails" id="OpportunityTabPanel" tabClass="activeTab" inactiveTabClass="inactiveTab">
+        <body onclick="resizemulti()">
+        <apex:tab label="Campaign Information" name="criteriainput1" id="criteriainput1" style="background-color:#f8f8f8">
+
+       <apex:dataTable width="100%" style="background-color:#f8f8f8" value="{!opportunitylineitem}" var="oli" cellPadding="5" border="0">
+            <apex:column width="350">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="Product Name" /></apex:facet>
+                <br/>
+                <apex:outputfield value="{!oli.PriceBookEntry.Name}"/>
+            </apex:column>
+            <apex:column width="">
+                 <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="Line Description" /></apex:facet>
+                 <br/>
+                 <apex:inputField value="{!oli.description}"/>              
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#cc0000; text-align:center" value="from (Date)" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.from_Date__c}" required="true"/>
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#cc0000" value="until (Date)" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.until_Date__c}" required="true"/>
+            </apex:column>
+        </apex:dataTable>
+                  
+       </apex:tab>
+       <apex:tab label="Pricing Detail" name="criteriainput2" id="criteriainput2" style="background-color:#f8f8f8">
+       <apex:dataTable width="100%" style="background-color:#f8f8f8" value="{!opportunitylineitem}" var="oli" cellPadding="5" border="0">
+            <apex:column width="350" >
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="Product Name" /></apex:facet>
+                <br/>
+                <apex:outputfield value="{!oli.PriceBookEntry.Name}"/>
+            </apex:column>
+            <apex:column width="">
+                 <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#cc0000" value="Billing Category" /></apex:facet>
+                 <br/>
+                 <apex:inputField value="{!oli.Billing_Category__c}" required="true"/>             
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#cc0000; text-align:center" value="Quantity" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.quantity}" required="true"/>
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#cc0000" value="Sales Price" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.unitprice}" required="true"/>
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="AC" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.AE__c}"/>
+            </apex:column>
+             <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="Discount" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.discount}"/>
+            </apex:column>
+        </apex:dataTable>          
+       </apex:tab>
+              <apex:tab label="Frequency Cap" name="criteriainput3" id="criteriainput3" style="background-color:#f8f8f8">
+       <apex:dataTable width="100%" style="background-color:#f8f8f8" value="{!opportunitylineitem}" var="oli" cellPadding="5" border="0">
+            <apex:column width="350" >
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="Product Name" /></apex:facet>
+                <br/>
+                <apex:outputfield value="{!oli.PriceBookEntry.Name}"/>
+            </apex:column>
+            <apex:column width="">
+                 <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="FC Number of Impressions" /></apex:facet>
+                 <br/>
+                 <apex:inputField value="{!oli.FC_Number_of_Impressions__c}"/>            
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="FC Number of TimePeriods" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.FC_Number_of_Timeperiods__c}"/>
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="FC Period" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.FC_Entity_of_TimePeriods__c}"/>
+            </apex:column>
+        </apex:dataTable>          
+       </apex:tab>
+                  <apex:tab label="Time & Keyword Targeting" name="criteriainput4" id="criteriainput4" style="background-color:#f8f8f8">
+       <apex:dataTable width="100%" style="background-color:#f8f8f8" value="{!opportunitylineitem}" var="oli" cellPadding="5" border="0">
+            <apex:column width="350" >
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="Product Name" /></apex:facet>
+                <br/>
+                <apex:outputfield value="{!oli.PriceBookEntry.Name}"/>
+            </apex:column>
+            <apex:column width="" colspan="2">
+                 <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="AdDayOfWeek" /></apex:facet>
+                 <br/>
+                 <apex:inputField value="{!oli.AdWeekdays__c}"/>           
+            </apex:column>
+            <apex:column width="" colspan="2">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="AdHourOfDay" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.AdTimes__c}"/>
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="AdKeyWords" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.AdServer_Keywords_Key_Values__c}"/>
+            </apex:column>
+        </apex:dataTable>          
+       </apex:tab>
+       <apex:tab label="OS & Browser Targeting" name="criteriainput5" id="criteriainput5" style="background-color:#f8f8f8">
+       <apex:dataTable width="100%" style="background-color:#f8f8f8" value="{!opportunitylineitem}" var="oli" cellPadding="5" border="0">
+            <apex:column width="350" >
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="Product Name" /></apex:facet>
+                <br/>
+                <apex:outputfield value="{!oli.PriceBookEntry.Name}"/>
+            </apex:column>
+            <apex:column width="" colspan="3">
+                 <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="AdOperatingSystem" /></apex:facet>
+                 <br/>
+                 <apex:inputField value="{!oli.AdOperating_System__c}"/>          
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="AdBrowser" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.AdBrowser__c}"/>
+            </apex:column>
+            <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="AdBrowserVersion" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.AdBrowser_Version__c}"/>
+            </apex:column>
+                        <apex:column width="">
+                <apex:facet name="header"><apex:outputText style="font-weight:bold; color:#000000" value="AdBrowserSubVersion" /></apex:facet>
+                <br/>
+                <apex:inputField value="{!oli.AdBrowser_SubVersion__c}"/>
+            </apex:column>
+          </apex:dataTable>        
+       </apex:tab>
+</body>
+       </apex:tabpanel>
+     </apex:pageBlock>
+
+</apex:form>
+
+</apex:page>

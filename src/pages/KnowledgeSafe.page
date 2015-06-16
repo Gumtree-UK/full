@@ -1,0 +1,112 @@
+<apex:page controller="KnowledgeController" showHeader="false" title="Public Knowledge Base" cache="true" expires="{!cacheMaxAge}">
+    <apex:composition template="{!$Site.Template}">
+    <apex:define name="content">
+
+       <apex:variable var="productUrlVar" value="{!productUrl}" />
+       <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+       <apex:variable var="cpt" value="{!0}" />
+       <apex:variable var="categoryDescriptionsVar" value="{!categoryDescriptions}" />
+       <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+
+         
+                    <div class="page-content">
+                        <apex:outputPanel styleClass="pkbHpMain" layout="block">
+                            <apex:outputPanel layout="block" styleClass="pkbCategoBlocksf">
+
+                        
+                        <table width="100%">
+                             <tr>
+                                    <td valign="top">
+                                         <apex:outputPanel styleClass="pkbColumnPanelsf" layout="block">
+                                                <apex:outputPanel styleClass="pkbColumnTopsf" layout="block">
+                                                    <apex:outputText styleClass="staySafe-articleTypes" value="Safety advice" />
+                                                     </apex:outputPanel>
+                                                    <apex:outputPanel styleClass="pkbColumnInnersf" layout="block">
+                                                
+                                                       <ul>
+                                                          <knowledge:articleList articleVar="article"
+                                                              categories="Public_KB:Safety_advice"
+                                                              articleTypes="General_Information__kav"
+                                                              sortBy="mostViewed"
+                                                              pageSize="7"
+                                                          >
+                                                              <li><a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}">{!article.title}</a></li>
+                                                          </knowledge:articleList>
+                                                      </ul>
+                                                    </apex:outputPanel>
+                                         </apex:outputPanel>
+                                    </td>
+                                        
+                                    <td valign="top">
+                                     <apex:outputPanel styleClass="pkbColumnPanelsf" layout="block">
+                                          <apex:outputPanel styleClass="pkbColumnTopsf" layout="block">
+                                            <apex:outputText styleClass="staySafe-articleTypes" value="Reporting a safety issue" />
+                                             </apex:outputPanel>
+                                                    <apex:outputPanel styleClass="pkbColumnInnersf" layout="block">
+                                                  <ul>
+                                                      <knowledge:articleList articleVar="article"
+                                                          categories="Public_KB:Reporting_a_safety_issue"
+                                                          articleTypes="General_Information__kav"
+                                                          sortBy="mostViewed"
+                                                          pageSize="7"
+                                                      >
+                                                          <li><a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}">{!article.title}</a></li>
+                                                      </knowledge:articleList>
+                                                  </ul>
+                                                </apex:outputPanel>
+                                         </apex:outputPanel>
+                                    </td>
+                             </tr>
+                             <tr>
+                                    <td valign="top">
+                                     <apex:outputPanel styleClass="pkbColumnPanelsf" layout="block">
+                                          <apex:outputPanel styleClass="pkbColumnTopsf" layout="block">
+                                        <apex:outputText styleClass="staySafe-articleTypes" value="FAQ's" />
+                                         </apex:outputPanel>
+                                                    <apex:outputPanel styleClass="pkbColumnInnersf" layout="block">
+                                            <ul>
+                                                    <knowledge:articleList articleVar="article"
+                                                        categories="Public_KB:Stay_Safe"
+                                                        articleTypes="FAQ__kav"
+                                                        sortBy="mostViewed"
+                                                        pageSize="7"
+                                                    >
+                                                        <li><a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}">{!article.title}</a></li>
+                                                    </knowledge:articleList>
+                                                </ul>
+                                        </apex:outputPanel>
+                                     </apex:outputPanel>
+                                    </td>
+                                    <td valign="top">
+                                     <apex:outputPanel styleClass="pkbColumnPanelsf" layout="block">
+                                          <apex:outputPanel styleClass="pkbColumnTopsf" layout="block">
+                                                <apex:outputText styleClass="staySafe-articleTypes" value="Safety @ Gumtree" />
+                                                 </apex:outputPanel>
+                                                    <apex:outputPanel styleClass="pkbColumnInnersf" layout="block">
+                                            <ul>
+                                                  <knowledge:articleList articleVar="article"
+                                                      categories="Public_KB:Safety_GumTree"
+                                                      articleTypes="General_Information__kav"
+                                                      sortBy="mostViewed"
+                                                      pageSize="7"
+                                                  >
+                                                      <li><a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}">{!article.title}</a></li>
+                                                  </knowledge:articleList>
+                                              </ul>
+                                        </apex:outputPanel>
+                                     </apex:outputPanel>
+                                    </td>
+                             </tr>
+                      </table>  
+                      </apex:outputPanel>    
+                      </apex:outputPanel>  
+                    </div>
+ 
+     
+
+        
+                     
+
+    </apex:define>
+    </apex:composition>
+</apex:page>

@@ -1,0 +1,155 @@
+<!---
+
+Change log;
+
+2014-06-16 - GTCRM-1015 - Embed Nickelled media into sidebar
+
+-->
+<apex:page controller="KnowledgeController" showHeader="false" cache="true" expires="{!cacheMaxAge}" standardStylesheets="false">
+
+<apex:variable var="currentCategoryVar" value="{!currentCategory}" />
+    <apex:variable var="currentArticleTypeVar" value="{!currentArticleType}" />
+    <apex:variable var="currentArticleTypeLabelVar" value="{!currentArticleTypeLabel}" />
+    <apex:variable var="categoryParameterNameVar" value="{!categoryParameterName}" />
+    <apex:variable var="articleTypeParameterNameVar" value="{!articleTypeParameterName}" />
+    <apex:variable var="articleTypeLabelParameterNameVar" value="{!articleTypeLabelParameterName}" />
+    <apex:variable var="productUrlVar" value="{!productUrl}" />
+    <apex:variable var="categoryGroupNameVar" value="{!categoryGroupName}" />
+
+    <apex:composition template="{!$Site.Template}">
+     	<apex:define name="content">
+       
+<section class="manage-ads">
+<div class="column grid_3">
+    <c:knowledgeCategories />
+</div>
+ 
+<div class="column grid_4">
+    <article class="space">
+     
+     
+     
+        <apex:define name="content">
+        
+                    <div class="page-content">
+                        <apex:outputPanel styleClass="pkMaintwo" layout="block">
+                        
+                   
+                            
+                                    <apex:outputPanel styleClass="pkbResultPanel" layout="block" rendered="{!rootCat=='FAQs'}">
+                                
+                                 
+                                
+                                <knowledge:articleList articleVar="article"  
+                                                    
+                                                     
+                                                    categories="{!categoryGroupNameVar}:{!currentCategoryVar}"
+                                                    pageSize="150"
+                                                    sortBy="lastUpdated"
+                                >
+                                <a href=''>
+                                    <div class='faq' id="faq_{!article.id}">
+                                    <h3 class='title'>{!article.title}</h3>
+                                    <div class='description'></div> 
+                                    </div>
+                                </a>
+                                
+                                </knowledge:articleList>
+                                
+                                
+                            </apex:outputPanel>
+                            
+                            
+                            
+                        
+                             <apex:outputPanel styleClass="pkbResultPanel" layout="block" rendered="{!rootCat!='FAQs'}">
+                                    <apex:outputPanel styleClass="pkbResultInner" layout="block">
+                                         
+                                         
+                                       <apex:variable var="testtest" value="{!DC}" /> 
+                                            <article class="space">
+                                                <hgroup>
+                                                    <table width="100%" >
+                                                        <tr>
+                                                            <td><h3>{!currentCategoryName}</h3></td>
+                                                        </tr>
+                                                    </table>
+                                                </hgroup>
+                                                <apex:outputField style="font-family:verdana, arial, sans-serif; vertical-align:baseline; font-size:12px;" value="{!testtest.DescriptionToDisplay__c}" />
+                                            </article>
+                                       <hr />
+                                       <article class="space">
+                                        <apex:outputPanel layout="block" rendered="{!currentArticleTypeVar==''}" >
+                                        <hgroup>
+                                            <h3>Related topics</h3>
+                                             </hgroup>
+                                            <apex:variable var="anyDocument" value="false" />
+                                            <apex:variable var="hasMore" value="" />
+                                            <ul>
+                                           
+                           
+                                                <knowledge:articleList articleVar="article" hasMoreVar="hasMore"
+                                                    pageSize="12"
+                                                    articleTypes="FAQ__kav, General_Information__kav" 
+                                                    pageNumber="{!currentPageNumber}"
+                                                    categories="{!categoryGroupNameVar}:{!currentCategoryVar}"
+                                                    sortBy="mostViewed"
+                                                >
+                                                <li class="pkbArticle">
+                                                     <a href="{!URLFOR($Action.KnowledgeArticle.View, article.id)}&at={!article.title}">{!article.title}</a>
+                                                      <apex:outputLink value="{!productUrl}">
+                                                         <apex:param name="{!categoryParameterNameVar}" value="{!currentCategoryVar}" />
+                                                         <apex:param name="{!articleTypeParameterNameVar}" value="{!article.articleTypeName}" />
+                                                         <apex:param name="{!articleTypeLabelParameterNameVar}" value="{!article.articleTypeLabel}" />
+                                                      </apex:outputLink>
+                                                    </li>
+                                                        <apex:variable var="anyDocument" value="true" />
+                                                </knowledge:articleList>
+                                            </ul>
+                                            <apex:outputText value="No Result" rendered="{!anyDocument=='false'}" />
+                                        </apex:outputPanel>
+                                        </article>
+                                        
+                                       
+                                   </apex:outputPanel>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </div>
+        </apex:define>
+    </article>
+</div>
+<div class="column grid_3">
+    <div class="roundedbox darkgray search">
+         <apex:form id="searchBox2"> 
+                                                        
+                                             <div class="search-input">
+                                                 <apex:inputText style="color:#CCCCCC;" styleClass="fld" value="{!currentKeyword}"  size="25" onblur="setsearchtext(this);" onclick="clearsearchtext(this);" onfocus="clearsearchtext(this);" onkeypress="return submitEnter2(event);" />
+                                             </div>
+                                             <apex:actionFunction name="searchJs" action="{!doSearch}" />
+                                             <apex:commandButton action="{!doSearch}" onclick="return updateCategoryField2(event)" id="searchButton" styleClass="secondary button" value="search" />
+                                         </apex:form>  
+    </div>
+    
+      <c:contactOptions2 /> 
+     
+        <!--MS 22-08-2014 Task #3808:phone number visibility when ShowPhoneContact__c = true -->
+        <script type="text/javascript">
+     
+            if('{!DC.ShowPhoneContact__c}' == 'true'){
+                document.getElementById("phone").style.display="block";
+                document.getElementById("phone_number").innerHTML = '{!DC.AvailablePhoneNumbers__c}';
+                document.getElementById("time").innerHTML = '{!phonetime}' ;
+            }
+             
+        </script>
+        
+<!--     <c:watchOurVideo /> -->
+     <c:watchOurHowtoGuide />  
+    
+</div>
+</section>
+
+
+   </apex:define>
+    </apex:composition>     
+</apex:page>

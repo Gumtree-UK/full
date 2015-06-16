@@ -1,0 +1,199 @@
+<apex:page controller="P2P_ExportStatementFilter" contenttype="application/vnd.ms-excel#{!acc.Name}_Gumtree_Statement_{!TODAY()}.xls">
+    <style>
+        .colHead{font-weight: bold; font-family: Arial; font-size: 20px}
+        .image{width: 100%;}
+        .label {font-weight: bold; font-family: Arial;}
+        .header1 {
+            font-weight: normal;
+            border: 1pt solid black;
+            color: white;
+            background-color: #7F7F7F;
+        }
+        .header2 {
+            font-weight: bold;
+            font-size: 11px;
+            border: 1pt solid black;
+            background-color: #BFBFBF;
+        }
+        .borderTop{border: 1pt solid black;}
+        .colData {
+            border: 0.5pt solid black;
+            font-family: Arial;
+        }
+    </style>
+    <table border="0" cellpadding="0" cellspacing="0" style="font-size: 10pt; font-family: Arial;">
+        <tr height="10">
+            <td width="33"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="200"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+            <td width="116"></td>
+        </tr>
+        <tr>
+            <td class="colHead" colspan="4">Gumtree Financial Statement</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="image" colspan="2">
+<!--                 <apex:image value="https://gumtree--pro--c.cs18.content.force.com/servlet/servlet.ImageServer?id=01511000000OZCk&oid=00D110000008MjU&lastMod=1421814326000" /> -->
+            </td>
+        </tr>
+        <tr height="30"></tr>
+        <tr height="16">
+            <td></td>
+            <td class="label">Date</td>
+            <td align="left">
+                <apex:outputText value="{0, date, dd'/'MM'/'yyyy}">
+                    <apex:param value="{!TODAY()}" /> 
+                </apex:outputText>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td class="label">Account Name</td>
+            <td colspan="3">{!acc.Name}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td class="label">Account Number</td>
+            <td align="left"><apex:outputText value="{!acc.Account_Number_Fiqas__c}" /></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr height="16">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr >
+        <tr height="35">
+            <td></td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Invoice Number</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Invoice Date</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Invoice Period</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Payment due</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Invoice amount incl. VAT</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Amount paid</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Amount due</td>
+            <td class="header2" style="vertical-align: middle;" align="center">Invoice status</td>
+        </tr >
+        <apex:repeat value="{!lstInvoices}" var="inv">
+        <tr height="20">
+            <td></td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;border-left: 1pt solid black;" align="center">{!inv.Name}</td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">
+                <apex:outputText value="{0, date, dd'/'MM'/'yyyy}">
+                    <apex:param value="{!inv.Invoice_Date__c}" /> 
+                </apex:outputText>
+            </td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">
+                <apex:outputText value="{0, date, dd'/'MM'/'yyyy}">
+                    <apex:param value="{!inv.Period_From__c}" /> 
+                </apex:outputText>
+                <apex:outputText value="&nbsp;&ndash;" escape="false"/>
+                <apex:outputText value="{0, date, dd'/'MM'/'yyyy}">
+                    <apex:param value="{!inv.Period_Until__c}" /> 
+                </apex:outputText>
+            </td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="center">
+                <apex:outputText value="{0, date, dd'/'MM'/'yyyy}">
+                    <apex:param value="{!inv.Payment_Due_Date__c}" /> 
+                </apex:outputText>
+            </td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="right">
+                <apex:outputText value="&pound;&nbsp;&nbsp;{0,number,#,##0.00}">
+                    <apex:param value="{!inv.Invoice_Amount__c}"/>
+                </apex:outputText>
+            </td>
+            <td class="colData" style="vertical-align: middle; border-top: none; border-right: none;" align="right">
+                <apex:outputText value="&pound;&nbsp;&nbsp;{0,number,#,##0.00}">
+                    <apex:param value="{!inv.Amount_Paid__c}"/>
+                </apex:outputText>
+            </td>
+            <td class="colData" style="vertical-align: middle; border-top: none;" align="right">
+                <apex:outputText value="&pound;&nbsp;&nbsp;{0,number,#,##0.00}">
+                    <apex:param value="{!inv.Amount_Due__c}"/>
+                </apex:outputText>
+            </td>
+            
+            <apex:outputText rendered="{!OR(inv.Invoice_Status__c=='Overdue',inv.Invoice_Status__c=='Partially Paid')}">
+                <td bgcolor="#EF4136" class="colData" style="vertical-align: middle; border-top: none; border-right: 1pt solid black; border-bottom: 0.5pt solid black; color:white; font-weight:bold;" align="center">
+                    {!inv.Invoice_Status__c}
+                </td>
+            </apex:outputText>
+            <apex:outputText rendered="{!inv.Invoice_Status__c=='Current'}">
+                <td bgcolor="#F7941E" class="colData" style="vertical-align: middle; border-top: none; border-right: 1pt solid black; border-bottom: 0.5pt solid black; color:white; font-weight:bold;" align="center">
+                    {!inv.Invoice_Status__c}
+                </td>
+            </apex:outputText>
+            <apex:outputText rendered="{!inv.Invoice_Status__c=='Paid in Full'}">
+                <td bgcolor="#7BB74B" class="colData" style="vertical-align: middle; border-top: none; border-right: 1pt solid black; border-bottom: 0.5pt solid black; color:white; font-weight:bold;" align="center">
+                    {!inv.Invoice_Status__c}
+                </td>
+            </apex:outputText>
+            <apex:outputText rendered="{!inv.Invoice_Status__c=='Written Off'}">
+                <td bgcolor="black" class="colData" style="vertical-align: middle; border-top: none; border-right: 1pt solid black; border-bottom: 0.5pt solid black; color:white; font-weight:bold;" align="center">
+                    {!inv.Invoice_Status__c}
+                </td>
+            </apex:outputText>
+        </tr>
+        </apex:repeat>
+        <tr height="35">
+            <td></td>
+            <td class="borderTop" style="border-left: none; border-right: none; border-bottom: none;"></td>
+            <td class="borderTop" style="border-left: none; border-right: none; border-bottom: none;"></td>
+            <td class="borderTop" style="border-left: none; border-right: none; border-bottom: none;"></td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="center">Total</td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="right">
+                <apex:outputText value="&pound;&nbsp;&nbsp;{0,number,#,##0.00}">
+                    <apex:param value="{!totalInv.Invoice_Amount__c}"/>
+                </apex:outputText>
+            </td>
+            <td class="header2" style="vertical-align: middle; border-right: none;" align="right">
+                <apex:outputText value="&pound;&nbsp;&nbsp;{0,number,#,##0.00}">
+                    <apex:param value="{!totalInv.Amount_Paid__c}"/>
+                </apex:outputText>
+            </td>
+            <td class="header2" style="vertical-align: middle;" align="right">
+                <apex:outputText value="&pound;&nbsp;&nbsp;{0,number,#,##0.00}">
+                    <apex:param value="{!totalInv.Invoice_Amount_Extra__c}"/>
+                </apex:outputText>
+            </td>
+            <td class="borderTop" style="border-left: none; border-right: none; border-bottom: none;"></td>
+        </tr>
+    </table>
+</apex:page>

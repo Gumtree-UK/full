@@ -1,0 +1,1334 @@
+<apex:page showHeader="false" action="{!doAuthorize}" controller="P2P_TemplateController" standardStylesheets="false" applyHtmlTag="false" title="My Gumtree | Gumtree.com">
+    <html>
+        <head>  
+            <!--<link rel="shortcut icon" href="{!$Resource.FavouriteSiteIcon}" type="image/x-icon"/> -->
+            <title>
+                My Gumtree | Gumtree.com
+            </title> 
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+            <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+            <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+            <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet" type="text/css"/>
+            <script src="{!URLFOR($Resource.P2P_Touchpunch, 'P2P_Touchpunch/jquery.ui.touch-punch.js')}"></script>
+            
+            <link rel="stylesheet" href="{!URLFOR($Resource.P2P_Popup, 'venobox/venobox.css')}" type="text/css" media="screen" />
+            <link rel="stylesheet" href="{!URLFOR($Resource.P2P_Resources, 'datepicker/css/datepicker.css')}" type="text/css" media="screen" />
+            <script type="text/javascript" src="{!URLFOR($Resource.P2P_Popup, 'venobox/venobox.js')}"></script>
+            
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'css/bootstrap.min.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'css/custom_bootrap.css')}" />
+            <script src="{!URLFOR($Resource.P2P_Resources, 'js/bootstrap.min.js')}"></script>
+            <script src="{!URLFOR($Resource.P2P_Resources, 'js/bootstrap-waitingfor.js')}"></script>
+            <script src="{!URLFOR($Resource.P2P_ResMyCheckout, 'jquery.popupoverlay.js')}"></script>
+            <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+            <script src="{!URLFOR($Resource.P2P_Resources, 'datepicker/js/bootstrap-datepicker.js')}"></script>
+            
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'helperDialog/helperDialog.css')}" />
+            <script src="{!URLFOR($Resource.P2P_Resources, 'helperDialog/helperDialog.js')}"></script>
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_Resources, 'css/font-awesome.min.css')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.P2P_IE_Fixed, 'css/ie_fixed.css')}" />
+            <style>
+                body{
+                    background: #FFF !important;
+                } 
+                #wrapper{
+                    margin:0 auto;
+                    width:1180px; 
+                }
+                #head{
+                    position: relative;
+                    float: left;
+                    min-height: 51px;
+                    margin-top: 15px;
+                    width: 100%;
+                    border-radius: 0.125em;
+                    background: linear-gradient(to bottom, #95C858 0%, #7BB74C 50%, #6BAE48 100%) repeat scroll 0% 0% transparent;
+                    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#95C858', endColorstr='#6BAE48',GradientType=0 );
+                }               
+                .panel-left{
+                    float: left;
+                }
+                .panel-left h3{
+                    margin:0;
+                }
+                .panel-left h3 span{
+                    background: #93C656;
+                    padding: 0px 5px;
+                    font-size: 20px;
+                    border-radius: 3px;
+                    color: #FFF;
+                    margin-left: 8px;
+                }
+                
+                .panel-right{
+                    float: left;
+                    width: 100%;
+                }
+                .panel-right span{
+                    color: rgb(153, 153, 153);
+                    font-size: 18px;
+                }
+                .panel-right select{
+                    margin: 0px 0 0 35px;
+                }
+                
+                #wrap-title{
+                    float: left;
+                    width: 100%;
+                    text-align: right;
+                }
+                #wrap-content{
+                    width:100%;
+                    background:#E6E7E8;
+                    padding: 0;
+                    float: left;
+                }
+                .isIe{
+                    display: none;
+                }
+                .ie .isNotIe{
+                    display: none;
+                }
+                .ie .isIe{
+                    display: inherit;
+                }
+                #nav{
+                    display: inline-block;
+                    height: auto;
+                    background: #E6E7E8;
+                }
+                
+                #content{
+                    margin:0 auto;
+                    background:#FFF;
+                    width: 100%;
+                    float: left;
+                }
+                
+                #logo{
+                    left: 15px;
+                    position: absolute;
+                    top: -57px;
+                    width: 114px;
+                }
+                
+                #logo-for-business{
+                    top: 10px;
+                    position: relative;
+                    padding-left: 8px;
+                }
+                #nav > ul{
+                    padding:0px;
+                    margin:0px;
+                    list-style-type: none;
+                    float: left;
+                    width: 100%;
+                }
+                
+                #nav .nav-item{
+                    background-position: center 10px;
+                    background-size: 40px auto;
+                    border-radius: 5px;
+                    color: #939598;
+                    cursor: pointer;
+                    float: left;
+                    font-size: 14px;
+                    height: 61px;
+                    margin-top: 10px;
+                    padding: 15px;
+                    position: relative;
+                    width: 12%;
+                    margin-left: 0.5%;
+                }
+                #nav .nav-item:HOVER{
+                    background-color: #fff;
+                }
+                .nav-item div{
+                    position: absolute;
+                    bottom: 3px;
+                    text-align: center;
+                    width: 100%;
+                    left: 0px;
+                }
+                
+                #nav .nav-item:hover,#nav .active{
+                    color: #333333;   
+                    background-color: #fff;          
+                }
+                .menuTopIcon{
+                    display: block;
+                    float: none;
+                    height: 30px;
+                    margin: 0 auto;
+                    position: relative !important;
+                    width: 40px !important;
+                }
+                .mymanage .menuTopIcon{
+                    background: url("{!URLFOR($Resource.P2P_Resources, 'header-icons/manage.png')}") no-repeat scroll; 
+                }
+                .mymanage.active .menuTopIcon,
+                .mymanage:hover .menuTopIcon{
+                    background-position: 0 -30px; 
+                }               
+                .myreplies .menuTopIcon{
+                    background: url("{!URLFOR($Resource.P2P_Resources, 'header-icons/replies.png')}") no-repeat scroll; 
+                }
+                .myreplies.active .menuTopIcon,
+                .myreplies:hover .menuTopIcon{
+                    background-position: 0 -30px;  
+                }
+                .mydetails .menuTopIcon{
+                    background: url("{!URLFOR($Resource.P2P_Resources, 'header-icons/details.png')}") no-repeat scroll; 
+                }
+                .mydetails.active .menuTopIcon,.mydetails:hover .menuTopIcon{
+                    background-position: 0 -30px;  
+                }               
+                .mycompany .menuTopIcon{
+                    background: url("{!URLFOR($Resource.P2P_Resources, 'header-icons/company.png')}") no-repeat scroll; 
+                }
+                .mycompany.active .menuTopIcon,.mycompany:hover .menuTopIcon{
+                    background-position: 0 -30px;  
+                }
+                .mymetrics .menuTopIcon{
+                    background: url("{!URLFOR($Resource.P2P_Resources, 'header-icons/metrics.png')}") no-repeat scroll; 
+                }
+                .mymetrics.active .menuTopIcon,.mymetrics:hover .menuTopIcon{
+                    background-position: 0 -30px;  
+                }
+                .myfinancials .menuTopIcon{
+                    background: url("{!URLFOR($Resource.P2P_Resources, 'header-icons/Financial.png')}") no-repeat scroll; 
+                }
+                .myfinancials.active .menuTopIcon,.myfinancials:hover .menuTopIcon{
+                    background-position: 0 -30px;  
+                }
+                .mystore .menuTopIcon{
+                    background: url("{!URLFOR($Resource.P2P_Resources, 'header-icons/store.png')}") no-repeat scroll; 
+                }
+                .mystore.active .menuTopIcon,.mystore:hover .menuTopIcon{
+                    background-position: 0 -30px;  
+                }
+                .mysupport .menuTopIcon{
+                    background: url("{!URLFOR($Resource.P2P_Resources, 'header-icons/support.png')}") no-repeat scroll; 
+                }
+                .mysupport.active .menuTopIcon,.mysupport:hover .menuTopIcon{
+                    background-position: 0 -30px;  
+                }
+                
+                
+                .top-menu{
+                    float: left;
+                    width: 100%;
+                }
+                
+                .tmp-search{
+                    width: 200px;
+                    float: left;
+                    margin-top: 8px;
+                }
+                .hideActive{
+                    display: none;
+                }
+                .tmp-btn{                 
+                    margin-top: 9px;             
+                }
+                
+                li.dropdown ul li{
+                    color: #333333;
+                    font-size: 15px;
+                    padding: 5px 5px 5px 15px
+                }
+                .navbar-default .open{
+                    background-image: none;
+                }
+                li.post-ad{
+                    border: 1px solid #E06509;
+                    background: linear-gradient(to bottom, #FFBD48 0%, #DE5B23 78%) repeat scroll 0% 0% transparent;
+                    height: 36px;
+                    border-radius: 5px;
+                    margin-top: -2px;
+                }
+                li.post-ad a{
+                    color:#fff;                 
+                }
+                
+                .clear-margin{
+                    margin:0px;
+                }
+                /*Edit menu top right*/
+                .spacingTopMini{
+                    margin-top: 10px;
+                }
+                .navbar-default{
+                    background-color: transparent;
+                    border: none;
+                }
+                .navbar-default .navbar-nav > li > a {
+                    color: #fff;
+                }
+                
+                .navbar-default .navbar-nav > li > a:hover{
+                    color: #006B38;
+                }
+                .panel-right span{
+                    color: #fff;
+                }
+                
+                .panel-right a:hover span {
+                    color: #333333;
+                }
+                .navbar-default .navbar-toggle .icon-bar{
+                    background-color: #fff;
+                    color: #fff;
+                    height: 4px;
+                    width: 30px;
+                }
+                
+                .navbar-default .navbar-toggle {
+                    border-color: #fff;
+                    border: 0;
+                }
+                .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus{
+                    background-color: transparent;
+                }
+                .navbar{
+                    margin-bottom: 0;
+                }
+                .navbar-collapse{
+                    border-top: 0;
+                    box-shadow: none;
+                }
+                .navCategory .navbar-nav{
+                    width: 100%;
+                }
+                .navCategory .navbar-header{
+                    background-color: #fff;
+                }
+                .navCategory .navbar-default .navbar-toggle .icon-bar{
+                    background-color: #888;
+                }
+                .panelTitle{
+                    float: left;
+                } 
+                .panelTitle h3{
+                    margin-top: 18px;
+                    padding-left: 15px;
+                } 
+                .panelSelect{
+                    float: right;
+                    margin-top: 15px;
+                    margin-right: 15px;
+                    margin-left: 15px;
+                } 
+                .panelStatus{
+                    padding-left: 15px;
+                    margin-top: 22px;
+                }
+                .selectedIcon{
+                    float: left;
+                    margin-left: 10px;
+                    margin-top: 5px;
+                    width: 50px;
+                }
+                .search-box{
+                    float: left;
+                }
+                .navbar-nav > li > a{
+                    padding-left: 5px;
+                    padding-right: 5px;
+                 }
+                
+                .gumtree-menu-ul-nav{
+                    padding: 0;
+                    list-style: none;
+                    background-color: #eaeaea;
+                    width: 160px;
+                    margin: 0;
+                    top: 0px;
+                    position: relative;
+                    border: 1px solid #999;
+                }
+                 
+                .gumtree-menu-ul-nav li a{
+                    font-weight: 400;
+                    position: relative;
+                    padding: 10px 10px;
+                    background-color: #eaeaea;
+                    display: block;
+                    border-bottom: solid 1px #fff;
+                    -webkit-box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                    box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                    color: #666;
+                    font-family: "Source Sans Pro",Arial,sans-serif;
+                    font-size: 12px;
+                    line-height: 1.4;
+                    padding-left: 10px !important;
+                    padding-right: 10px !important;
+                }
+                .gumtree-menu-ul-nav li a:hover{
+                    background-color: #e5e5e5;
+                    text-decoration: none;
+                    color: #666 !important;
+                }
+                
+                .gumtree-menu-ul-nav li a:hover span{
+                    color: #f4731e !important;
+                }
+                .gumtree-menu-ul-nav li a span{
+                    padding-right: 10px;
+                    font-size: 16px;
+                    top: 3px;
+                    color: #666;
+                }
+                .gumtree-menu-ul-nav li{
+                    display: list-item;
+                    text-align: -webkit-match-parent;
+                }
+                
+                .module-menu-ul-nav{
+                    padding: 0;
+                    list-style: none;
+                    background-color: #eaeaea;
+                    width: 100%;
+                    margin: 0;
+                    top: 0px;
+                    position: relative;
+                    border-width: 1px 2px 2px 2px;
+                    border-style: solid;
+                    border-color: #ddd;
+                }
+                
+                .module-menu-ul-nav li a{
+                    font-weight: 400;
+                    position: relative;
+                    padding: 10px 10px;
+                    background-color: #F2F2F2;
+                    display: block;
+                    border-bottom: solid 1px #fff;
+                    -webkit-box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                    box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                    color: #666;
+                    font-family: "Source Sans Pro",Arial,sans-serif;
+                    font-size: 15px;
+                    line-height: 1.4;
+                    padding-left: 10px !important;
+                    padding-right: 10px !important;
+                }
+                
+                .module-menu-ul-nav li a:hover{
+                    background-color: #e5e5e5;
+                    text-decoration: none;
+                }
+                
+                .module-menu-ul-nav li a:hover span{
+                    color: #f4731e;
+                }
+                
+                .module-menu-ul-nav li a span{
+                    font-size: 16px;
+                    top: 3px;
+                    color: #666;
+                }
+                .module-menu-ul-nav li{
+                    display: list-item;
+                    text-align: -webkit-match-parent;
+                }
+                a#linkMyGumtree:after {
+                    font-family: 'FontAwesome';  
+                    content: "\f0d8"; 
+                    float: right;  
+                    padding-left: 10px;
+                    font-size: 16px;
+                    padding-top: 1px;
+                }
+                a#linkMyGumtree.collapsed:after {
+                    content: "\f0d7"; 
+                }
+                .ie .ieFixImg{
+                    -ms-interpolation-mode: bicubic;
+                }
+                @media (max-width: 767px){
+                    .panelTitle{
+                        
+                    } 
+                    .hideActive{
+                        display: inherit;
+                        
+                    }
+                    #wrap-title{
+                        text-align: left;
+                    }
+                    .panelSelect{
+                        margin-left: 0;
+                    } 
+                    .panelStatus{
+                        margin-top: 0;
+                        width: 100%;
+                        float: left;
+                    }
+                    #nav .nav-item{
+                        width: 25%;
+                    }
+                    .header-green{
+                        background-color: #93C656;
+                    }
+                    .nav>li {
+                        float: left;
+                        
+                    }
+                    .navTopBtn{
+                        margin-top: 8px;
+                    }
+                    .cus-nav-divider{
+                        border-left: 1px solid #54b134;
+                        padding-left:10px;
+                        height: 100%;
+                    }
+                     
+                    .cus-navbar-collapse{
+                        border-top: 1px solid #54b134 !important;
+                    }
+                    
+                    .menu-ul-nav{
+                        padding: 0;
+                        list-style: none;
+                        background-color: #eaeaea;
+                        max-width: 260px;
+                        margin: 0;
+                        height: 100%;
+                        width: 260px !important;
+                    }
+                    .menu-ul-nav li a{
+                        font-weight: 500;
+                        position: relative;
+                        padding: 10px 20px;
+                        background-color: #eaeaea;
+                        display: block;
+                        border-bottom: solid 1px #fff;
+                        -webkit-box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                        box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                        color: #666;
+                        font-family: "Source Sans Pro",Arial,sans-serif;
+                        font-size: 14px;
+                        line-height: 1.4;
+                        vertical-align: top;
+                    }
+                    .menu-ul-nav li a:hover{
+                        background-color: #e5e5e5;
+                        text-decoration: underline;
+                    }
+                    
+                    .menu-ul-nav li a:hover span{
+                        color: #f4731e;
+                    }
+                    .menu-ul-nav li a span{
+                        padding-right: 10px;
+                        font-size: 20px;
+                        top: 3px;
+                    }
+                    .menu-ul-nav li{
+                        display: list-item;
+                        text-align: -webkit-match-parent;
+                    }
+                    a.navbar-brand{
+                        padding-top: 3px !important;
+                        display: inline-block !important;
+                        width: 48px;
+                        height: 48px;
+                        text-align: center;
+                        padding-left: 4px !important;
+                        padding-right: 4px !important;
+                    }
+                     
+                    
+                    .side-menu-title{
+                        margin: 6px 0 0;
+                        padding-bottom: 7px;
+                        padding-left: 20px;
+                        font-size: 13px;
+                        border-bottom: solid 1px #fff;
+                        -webkit-box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                        box-shadow: inset 0 -1px 0 0 #d6d6d6;
+                        color: #666;
+                        font-weight: 600;
+                    }
+                    .navbar-nav {
+                        margin: 0 0 7.5px;
+                    }
+                    .navCategory .navbar-header{
+                        margin-top: 15px;
+                    }
+                }
+                @media (max-width: 480px){
+                    .panelTitle{
+                        
+                    } 
+                    .panelSelect{
+                        
+                    } 
+                    .panelStatus{
+                        
+                    }
+                    #nav .nav-item{
+                        width: 50%;
+                    }
+                }
+                @media (max-width: 479px){
+                    .panelTitle{
+                        
+                    } 
+                    .panelSelect{
+                        margin-left: 15px;
+                    } 
+                    .panelStatus{
+                        margin-top: 15px;
+                    }
+                }
+                
+                #slide-expand-menu_background {
+                  transition: all 0.3s 0.3s;
+                }
+                #slide-expand-menu,
+                #slide-expand-menu_wrapper {
+                  transition: all 0.3s linear;
+                }
+                #slide-expand-menu {
+                  transform: translateX(40%) translateY(0);
+                }
+                .popup_visible #slide-expand-menu {
+                  transform: translateX(0) translateY(0);
+                }
+                #wrap-footer{
+                    width: 100%;
+                    padding: 0;
+                    margin: 0;
+                    margin-top: 15px;
+                }
+                
+                .footer-divider{
+                    width: 100%;
+                    height: 1px;
+                    background-color: #ccc;
+                    margin: 0;
+                    margin-top: 0px;
+                }
+                .footer-link{
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+                
+                .footer-link li{
+                    width: auto;
+                    border: 0;
+                    display: inline-block;
+                    margin-top: 6px;
+                    margin-right: 6px;
+                    padding: 0 6px 0 0;
+                    border-left: 0;
+                    border-right: 1px solid #999;
+                }
+                
+                .footer-link li a{
+                    padding: 0;
+                    color:#2A5DB0 !important;
+                }
+                .footer-link li a:hover{
+                    text-decoration:underline;
+                    background-color:transparent;
+                    //color:#428bca;
+                    color:#2A5DB0;
+                }
+                .footer-link li a h5{
+                    margin-top: 3px;
+                    margin-bottom: 3px;
+                }
+                .footer-link li.end{
+                    border-right: 0;
+                }
+                .footer-follow h3{
+                    margin-top: 10px;
+                }
+                
+                 
+                 
+                @media (min-width: 768px) and (max-width: 1023px){
+                    .footer-link li{
+                        width: 20%;
+                        border-right: 1px solid #d6d6d6;
+                        border-left: 0;
+                        border-bottom: 1px solid #d6d6d6;
+                        margin: 0;
+                        text-align: center;
+                        padding-top: 10px;
+                        padding-bottom: 10px;
+                    }
+                    .footer-link{
+                        border-left: 0;
+                    }
+                    .footer-follow p{
+                        text-align: center;
+                    }   
+                    .footer-follow li.no-border-right-768{
+                        border-right: 0 !important;
+                    }
+                    .footer-container{
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                    }
+                }
+                @media (max-width: 767px){
+                    .footer-link li{
+                        width: 50%;
+                        border-right: 1px solid #d6d6d6;
+                        border-left: 0;
+                        border-bottom: 1px solid #d6d6d6;
+                        margin: 0;
+                        text-align: center;
+                        padding-top: 10px;
+                        padding-bottom: 10px;
+                    }
+                    .footer-follow p{
+                        text-align: center;
+                        padding-right: 10px;
+                        padding-left: 10px;
+                    }   
+                    .footer-follow h3{
+                        margin-left: 10px;
+                    }
+                    .footer-link {
+                        border-left: 0;
+                    }
+                    .footer-follow li.no-border-right-767{
+                        border-right: 0 !important;
+                    }
+                    .footer-container{
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                    }
+                    
+                }
+                
+                .desktop-head-divider{
+                    border-left: 1px solid #54b134;
+                    height: 30px;
+                    top: 10px;
+                }
+                ul.desktop-nav li a{
+                    padding-left:20px;
+                    padding-right: 20px;
+                }
+                ul.desktop-nav li a:hover, ul.desktop-nav li a:hover span{
+                    color: #006B38 ;
+                }
+                ul.desktop-nav li a span{
+                    font-size: inherit;
+                }
+                
+                
+                .shortname{
+                    display: none;
+                }
+                .fullname{
+                    display: inline;
+                }
+                #desktop-post-ad{
+                    margin-top: 8px;
+                }
+                .actionOpenMobile{
+                    -webkit-border-radius: 5px;    
+                      border-radius: 5px; 
+                      -moz-border-radius:5px;
+                      -khtml-border-radius:5px;
+                }
+                .deactionOpenMobile{
+                    -webkit-border-radius: 5px 5px 0 0;    
+                      border-radius: 5px 5px 0 0; 
+                      -moz-border-radius:5px 5px 0 0;
+                      -khtml-border-radius:5px 5px 0 0;
+                }
+                
+                .cropFullName{
+                    float: left;
+                    overflow: hidden;
+                    text-align: right;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    width: 210px;
+                }
+                #nav .nav-item:first-child{
+                    margin-left: 0;
+                }
+                @media (max-width: 1150px){
+                    .fullname{
+                        display: none;
+                    }
+                    .shortname{
+                        display: inline;
+                    }
+                    
+                }
+                @media (max-width: 950px){
+                    ul.desktop-nav li a{
+                        padding-left:5px;
+                        padding-right: 5px;
+                    }
+                    #desktop-post-ad{
+                        padding-left: 5px;
+                        padding-right: 5px;
+                    }
+                    #desktop-search-box{
+                        width: 176px;
+                    }
+                }
+                @media (max-width: 800px){
+                    ul.desktop-nav li a{
+                        font-size: 13px;
+                    }
+                }
+                @media (max-width: 320px){
+                    ul.social-media-buttons li{
+                        width: auto;
+                        max-width: 70px;
+                    }
+                }
+                ul.social-media-buttons{ 
+                    list-style: none;
+                    list-style-image: none;
+                    padding: 0;
+                    float: left;
+                }
+                ul.social-media-buttons li{
+                    width: 68px;
+                    height: 28px;
+                    background-color: #ddd;
+                    border-radius: 5px;
+                    margin-right: 6px;
+                    padding: 4px 6px;
+                    font-size: 12px;
+                    position: relative;
+                    float: left;
+                    text-align: center;
+                    cursor: pointer; 
+                }
+                ul.social-media-buttons li:last-child{
+                    margin-right: 0;
+                }
+                ul.social-media-buttons li span{
+                    margin-right: 3px;
+                    font-size: 17px;
+                    top: 2px;
+                    position: relative;
+                }
+                .icn-facebook{
+                    color: #37589a;
+                }
+                .icn-twitter{
+                    color: #38a8e0;
+                }
+                .icn-google-plus{
+                    color: #da4a38;
+                }
+                .icn-pinterest{
+                    color: #c91618;
+                }
+                
+                
+            </style>
+        
+        <!-- Start: GPT Async -->
+            <script type='text/javascript'>
+                var gptadslots=[];
+                var googletag = googletag || {};
+                googletag.cmd = googletag.cmd || [];
+                (function(){ var gads = document.createElement('script');
+                gads.async = true; gads.type = 'text/javascript';
+                var useSSL = 'https:' == document.location.protocol;
+                gads.src = (useSSL ? 'https:' : 'http:') + '//www.googletagservices.com/tag/js/gpt.js';
+                var node = document.getElementsByTagName('script')[0];
+                node.parentNode.insertBefore(gads, node);
+                })();
+            </script>
+
+            <script type="text/javascript">
+                googletag.cmd.push(function() {
+
+            //Adslot 1 declaration
+                gptadslots[1]= googletag.defineSlot('/5144/manage-ads-business', [[728,90],[468,60]],'div-gpt-ad-543961393633539649-1').addService(googletag.pubads());
+
+                googletag.pubads().enableSingleRequest();
+                googletag.pubads().enableAsyncRendering();
+                googletag.enableServices();
+                });
+            </script>
+        <!-- End: GPT -->
+        
+       
+        
+        </head>
+        <body>
+            
+            <div class="container">
+                <apex:variable var="pageParam" value="{!IF(SitePrefix == '','?id='&$CurrentPage.parameters.id,'')}"/>
+                <!-- desktop header -->
+                <div class="row clear-margin hidden-xs">
+                 
+                    <!-- Beginning Async AdSlot 1 for Ad unit manage-ads-business  ### size: [[728,90],[468,60]] -->
+                    <!-- Adslot's refresh function: googletag.pubads().refresh([gptadslots[1]]) -->
+                    <div style="margin-top:20px; height: 90px; width: 100%; display: block !important;">
+                       <div id='div-gpt-ad-543961393633539649-1' align="center" style="margin-top:20px; height: 90px; width: 100%; display: block !important;">
+                          <script type='text/javascript'>
+                              googletag.cmd.push(function() { googletag.display('div-gpt-ad-543961393633539649-1'); });
+                          </script>
+                       </div>
+                    </div>
+                    <!-- End AdSlot 1 -->
+                              
+                    <div id="head">
+                                            
+                        <a href="http://www.gumtree.com">
+                            <img class="isNotIe" src="{!URLFOR($Resource.P2P_Resources, 'header-icons/gfb-dtlogo.png')}" alt="logo" id="logo"/> 
+                            <img class="ieFixImg isIe" src="{!URLFOR($Resource.P2P_Resources, 'header-icons/md-destop-logo.png')}" alt="logo" id="logo"/> 
+                        </a>
+                        <div class="panel-right" style="padding: 0px;">
+                            <div class="top-menu">
+                                <nav class="navbar navbar-default">
+                                  <div class="container-fluid">
+                                    
+                                    <!-- Brand and toggle get grouped for better mobile display -->
+                                    <div class="navbar-header">
+                                      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                      </button>
+                                    </div>
+                                
+                                    <!-- Collect the nav links, forms, and other content for toggling -->
+                                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                      <ul class="nav navbar-nav" style="margin-left:110px;">
+                                        <li>
+                                            <div class="search-box">
+                                                <input type="text" class="tmp-search" placeholder="Search in United Kingdom" id="desktop-search-box"/>
+                                                <button class="btnOrange btnSearch tmp-btn">
+                                                    <i class="fa fa-search"></i>
+                                                </button>                                               
+                                            </div>
+                                        </li>
+                                      </ul>
+                                      <ul class="nav navbar-nav navbar-right desktop-nav">
+                                         
+                                        <!-- <li><a href="https://my.gumtree.com/logout"><span class="fullname"><span class="cropFullName">Hi {!act.Name}</span>&nbsp;(logout)</span><span class="shortname">Logout</span></a></li> -->
+                                        <!-- <li><a href="https://my.gumtree.com/logout"><span class="fullname">Logout</span><span class="shortname">Logout</span></a></li> -->
+                                        <li><a href="{!$Site.Prefix}/secur/logout.jsp"><span class="fullname">Logout</span><span class="shortname">Logout</span></a></li>
+                                        <li class="desktop-head-divider"></li>
+                                        <li>
+                                          <a id="linkMyGumtree" href="#myGumtree" class="collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="myGumtree">My Gumtree </a>
+                                          <div id="myGumtree" style="position: absolute; z-index: 9999;" class="collapse">
+                                          <ul class="gumtree-menu-ul-nav">
+                                            <li><a href="http://www.gumtree.com/my-account/favourites"><span class="glyphicon glyphicon-star"></span> Favourites</a></li>
+                                            <li><a href="http://www.gumtree.com/my-account/saved-searches"><span class="glyphicon glyphicon-floppy-disk"></span> Saved searches</a></li>
+                                            <li><a href="https://my.gumtree.com/manage/ads"><span class="glyphicon glyphicon-folder-open"></span> Manage my ads</a></li>
+                                            <li><a href="https://my.gumtree.com/manage/details/update"><span class="glyphicon glyphicon-user"></span> My details</a></li>
+                                          </ul>
+                                          </div>
+                                        </li>
+                                        <li class="desktop-head-divider"></li>
+                                        <li><a href="http://help.gumtree.com/knowledgeHome">Help &amp; Contact</a></li>
+                                        <button class="btnOrange setLeft spacingTopMini btnPostAd" id="desktop-post-ad"><span class="glyphicon glyphicon-plus-sign" style="top: 4px;padding-right: 5px;"></span> Post an ad</button>
+                                        <!-- <li><a href="https://my.gumtree.com/postad"><button class="btnOrange setLeft spacingTopMini">Post an ad</button></a></li> -->
+                                      </ul>
+                                    </div>
+                                  </div> 
+                                </nav>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+                <!-- end desktop header -->    
+                            
+                <!-- mobile header -->
+                <div class="visible-xs">  
+                    <nav class="navbar navbar-default header-green" style="min-height:20px">
+                      <div class="container-fluid" >
+                        <div class="navbar-header">
+                            <ul class="nav navbar-nav" style="float:left;margin-bottom:0;height:47px;">
+                                <li>
+                                    <img class="isNotIe" src="{!URLFOR($Resource.P2P_Resources, 'header-icons/mobile-logo.png')}" alt="logo" width="190px"/>
+                                    <img class="isIe" src="{!URLFOR($Resource.P2P_Resources, 'header-icons/md-mobile-logo.png')}" alt="logo" width="190px"/>
+                                </li>
+                                 
+                            </ul>
+                            <ul class="nav navbar-nav" style="float:right;margin-bottom:0;height:47px;">
+                                <li class="cus-nav-divider" style="padding-left:0; padding-right:0;">
+                                    <button id="btnSearchToggle" type="button" class="navbar-toggle collapsed" data-toggle="collapse" style="margin-right: 0px; margin-bottom: 0px;margin-top:3px;" data-target="#search-navbar-collapse">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="glyphicon glyphicon-search" style="color: white; font-size: 25px;"></span>
+                                      </button>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="cus-nav-divider" style="padding-left:0; padding-right:0;">
+                                    <button id="menuSlider" type="button" class="navbar-toggle collapsed" data-toggle="collapse" style="margin-right: 0px;margin-top:6px;" >
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                      </button>
+                                </li>
+                            </ul>
+                        </div> 
+                        
+                        <div class="collapse navbar-collapse cus-navbar-collapse" id="search-navbar-collapse" style="background-color: #54b134;">
+                            <div class="search-box" style="padding-bottom: 10px;width: 100%;padding-right: 40px;position: relative;">
+                                <input type="text" class="tmp-search" placeholder="Search in London" style="width: 100%;"/>
+                                <button class="btnOrange btnSearch tmp-btn" style="position: absolute; right: 0;">
+                                    <i class="fa fa-search"></i>
+                                </button>                                
+                            </div>
+                        </div>
+                        
+                        
+                          
+                      </div> 
+                      
+                    </nav>
+                </div>
+                <!-- End mobile header -->
+                
+                <div id="wrap-title">
+                    
+                    <div class="col-md-12 col-xs-12 visible-xs" style="margin: 0;margin-top: 15px;">
+                        <h2 style="margin-bottom: 0;">{!act.Name}</h2>
+                    </div>
+                     
+                    <div class="panelSelect hidden-xs">
+                        <select>
+                            <option>{!act.Name}</option>
+                        </select>
+                    </div>
+                     
+                    <!--
+                    <div class="panelStatus">
+                        <span style="color: #333;">Question? Call the Customer Support Team: 0208 605 3302</span>
+                        
+                    </div>
+                  --->                      
+                </div>        
+                      
+                <div id="wrap-content" class="spacingTop">
+                    <!-- Module header menu on mobile 
+                    
+                    <div class="col-md-12 col-xs-12 visible-xs" id="nav">
+                        <select style="width: 100%; margin-top: 15px;" id="selectModule">
+                            <option class="lst-item" value="Manage ads" >Manage ads</option>
+                            <option class="lst-item" value="Replies" >Replies</option>
+                            <option class="lst-item" value="My Details" >My Details</option>
+                            <option class="lst-item" value="Company" >Company</option>
+                            <option class="lst-item" value="Financials" >Financials</option>
+                            <option class="lst-item" value="Metrics" >Metrics</option>
+                            <option class="lst-item" value="Store" >Store</option>
+                            <option class="lst-item" value="Support" >Support</option>
+                        </select>
+                    </div>-->
+                    
+                    <!-- End Module header menu on mobile -->
+                    
+                    <!-- Module header menu (desktop)-->
+                    <div id="nav" class="col-md-12 col-xs-12 navCategory hidden-xs">
+                        <nav class="navbar navbar-default" style="min-height:44px;">
+                          <div class="container-fluid" style="padding-left: 0; padding-right: 0;">
+                            <!-- Brand and toggle get grouped for better mobile display -->
+                            <div class="navbar-header">
+                              <div class="setLeft hideActive">
+                                    <!-- <img class="selectedIcon" src="{!URLFOR($Resource.P2P_Resources, 'header-icons/company_over.png')}"/> -->
+                                    <div class="setLeft spacingTop">
+                                        <h2>Company</h2>
+                                    </div>
+                              </div>
+                              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                              </button>
+                            </div>
+                        
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2" style="float: left; width: 100%; padding: 0px;">
+                              <ul class="nav navbar-nav">
+                                <li class="nav-item manage mymanage" onclick="top.location='https://my.gumtree.com/manage/ads';">
+                                    <div class="menuTopIcon"></div>
+                                    <div>Manage ads</div>
+                                </li>
+                                <li class="nav-item details mydetails" onclick="top.location='https://my.gumtree.com/manage/details/update';">
+                                    <div class="menuTopIcon"></div>
+                                    <div>My Details</div>
+                                </li>
+                                <li class="nav-item replies myreplies" onclick="top.location='https://my.gumtree.com/manage/replies/outbox';">
+                                    <div class="menuTopIcon"></div>
+                                    <div>Replies</div>
+                                </li>
+                                <li class="nav-item company mycompany" onclick="top.location='{!URLFOR($Page.P2P_MyCompany)}{!pageParam}';">
+                                    <div class="menuTopIcon"></div>
+                                    <div>Company</div>
+                                </li>
+                                
+                                <li class="nav-item financials myfinancials" onclick="top.location='{!URLFOR($Page.P2P_MyFinancials)}{!pageParam}';">
+                                    <div class="menuTopIcon"></div>
+                                    <div>Financials</div>
+                                </li>
+                                <li class="nav-item metrics mymetrics" onclick="top.location='{!URLFOR($Page.P2P_MyMetrics)}{!pageParam}';">
+                                    <div class="menuTopIcon"></div>
+                                    <div>Metrics</div>
+                                </li>
+                                <apex:outputPanel id="storeModule" rendered="{!act.RecordType.Name='Motor Account - Dealer'}">
+                                    <li class="nav-item store mystore" onclick="top.location='{!URLFOR($Page.P2P_MyCheckout)}{!pageParam}';">
+                                        <div class="menuTopIcon"></div>
+                                        <div>Store</div>
+                                    </li>                   
+                                </apex:outputPanel>
+                                <li class="nav-item support mysupport" onclick="top.location='{!URLFOR($Page.P2P_MySupport)}{!pageParam}';">
+                                    <div class="menuTopIcon"></div>
+                                    <div>Support</div>
+                                </li>
+                                
+                              </ul>
+                              
+                              
+                            </div><!-- /.navbar-collapse -->
+                          </div><!-- /.container-fluid -->
+                        </nav>
+                    </div> 
+                    <!-- End Module header menu (desktop)-->
+                    
+                    <!-- Module header menu (Mobile)-->
+                    <div class="col-md-12 col-xs-12 navCategory visible-xs">
+                        <nav class="navbar navbar-default" style="min-height:44px;">
+                          <div class="container-fluid">
+                            <!-- Brand and toggle get grouped for better mobile display -->
+                            <div class="navbar-header actionOpenMobile">
+                              <div class="setLeft hideActive">
+                                    <div class="setLeft spacingTop">
+                                        <h2 style="padding-left: 10px;">
+                                            <span id="mobile-module-icon" class="fa " style="color:#f4731e;margin-right: 10px;font-size: 26px;margin-top: -3px;"></span>
+                                            <span id="mobile-module-name" style="position: relative; top: -2px;"></span>
+                                        </h2> 
+                                    </div>
+                              </div>
+                              <button type="button" class="actionOpenMobileClick navbar-toggle collapsed" data-toggle="collapse" data-target="#mobile-module-menu">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                              </button>
+                            </div>
+                       
+                                          
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <div class="collapse navbar-collapse" id="mobile-module-menu" style="max-height:500px;padding:0;">
+                              <ul class="module-menu-ul-nav">
+                                <li><a href="#" onclick="top.location='https://my.gumtree.com/manage/ads';"><span class="fa fa-folder-open fa-fw"></span> Manage ads</a></li>
+                                <li><a href="#" onclick="top.location='https://my.gumtree.com/manage/details/update';"><span class="fa fa-user fa-fw"></span> My Details</a></li>
+                                <li><a href="#" onclick="top.location='https://my.gumtree.com/manage/replies/outbox';"><span class="fa fa-envelope fa-fw"></span> Replies</a></li>
+                                <li><a href="#" onclick="top.location='{!URLFOR($Page.P2P_MyCompany)}{!pageParam}';"><span class="fa fa-suitcase fa-fw"></span> Company</a></li>
+                                <li><a href="#" onclick="top.location='{!URLFOR($Page.P2P_MyFinancials)}{!pageParam}';"><span class="fa fa-gbp fa-fw"></span> Financials</a></li>
+                                <li><a href="#" onclick="top.location='{!URLFOR($Page.P2P_MyMetrics)}{!pageParam}';"><span class="fa fa-bar-chart fa-fw"></span> Metrics</a></li>
+                                <apex:outputPanel id="storeModuleMobile" rendered="{!act.RecordType.Name='Motor Account - Dealer'}">
+                                    <li><a href="#" onclick="top.location='{!URLFOR($Page.P2P_MyCheckout)}{!pageParam}';"><span class="fa fa-shopping-cart fa-fw"></span> Store</a></li>
+                                </apex:outputPanel>
+                                <li><a href="#" style="border-bottom-width: 0px;" onclick="top.location='{!URLFOR($Page.P2P_MySupport)}{!pageParam}';"><span class="fa fa-question-circle fa-fw"></span> Support</a></li>
+                              </ul>
+                            </div><!-- /.navbar-collapse -->
+                          </div><!-- /.container-fluid -->
+                        </nav>
+                    </div>
+                    <!-- End Module header menu (Mobile) -->
+                    
+                    <div id="content">
+                        <apex:insert name="body"/>
+                    </div>
+                </div> 
+            </div>
+            
+            <!-- Footer -->
+            <div id="wrap-footer">
+                
+                 <div class="row footer-divider"></div>
+                  <div class="container">
+                      <div class="footer-follow" style="overflow:auto; padding-left: 15px; padding-right: 15px;">
+                          <!-- <h3>Follow Gumtree</h3> -->
+                          <h5>Follow Gumtree</h5>
+                          <ul class="social-media-buttons">  
+                              <li onclick="top.location='https://www.facebook.com/gumtree'"><span class="fa fa-facebook icn-facebook"></span> Like</li>
+                              <li onclick="top.location='https://twitter.com/gumtree'"><span class="fa fa-twitter icn-twitter"></span> Tweet</li>
+                              <li onclick="top.location='https://plus.google.com/+gumtree'"><span class="fa fa-google-plus icn-google-plus"></span> +1</li>
+                              <li onclick="top.location='http://www.pinterest.com/gumtreeuk'"><span class="fa fa-pinterest icn-pinterest"></span> Pin it</li>
+                          </ul>
+                      </div>
+                 </div>
+                 <div class="row footer-divider"></div>
+                 <div class="container footer-container">
+                     
+                     <div class="footer-follow">
+                         <ul class="nav navbar-nav footer-link">
+                             <li ><a href="http://help.gumtree.com/knowledgeHome"><h5>Help &amp; Contact</h5></a></li>
+                             <li class="no-border-right-767"><a href="https://my.gumtree.com/manage/ads"><h5>My Gumtree</h5></a></li>
+                             <li ><a href="http://blog.gumtree.com/aboutus"><h5>About Gumtree</h5></a></li>
+                             <li class="no-border-right-767"><a href="http://www.gumtree.com/partners"><h5>Partners</h5></a></li>
+                             <li class="no-border-right-768"><a href="http://www.gumtreeforbusiness.co.uk"><h5>For business</h5></a></li>
+                             <li class="no-border-right-767"><a href="http://www.gumtree.com/popular-search"><h5>Popular searches</h5></a></li>
+                             <li ><a href="http://www.gumtree.com/privacy_policy"><h5>Privacy Policy</h5></a></li>
+                             <li class="no-border-right-767"><a href="#http://www.gumtree.com/cookies"><h5>Cookies Policy</h5></a></li>
+                             <li ><a href="http://www.gumtree.com/termsofuse"><h5>Terms of use</h5></a></li>
+                             <li class="end"><a href="http://blog.gumtree.com/"><h5>Blog</h5></a></li>
+                         </ul>
+                                                                             
+                         
+                         <p >© Copyright 2000-{!YEAR(TODAY())} Gumtree.com Limited. All rights reserved.</p>
+                         
+                     </div>
+                </div>
+            </div>
+            <!-- End Footer -->
+                    
+            <!-- Menu on right side -->
+            <div id="slide-expand-menu" style="height:100%">
+               <ul class="menu-ul-nav" style="">
+                    <li><a href="http://www.gumtree.com/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                    <li><a href="https://my.gumtree.com/postad"><span class="glyphicon glyphicon-plus-sign"></span> Post an ad</a></li>
+                    <li><h2 class="side-menu-title">My Gumtree</h2></li>
+                    <li><a href="http://www.gumtree.com/my-account/favourites"><span class="glyphicon glyphicon-star"></span> Favorites</a></li>
+                    <li><a href="http://www.gumtree.com/my-account/saved-searches"><span class="glyphicon glyphicon-floppy-save"></span> Saved searches</a></li>
+                    <li><a href="https://my.gumtree.com/manage/ads"><span class="glyphicon glyphicon-folder-open"></span> Manage my ads</a></li>
+                    <li><a href="https://my.gumtree.com/manage/details/update"><span class="glyphicon glyphicon-user"></span> My details</a></li>
+                    <!-- <li><a href="https://my.gumtree.com/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li> -->
+                    <li><a href="{!$Site.Prefix}/secur/logout.jsp"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+                    <li><h2 class="side-menu-title">More information</h2></li>
+                    <li><a href="http://help.gumtree.com/knowledgeHome"><span class="glyphicon glyphicon-question-sign"></span> Help &amp; Contact</a></li>
+                </ul>
+           </div>
+            
+            <script type="text/javascript">
+                    setTimeout(function(){var a=document.createElement("script");
+                    var b=document.getElementsByTagName("script")[0];
+                    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0012/7064.js?"+Math.floor(new Date().getTime()/3600000);
+                    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+            </script>
+            
+        </body> 
+        <script>     
+            $('head').prepend('<link rel="shortcut icon" href="{!$Resource.FavouriteSiteIcon}" type="image/x-icon"/>');
+            function detectIE() {
+                var ua = window.navigator.userAgent;
+            
+                var msie = ua.indexOf('MSIE ');
+                if (msie > 0) {
+                    // IE 10 or older => return version number
+                    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+                }
+            
+                var trident = ua.indexOf('Trident/');
+                if (trident > 0) {
+                    // IE 11 => return version number
+                    var rv = ua.indexOf('rv:');
+                    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+                }
+             
+                var edge = ua.indexOf('Edge/');
+                if (edge > 0) {
+                   // IE 12 => return version number
+                   return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+                }
+            
+                // other browser
+                return false;
+            }     
+            if(detectIE()){
+                $('html').addClass('ie');
+            }            
+            $(document).ready(function(){  
+                var active = $("#comp").attr("class");
+                
+                var lst ="";
+                
+                if(active == 'manage'){
+                    lst = "Manage ads";
+                    $('#mobile-module-icon').addClass("fa-folder-open");
+                }else if(active == 'replies'){
+                    lst = "Replies";
+                    $('#mobile-module-icon').addClass("fa-envelope");
+                }else if(active == 'details'){
+                    lst = "My Details";
+                    $('#mobile-module-icon').addClass("fa-user");
+                }else if(active == 'metrics'){
+                    lst = "Metrics";
+                    $('#mobile-module-icon').addClass("fa-bar-chart");
+                }else if(active == 'company'){
+                    lst = "Company";
+                    $('#mobile-module-icon').addClass("fa-suitcase");
+                }else if(active == 'financials'){
+                    lst = "Financials";
+                    $('#mobile-module-icon').addClass("fa-gbp");
+                }else if(active == 'store'){
+                    lst = "Store";
+                    $('#mobile-module-icon').addClass("fa-shopping-cart");
+                }else if(active == 'support'){
+                    lst = "Support";
+                    $('#mobile-module-icon').addClass("fa-question-circle");
+                }
+                
+                $('#mobile-module-name').text(lst);
+                
+                //$("select#selectModule").val(lst);
+                $('.'+active).addClass('active');
+                $("#comp").removeClass('active');
+                
+                $('#slide-expand-menu').popup({
+                        scrolllock: true,
+                        outline: true,
+                        focusdelay: 400, 
+                        horizontal: 'right',
+                        vertical: 'top' 
+                    });
+                $("#menuSlider").click(function(){
+                    $('#slide-expand-menu').popup('show');
+                });
+                
+                $("#btnSearchToggle").click(function(){
+                    $(this).parent().css('background-color','inherit');
+                    if($(this).hasClass('collapsed')){
+                        $(this).parent().css('background-color','#54b134');
+                    }
+                });
+                
+                $(".btnPostAd").click(function(){
+                    window.location ="https://my.gumtree.com/postad";
+                });
+                //For radius mobile menu
+                $('.actionOpenMobileClick').off('click').on('click',function(){
+                    var $mobileMenu = $(this).closest('.navbar-header');
+                    if($mobileMenu.hasClass("disableMe")){
+                        return false;
+                    }
+                    $mobileMenu.addClass('disableMe');
+                    if($mobileMenu.hasClass("deactionOpenMobile")){
+                        $mobileMenu.removeClass('deactionOpenMobile');
+                    }else{
+                        $mobileMenu.addClass('deactionOpenMobile');
+                    }
+                    setTimeout(function(){
+                        $mobileMenu.removeClass('disableMe');
+                    },500);
+                });
+                $('.btnSearch').off('click')
+                .on('click',function(){
+                    var $input = $(this).closest('.search-box').find('input');
+                    if($input.val().trim() != ''){
+                        window.location.href = "http://www.gumtree.com/search?q="+$input.val().trim()+"&search_category=all&search_location=&distance=0.0001";
+                    }
+                });
+  
+            });
+        </script>
+    </html>
+</apex:page>

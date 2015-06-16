@@ -1,0 +1,966 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" Controller="P2P_MyCheckoutController" id="thePage" docType="html-5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    
+                
+    <script>
+        
+        function checkboxChange(btnEle, chkBsk, rechk){
+            if(btnEle.src.indexOf("uncheckbox.png") != -1){
+                btnEle.src = "{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/checkbox.png')}";
+                document.getElementById(chkBsk).value = true;
+            }else{
+                btnEle.src = "{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/uncheckbox.png')}";
+                document.getElementById(chkBsk).value = false;
+            }
+            document.getElementById(rechk).value = true;
+        }
+        
+        
+        
+        
+        
+        function selectDeselectPro(val, hasChanged){
+            if(val == 'true'){
+                
+                if(hasChanged == 'true'){
+                    if(confirm("Would you like to discard your current package?")){
+                        removeProducts();
+                    }
+                }else{
+                    removeProducts();
+                }
+                
+            }else{
+                getProducts();
+            }
+        }
+    </script>
+    <style>
+         
+                    .paddingBefore1024{
+                        padding-left: 26px;
+                    }
+                    .wrapMeByBlock{
+                        background-color: #fff;
+                        float: left;
+                        padding: 15px;
+                        width: 100%;
+                    }
+                  
+                    .wrapChartSignal{
+                        border-bottom: 1px solid #cdcdcd;
+                        float: left;
+                        width: 100%;
+                    }
+                    .miniTitle{
+                        font-size: 20px;
+                        float: left;
+                    }
+                    
+                    .clearPadding{
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                    .clearpaddingright{
+                        padding-right: 0;
+                    }
+                    .clearpaddingleft{
+                        padding-left: 0;
+                    }
+                    
+                    .hideAllSize{
+                        display: none;
+                    }
+                    
+                    .clearMe{
+                        float: left;
+                        width: 100%;
+                        clear: both;
+                    }
+                    
+                    .paddingTop{
+                        padding-top: 15px;
+                    }
+                    
+                    .paddingLeft{
+                        padding-left: 15px;
+                    }
+                    .paddingRight{
+                        padding-right: 15px;
+                    }
+                    
+                    
+                    
+                    .colSearch{
+                        float: left;
+                        width: 25%;
+                        padding-left: 15px;
+                        position: relative;
+                        min-height: 65px;
+                    }
+                    .paddingForButton{
+                        padding-right: 40px;
+                    }
+                    .btnSearchProduct{
+                        bottom: 4px;
+                        position: absolute;
+                        right: 0;
+                    }
+                    .searchProduct{
+                        float: left;
+                        width: 100%;
+                    }
+                    .lockBreakLine{
+                        white-space: nowrap;
+                    }
+                    .wrapCheckProduct{
+                        float: left;
+                        padding-left: 55px;
+                        position: relative;
+                        width: 33.55%;
+                        margin-bottom: 8px;
+                    }
+                    .wrapDescriptionProduct{
+                        float: left;
+                        padding-left: 15px;
+                        width: 50%;
+                    }
+                    .wrapActionAdd{
+                        float: right;
+                        padding-left: 15px;
+                        text-align: right;
+                        width: 25%;
+                    }
+                    .lblAdd{
+                        display: inline-block;
+                        line-height: 12px;
+                        margin-right: 5px;
+                        position: relative;
+                        width: 92px;
+                    }
+                    .labelCheckProduct{
+                        float: left;
+                        position: relative;
+                        width: 100%;
+                        top: 4px;
+                    }
+                    .checkImagePosition{
+                        left: 15px;
+                        position: absolute;
+                        top: 2px;
+                    }
+                    .subProductCol1{
+                        float: left;
+                        width: 20%;
+                        padding-left: 15px;
+                    }
+                    .subProductCol2{
+                        float: left;
+                        width: 80%;
+                    }
+                    .rowSubProduct{
+                        float: left;
+                        width: 100%;
+                    }
+                    .subProductList{
+                        float: left;
+                        width: 100%;
+                        position: relative;
+                    }
+                    .labelDetail{
+                        float: none;
+                        margin-left: 5px;
+                        position: relative;
+                        top: -1px;
+                    }
+                    .colEachSubProItem{
+                        float: left;
+                        padding-left: 15px;
+                        width: 16.66%;
+                        height: 65px;
+                    }
+                    .subProItemValue3,
+                    .subProItemValue2,
+                    .subProItemValue1{
+                        float: left;
+                        margin-top: 10px;
+                    }
+                    .subProItemValue{
+                        line-height: 12px;
+                    }
+                    .priceSize{
+                        font-size: 25px;
+                    }
+                    .popular{
+                        bottom: -24px;
+                        display: none;
+                        position: absolute;
+                        right: -22px;
+                    }
+                    
+                    .isPopular .popular{
+                        display: block;
+                    }
+                    .seperateProductItem{
+                        padding-left: 15px;
+                    }
+                    .seperateProductItem hr{
+                        border: 1px solid #cdcdcd;
+                    }
+                    .lineSeperateBlock{
+                        border: 1px solid #cdcdcd;
+                        margin-bottom: 10px;
+                        margin-top: 5px;
+                    }
+                    .wrapBlockTotal{
+                        background-color: #999999;
+                    }
+                    .totalItem{
+                        color: #fff;
+                    }
+                    .totalLabelSize{
+                        font-size: 18px;
+                    }
+                    .totalPrice{
+                        color: #fff;
+                        float: right;
+                        font-size: 18px;
+                    }
+                    .alert {
+                        background-color: #f0f0f0;
+                        border: 1px solid transparent;
+                        border-radius: 4px;
+                        float: left;
+                        margin-bottom: 0;
+                        margin-top: 15px;
+                        padding: 15px;
+                        width: 100%;
+                    }
+                    button.close {
+                        background: url("{!URLFOR($Resource.P2P_ResMyCheckout, 'close_warning.png')}") no-repeat scroll 0 0 transparent;
+                        border: 0 none;
+                        cursor: pointer;
+                        height: 25px;
+                        filter:alpha(opacity=50);
+                        -moz-opacity:0.5;
+                        -khtml-opacity: 0.5;
+                        opacity: 0.5;
+                        width: 25px;
+                        float: left;
+                        margin-right: 10px;
+                        margin-top: -3px;
+                    }
+                    button.close:HOVER{
+                        filter:alpha(opacity=100);
+                        -moz-opacity:1;
+                        -khtml-opacity: 1;
+                        opacity: 1;
+                    }
+                    .fontSize{
+                        font-size: 20px;
+                    }
+                    .removePaddingRight{
+                        padding-right: 0;
+                    }
+                    .wrapPopupLeft{
+                        float: left;
+                        padding-right: 15px;
+                        width: 40%;
+                    }
+                    .wrapPopupRight{
+                        float: right;
+                        width: 60%;
+                    }
+                    .wrapButtonAction{
+                        float: left;
+                        padding-right: 15px;
+                        width: 40%;
+                    }
+                    .btnAddStandardAd{
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                    .btnNoThanks{
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                    .colAction1{
+                        float: left;
+                        margin-right: 2%;
+                        width: 48%;
+                    }
+                    .colAction2{
+                        float: left;
+                        margin-left: 2%;
+                        width: 48%;
+                    }
+                    #my_popup{
+                        background-color: #fff;
+                        max-width: 1150px;
+                        padding: 15px 15px 40px;
+                        width: 95%;
+                        display: none;
+                        position: relative;
+                        border: 2px solid #cdcdcd;
+                        border-radius: 5px;
+                        top: 26px;
+                    }
+                    
+                    .titlePopup{
+                        border-bottom: 1px solid #cdcdcd;
+                        font-size: 18px;
+                        margin-bottom: 10px;
+                        padding-bottom: 10px;
+                    }
+                    .wrapDeviceType{
+                        background-color: #ddd;
+                        border-radius: 5px;
+                        float: left;
+                        height: 60px;
+                        margin: 0;
+                        padding: 0;
+                        width: 100%;
+                    }
+                    .desktop{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/desktop.png')}") no-repeat scroll center 12px transparent;
+                    }
+                    .mobile{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/ipad.png')}") no-repeat scroll center 11px transparent;
+                    }
+                    .iOs{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/iphone.png')}") no-repeat scroll center 12px transparent;
+                    }
+                    .android{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/android.png')}") no-repeat scroll center 12px transparent;
+                    }
+                    .wrapDeviceType li{
+                        float: left;
+                        height: 60px;
+                        list-style: none;
+                        width: 25%;
+                        position: relative;
+                        text-align: center;
+                    }
+                    .wrapDeviceType li:first-child{
+                        border-radius: 5px 0 0 5px;
+                    }
+                    
+                    .wrapDeviceType li:last-child{
+                        border-radius: 0 5px 5px 0;
+                    }
+                    .deviceType{
+                        bottom: -65px;
+                        position: relative;
+                    }
+                    .wrapDeviceType li:HOVER{
+                        cursor: pointer;
+                    }
+                    .desktop.active{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/desktop.png')}") no-repeat scroll center -63px #7ca950;
+                    }
+                    .mobile.active{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/ipad.png')}") no-repeat scroll center -57px #7ca950;
+                    }
+                    .iOs.active{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/iphone.png')}") no-repeat scroll center -61px #7ca950;
+                    }
+                    .android.active{
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/android.png')}") no-repeat scroll center -60px #7ca950;
+                    }
+                    .popupLeft{
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .popupLeft li{
+                        background: url("{!URLFOR($Resource.P2P_ResMyCheckout, 'tick_icon.png')}") no-repeat scroll 8px center / auto 18px #ddd;
+                        list-style: none;
+                        padding: 10px 10px 10px 40px;
+                        line-height: 16px;
+                    }
+                    .popupLeft li:nth-child(2n){
+                        background-color: #fff;
+                    }
+                    
+                    #theImage img{
+                        max-width: 100%;
+                    }
+                    @media (max-width: 1024px){
+                        
+                        .hideUnder1024{
+                            display: none;
+                        }
+                        .showUnder1024{
+                            display: inline-block;
+                        }
+                        .paddingBefore1024{
+                            padding-left: 0;
+                        }
+                        .colEachSubProItem{
+                            width: 33.33%;
+                        }
+                        .subProItemValue3,
+                        .subProItemValue2,
+                        .subProItemValue1{
+                            margin-top: 5px;
+                        }
+                        .subProductCol1{
+                            width: 25%;
+                        }
+                        .subProductCol2{
+                            width: 75%;
+                        }
+                    }
+                    @media (max-width: 1023px){
+                        
+                    }
+                   
+                    @media (max-width: 768px){
+                        .hideUnder768{
+                            display: none;
+                        }
+                        .showUnder768{
+                            display: block;
+                        }
+                        .colSearch{
+                            width: 50%;
+                        }
+                        .lblAdd{
+                            display: none;
+                        }
+                        .wrapCheckProduct{
+                            width: 45%;
+                        }
+                        .wrapActionAdd{
+                            width: 15%
+                        }
+                        .wrapDescriptionProduct{
+                            width: 55%;
+                        }
+                    }
+                    @media (max-width: 767px){
+                        
+                        .hideUnder767{
+                            display: none;
+                        }
+                        .showUnder767{
+                            display: block;
+                        }
+                        .subProductCol1{
+                            width: 100%;
+                        }
+                        .subProductCol2{
+                            width: 100%;
+                        }
+                        .subProductCol2 .colEachSubProItem{
+                            min-height: 72px;
+                        }
+                        .subProductCol2 .iLabel{
+                            margin-top: 10px;
+                        }
+                        .colEachSubProItem{
+                            width: 50%;
+                        }
+                        .subProItemValue3{
+                        
+                        }
+                        .subProItemValue2{
+                        
+                        }
+                        .subProItemValue1{
+                            margin-top: 10px;
+                        }
+                        .removePaddingLeft{
+                            padding-left: 0;
+                        }
+                        .wrapButtonAction{
+                            width: 100%;
+                            padding-left: 0;
+                            padding-right: 0;
+                            margin-top: 40px;
+                        }
+                        .wrapPopupLeft{
+                            width: 100%;
+                            padding-right: 0;
+                        }
+                        .wrapPopupRight{
+                            width: 100%;
+                            margin-top: 15px;
+                        }
+                    }
+                    @media (max-width: 550px){
+                        .wrapCheckProduct{
+                            width: 80%;
+                        }
+                        .wrapActionAdd{
+                            width: 20%
+                        }
+                        .wrapDescriptionProduct{
+                            width: 100%;
+                        }
+                    }
+                    @media (max-width: 480px){
+                        
+                        .hideUnder480{
+                            display: none;
+                        }
+                        .showUnder480{
+                            display: block;
+                        }
+                        .fullWidth379{
+                            width: 100%;
+                        }
+                        .btnContinue{
+                            margin-top: 5px;
+                        }
+                    }
+                    @media (max-width: 379px){
+                        .colEachSubProItem{
+                            width: 100%;
+                        }
+                        .hideUnder379{
+                            display: none;
+                        }
+                        .showUnder379{
+                            display: block;
+                        }
+                        .colSearch{
+                            width: 100%;
+                        }
+                        .subProItemValue3,
+                        .subProItemValue2,
+                        .subProItemValue1{
+                            margin-top: 5px;
+                        }
+                        
+                    }
+                    .container{
+                        min-width: 320px;
+                    }
+                    .iMiniMarginBottom{
+                        margin-bottom: 5px;
+                    }
+                    
+/*                     .error{ */
+/*                         border-color:red !important; */
+/*                     } */
+                    .errorMsg{
+                        white-space: nowrap;
+                        margin-top: -2px;
+                    }
+                    <!--11-Dec-2014 to move text under Finalcial Update to icon -->
+                    .remove-padding-right {
+                        padding-right: 0;
+                        text-align: right;
+                    }
+                 @media (max-width: 767px){
+                    .padding-zero {
+                        padding-left:0;
+                    }
+                    .remove-padding-right {
+                        padding-right: 0;
+                        text-align: left;
+                    }
+                 } 
+                                  
+                    .dropdown-menu{
+                        z-index: 1100;
+                    }
+                </style>
+                
+  <apex:composition template="P2P_Template">
+      <apex:define name="body" >  
+                  
+          <body id="comp" class="store">                       
+        
+                  <!-- 2015-01-02 - Feedback tab integrated with Clicktools by Steve Paul -->
+                  <div class="feedback" id="feedback">
+                     <!--- hard code Q1 for testing - replace with {!acc.Id} --->
+                     <a href="http://supportsurvey.gumtree.com/go?iv=18xfknvyio31q&q1=0011100000bN9SO&q2=&q3=Store&q4=Web">Feedback</a>
+                  </div>
+                  
+            <apex:form id="theForm">
+                <apex:actionFunction name="removeProducts" action="{!removeProducts}" rerender="theForm"/>
+                <apex:actionFunction name="getProducts" action="{!getRelatedProducts}" rerender="theForm"/>
+                <apex:actionFunction name="calculatePrice" action="{!calculatePrice}" rerender="theForm"/>
+                <apex:actionFunction name="getAdvertisingMeduim" action="{!getAdvertisingMeduim}" rerender="theForm"/>
+                <apex:actionFunction name="removeSubProduct" action="{!removeSubProduct}" rerender="theForm"/>
+                
+                <apex:inputHidden value="{!indexProGroupSel}" id="indexProGroupSelected"/>
+                <apex:inputHidden value="{!indexSubPro}" id="indexSubPro"/>
+        
+                <div class="container wrapContentBg">
+                            
+                  <apex:outputPanel id="msgSysPanel" rendered="{!msgErr.size!=0}">
+                            
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- 11-Dec-2014 add 'padding-right: 10px;' to rigth aligne, remove padding rigth -->
+                                <div class="accountTitle" style="float: left; width: 100%; padding-right: 10px;">
+                                <div class="col-md-5 col-xs-12 col-sm-5" style="padding-left: 0;">
+                                    <img class="imageSignal" src="{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/signal-icon.png')}"/> <h1 style="color: #009BDF;">Update</h1>
+                                </div>
+                                <div class="col-md-7 col-xs-12 col-sm-7 padding-zero remove-padding-right">
+                            
+                                <!--- Commented out by Steve Paul --->
+                                <!--- <span style="margin-top: 3px; font-size: 15px; display: block;">Did you know? We can now set you up to pay your invoices via direct debit - making life even easier!</span> ---> 
+                              
+                               <apex:repeat value="{!msgErr}" var="msg">
+                                 <span style="margin-top: 3px; font-size: 15px; display: block; line-height: 18px;">  
+                                   <apex:outputText value="{!msg.MessageText__c}" escape="false" /> 
+                                 </span>
+                               </apex:repeat>
+                    
+                             
+                            </div>
+                         </div>
+                    </div>
+                </div>
+             </apex:outputPanel>             
+                     <div class="row">
+                        <div class="col-md-12">
+                            <!-- Block Search filter -->
+                            <div class="wrapMeByBlock clearPadding spacingTop iRadius paddingRight">
+                                <div class="colSearch paddingForButton">
+                                    <div class="iLabel iMiniMarginBottom lockBreakLine">Search your products</div>
+                                    <apex:inputText html-placeholder="e.g. subscription" value="{!searchKey}" styleClass="searchProduct"/>
+                                    <button class="btnOrange btnSearch btnSearchProduct" name="btnSearchProduct" id="btnSearchProduct" onclick="getAdvertisingMeduim(); return false;">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+         
+        
+                                 <div class="colSearch" style="min-height: 1px;">
+        <!-- 2014.12.09 - Commented out by Steve Paul
+                                    <div class="iBold iMiniMarginBottom lockBreakLine">Filter by Category:</div>
+                                    <div>
+                                        <apex:selectList value="{!categoryKey}" size="1" styleClass="inputFullWidth" onchange="getAdvertisingMeduim()">
+                                            <apex:selectOptions value="{!categoryOpts}"/>
+                                        </apex:selectList> 
+                                    </div>
+        ---->     
+                                </div>
+        
+                                <div class="colSearch">
+                                    <div class="iLabel iMiniMarginBottom lockBreakLine">Filter by Type:</div>
+                                    <div>
+                                        <apex:selectList value="{!typeKey}" size="1" styleClass="inputFullWidth" onchange="getAdvertisingMeduim()">
+                                            <apex:selectOptions value="{!lstFilterTyps}"/>
+                                        </apex:selectList>
+                                    </div>
+                                </div>
+                                <div class="colSearch">
+                                    <div class="iLabel iMiniMarginBottom lockBreakLine">Filter by Location:</div>
+                                    <div>
+                                        <apex:selectList value="{!locationKey}" size="1" styleClass="inputFullWidth" onchange="getAdvertisingMeduim()">
+                                            <apex:selectOptions value="{!lstFilterLocations}"/>
+                                        </apex:selectList>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End block search filter -->
+                            <apex:outputPanel id="resultMsg">
+                            <div class="alert" style="{!IF(hasError==true, '', 'display:none;')}">
+                                <button type="button" class="close" data-dismiss="alert"></button>
+                                Hmm, it looks like you missed something? <br/>
+                                {!errorBskMsg}
+                            </div>
+                            </apex:outputPanel>
+                            <!-- List products -->
+                            <apex:repeat id="basketlist" value="{!lstBasketRows}" var="pBasket">
+                                <div class="wrapMeByBlock clearPadding spacingTop paddingRight">
+                                    <div class="wrapCheckProduct">
+                                        <apex:image styleClass="checkImagePosition {!IF(pBasket.selected == true, 'checkbox-checked', 'checkbox-unchecked')}" url="{!URLFOR($Resource.P2P_Resources, IF(pBasket.selected == true, 'gumtree-icons/checkbox-32x32.png', 'gumtree-icons/unchecked-32x32.png'))}" onmouseover="setIndexProductGroup('{!pBasket.index}')" onclick="selectDeselectPro('{!pBasket.selected}', '{!pBasket.isChangedData}')"/>
+                                                                                         
+                                        <span class="labelCheckProduct miniTitle {!IF(pBasket.selected == true, 'iColorGreen', '')}">{!pBasket.productGroupName}</span>
+                                    </div>
+                                    
+                                    <div class="wrapDescriptionProduct">
+                                        <div><apex:outputText value="{!pBasket.productGroupDesc}" escape="false"/></div>
+                                        <div><a class="iBold iColorBlue readMore" href="javascript:void(0)" data-value="{!pBasket.productGroupId}" data-index="{!pBasket.index}">Read more</a></div>
+                                    </div>
+                                    
+                                    <div class="subProductList {!IF(pBasket.isPopulate == true, 'isPopular', '')}">
+                                        <apex:repeat value="{!pBasket.basketItems}" var="basketItem" id="basketItem">
+                                        
+                                            <div class="rowSubProduct">
+                                                <div class="seperateProductItem"><hr/></div>
+<!--                                                 <div><apex:outputText value="{!pBasket.errorMsg}"/></div> -->
+                                                <div class="subProductCol1"> 
+                                                    <apex:image styleClass="" style="position: relative; top: -5px;" url="{!URLFOR($Resource.P2P_ResMyCheckout, 'minus_icon.png')}" onclick="removeSubProductScript('{!pBasket.index}', '{!basketItem.index}')"/>
+                                                    <span class="labelDetail iColorGreen miniTitle">Details</span>
+                                                </div>
+                                                <div class="subProductCol2">
+                                                    <div class="colEachSubProItem">
+                                                        <div class="iLabel iMiniMarginBottom lockBreakLine"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col1}"></span> Quantity</div>
+                                                        <div>
+                                                            <apex:inputField value="{!basketItem.mb.Quantity__c}" styleclass="inputFullWidth" onchange="assignVal2Cal('{!pBasket.index}', '{!basketItem.index}')" rendered="{!basketItem.isEnableQty}"/>
+                                                            <apex:outputField value="{!basketItem.mb.Quantity__c}" styleclass="inputFullWidth" rendered="{!!basketItem.isEnableQty}"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="colEachSubProItem">
+                                                        <div class="iLabel iMiniMarginBottom lockBreakLine"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col2}"></span> Start date</div>
+                                                        <div>
+                                                            <input type="text" id="{!pBasket.index}_{!basketItem.index}" name="datePicker" class="inputFullWidth" readonly="readonly" />
+                                                            <input type="hidden" value="{!basketItem.mb.from_Date__c}"/>
+                                                            <apex:inputHidden value="{!basketItem.startDate}"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="colEachSubProItem">
+                                                        <div class="iLabel iMiniMarginBottom lockBreakLine"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col3}"></span> Valid (months)</div>
+                                                        <div>
+                                                            <apex:selectList id="duration" value="{!basketItem.mb.Length_Months__c}" size="1" styleClass="inputFullWidth {!IF(basketItem.isErrorLength == true, 'error', '')}" onchange="assignVal2Cal('{!pBasket.index}', '{!basketItem.index}')">
+                                                                <apex:selectOptions value="{!lstCustomDuration}"/> 
+                                                            </apex:selectList> 
+                                                            <apex:outputPanel layout="block" styleclass="errorMsg" rendered="{!basketItem.isErrorLength}"><strong>Error:</strong> {!basketItem.msgErrorLength}</apex:outputPanel>
+                                                        </div>
+                                                    </div>
+                                                    <div class="colEachSubProItem">
+                                                        <div class="iLabel iMiniMarginBottom lockBreakLine"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col4}"></span> End date</div>
+                                                        <div>
+                                                            <apex:outputText value="{0, date, dd/MM/yyyy}" id="endDate" styleclass="subProItemValue subProItemValue1">
+                                                                <apex:param value="{!basketItem.mb.until_Date__c}" />
+                                                            </apex:outputText> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="colEachSubProItem">
+                                                        <div class="iLabel iMiniMarginBottom lockBreakLine"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col5}"></span> Location</div>
+                                                        <div>
+                                                            <apex:outputText value="{!basketItem.mb.Location__c}" styleclass="subProItemValue subProItemValue2"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="colEachSubProItem">
+                                                        <div class="iLabel iMiniMarginBottom lockBreakLine"><span class="headerIcon" data-toggle="tooltip" data-placement="top" title="{!$Label.P2P_Checkout_Col6}"></span> Price</div>
+                                                        <div>
+                                                            <apex:outputText styleclass="subProItemValue iColorGreen iBold priceSize subProItemValue3" value="£{0, number, ###,##0.00}">
+                                                                <apex:param value="{!basketItem.mb.Net_Net_Net__c}" />
+                                                            </apex:outputText>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        </apex:repeat>
+                                        <img class="popular" src="{!URLFOR($Resource.P2P_ResMyCheckout, 'popular.png')}"/>
+                                    </div>
+                                </div>
+                            </apex:repeat>
+                            <!-- End List products -->
+                            
+                            <div class="wrapBlockTotal wrapMeByBlock clearPadding spacingTop paddingRight iRadiusMini">
+                                <div class="col-md-10 col-sm-10 col-xs-9 fullWidth379 clearpaddingright">
+                                    <span class="totalItem"><span class="iBold totalLabelSize">Total</span> ({!totalProduct} products)</span>
+                                    <span class="totalPrice iBold">
+                                        <apex:outputText value="£{0, number, ###,##0.00}"> 
+                                            <apex:param value="{!totalPrice}" />
+                                        </apex:outputText>
+                                    </span>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-3 fullWidth379 clearpaddingright">
+                                    <apex:commandButton value="Continue" action="{!doContinue2Checkout}" rerender="resultMsg" styleclass="btnOrange btnContinue inputFullWidth"/>
+                                </div>
+                            </div> 
+                         
+                        </div><!--  end col 12 -->
+                        
+                    </div>
+                </div>
+                <!-- Show read more popup -->
+                <div id="my_popup">
+                    <input type="hidden" id="advIndex" />
+                    <apex:outputPanel id="thePopup">
+                    
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="iBold titlePopup"><apex:outputField value="{!adMedium.Name}"/></div>
+                            <div class="wrapPopupLeft">
+                                <ul class="popupLeft">
+                                    <apex:outputText rendered="{!adMedium.Sales_message_1__c != null}">
+                                        <li id="msg1"><apex:outputField value="{!adMedium.Sales_message_1__c}"/></li>
+                                    </apex:outputText>
+                                    <apex:outputText rendered="{!adMedium.Sales_message_2__c != null}">
+                                        <li id="msg2"><apex:outputField value="{!adMedium.Sales_message_2__c}"/></li>
+                                    </apex:outputText>
+                                </ul>
+                            </div>
+                            <div class="wrapPopupRight">
+                            
+                                <div id="theImage"></div>
+                                
+                                <ul class="wrapDeviceType">
+                                    <li class="desktop active" data-index="0">
+                                        <span class="deviceType">Desktop</span>
+                                    </li>
+                                    <li class="mobile" data-index="1">
+                                        <span class="deviceType">Mobile</span>
+                                    </li>
+                                    <li class="iOs" data-index="2">
+                                        <span class="deviceType">iPhone app</span>
+                                    </li>
+                                    <li class="android" data-index="3">
+                                        <span class="deviceType">Android app</span>
+                                    </li>
+                                </ul>
+                                </div>
+                                    <div class="wrapButtonAction">
+                                        <hr class="lineSeperateBlock" />
+                                    
+                                        <div class="colAction1">
+                                            <button class="btnGrey inputFullWidth btnNoThanks">No thanks</button>
+                                        </div>
+                                        <div class="colAction2">
+                                            <button class="btnOrange inputFullWidth btnAddStandardAd" >Yes please</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <img class="close_popup" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                            
+                            <script>
+                                function showAdvPopup(){
+                                    $('#my_popup').popup('show',{scrolllock: true});
+                                }  
+                                
+                                function setIndexProductGroup(val){
+                                    document.getElementById("{!$Component.theForm.indexProGroupSelected}").value = val;
+                                }
+                                
+                                function assignVal2Cal(parentIndex, subIndex){
+                                    document.getElementById("{!$Component.theForm.indexProGroupSelected}").value = parentIndex;
+                                    document.getElementById("{!$Component.theForm.indexSubPro}").value = subIndex;
+                                    calculatePrice();
+                                    return false;
+                                }
+                                 
+                                function removeSubProductScript(parentIndex, subIndex){
+                                    document.getElementById("{!$Component.theForm.indexProGroupSelected}").value = parentIndex;
+                                    document.getElementById("{!$Component.theForm.indexSubPro}").value = subIndex;
+                                    removeSubProduct();
+                                }
+                                
+                                $(document).ready(function() {
+                                    //====== kakada 17-02-15=========//
+                                    if ({!totalProduct} <= 0){
+                                        $('.btnContinue').removeClass("btnOrange");
+                                        $('.btnContinue').addClass("btnGrey");
+                                    }
+                                    $('.btnContinue').hover(function(){
+                                            if($(this).hasClass("btnGrey")){
+                                                $(this).attr("value","Select products");
+                                            }
+                                        },function(){
+                                            if($(this).hasClass("btnGrey")){
+                                                $(this).attr("value","Continue");
+                                            }
+                                    });
+                                    $('.btnContinue').off('click').on('click',function(){
+                                        if ($(this).hasClass("btnGrey")) {
+                                           return false;
+                                        }
+                                    });
+                                    //===============================//
+                                    
+                                    $('.readMore').off('click')
+                                    .on('click',function(){
+                                        //$('#my_popup').popup({
+                                         // scrolllock: true // optional
+                                        //});
+                                        //$('#my_popup').popup('show',{scrolllock: true});
+                                        $("#advIndex").val($(this).attr('data-index'));
+                                        showPopup($(this).attr('data-value'));
+                                        
+                                    });
+                                    
+                                    var img = '{!images}';
+                                    var arrImg = img.split(",");
+                                    $("#theImage").html(arrImg[0]);
+                                    
+                                    $('.close_popup, .btnNoThanks').off('click')
+                                    .on('click',function(){
+                                        $('#my_popup').popup('hide');
+                                    });
+                                    
+                                    $(".btnAddStandardAd").off('click').on('click', function(){
+                                        setIndexProductGroup($("#advIndex").val());
+                                        getProducts();
+                                        $('#my_popup').popup('hide'); 
+                                    });
+                                    
+                                    $('.wrapDeviceType li').off('click')
+                                    .on('click',function(){
+                                        var that = this;
+                                        var device = $(that).attr('data-index');
+                                        $('.wrapDeviceType li').each(function(){
+                                            $(this).removeClass('active');
+                                        });
+                                        $(that).addClass('active');
+                                        $("#theImage").html(arrImg[device]);
+                                    });
+                                    
+                                    $('[data-toggle="tooltip"]').bind({
+                                        mouseover : function(){
+                                            var title = $(this).attr('title');
+                                            var data_title = $(this).attr('data-title');
+                                            $(this).attr('title','');
+                                            if(!data_title){
+                                                data_title = title;
+                                                $(this).attr('data-title',title);
+                                            }
+                                            helperDialog.show($(this).get(0), data_title);
+                                        },
+                                        mouseout : function(){
+                                            helperDialog.hide();
+                                        }
+                                    });
+        
+                                    $('[name="datePicker"]').datepicker({format: 'dd/mm/yyyy'});
+                                    $('[name="datePicker"]').each(function(){
+                                        var defaultDate = $(this).next().val(),
+                                        
+                                            dateObj = new Date(defaultDate),
+                                            dateStr = $.datepicker.formatDate("dd/mm/yy", dateObj);
+                                        if(defaultDate != ''){
+                                            $(this).val(dateStr);
+                                            $(this).datepicker('setValue', dateObj);
+                                            $(this).datepicker('update');
+                                        }
+                                    });
+                                    
+                                    $('[name="datePicker"]').datepicker().on('changeDate', function(ev){
+                                        var pickDate = new Date(ev.date),
+                                            dateStr = $.datepicker.formatDate("dd/mm/yy", pickDate),
+                                            elemId = $(this).attr('id'); 
+                                        
+                                        $(this).next().next().val(dateStr);
+                                        
+                                        $(this).datepicker('hide'); 
+                                        
+                                        var parentId = elemId.split("_")[0];
+                                        var subId = elemId.split("_")[1];
+                                        assignVal2Cal(parentId, subId);
+                                    });
+                                    
+                                     
+                                });
+                            </script>
+                        </apex:outputPanel>      
+                        </div>
+                        
+                        <apex:actionFunction name="showPopup" action="{!advMedium}" oncomplete="showAdvPopup();" rerender="thePopup">
+                            <apex:param name="p1" value="" assignTo="{!adid}"/>
+                        </apex:actionFunction>
+                <!-- Show read more popup -->
+            </apex:form>
+            <!-- Pre load images -->
+            <div style="display:none;">
+                <img src="{!URLFOR($Resource.P2P_Resources, 'img/desktop.png')}"/>
+                <img src="{!URLFOR($Resource.P2P_Resources, 'img/ipad.png')}"/>
+                <img src="{!URLFOR($Resource.P2P_Resources, 'img/iphone.png')}"/>
+                <img src="{!URLFOR($Resource.P2P_Resources, 'img/android.png')}"/>
+            </div>
+         </body>
+      </apex:define> 
+ </apex:composition>
+ 
+ 
+</apex:page>

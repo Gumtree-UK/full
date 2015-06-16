@@ -1,0 +1,264 @@
+<apex:page showHeader="false" cache="false"> 
+<!-- This script takes the endpoint URL parameter passed from the deployment page and makes it the action for the form -->
+<script type="text/javascript">
+
+document.title = "Gumtree Help Live Chat"; 
+function closeChat(){
+    window.close();
+}
+
+</script>
+<head>
+
+<style type="text/css">
+body {
+    font-family: Arial,sans-serif; 
+    font-size: 13px ;
+    margin:0;
+    padding:0;
+    }
+     
+/************************************
+ We want the buttons to have the same
+ visual feedback as normal links.
+
+ START - Links visual feedback
+ ************************************/
+
+/* 'position' and 'top' are used to
+   override global links behaviour */
+a:active.button {
+position: relative;
+top: 0px;
+}
+/* 'position' and 'top' are used to
+   replicate global links behaviour */
+a:active.button span,
+a:active.button input,
+button:active span {
+position: relative;
+top: 1px;
+}
+input.button[type='submit']:active {
+padding-top: 1px !important;
+}
+/* 'position' and 'top' are used to
+   override global links behaviour
+*/
+a:active.button.disabled span,
+a:active.button.disabled input,
+button:active.disabled span {
+position: relative;
+top: 0px !important;
+}
+input.button[type='submit']:active.disabled {
+padding-top: 0px !important;
+}
+/*
+   We make the button non-selectable,
+   since it is disabled and the user could
+   click it more than once, highlighting the
+   text unintentionally.
+*/
+a.button.disabled span,
+a.button.disabled input {
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-o-user-select: none;
+user-select: none;
+}
+/****************************
+ END - Links visual feedback
+*****************************/
+
+
+/**********************
+ Common button styling
+ **********************/
+.button,
+input.button {
+display: inline-block;
+*display: inline;
+zoom: 1;
+vertical-align: middle;
+text-align: center;
+outline: none;
+text-decoration: none;
+cursor: pointer;
+white-space: nowrap;
+margin: 0;
+}
+.button.disabled,
+input.button[disabled] {
+cursor: not-allowed;
+}
+input.button,
+button.button {
+*overflow: visible;
+/* prevents the dynamic expanding width depending on the value */
+    *width: auto;
+*border: none !important;
+/* with the gradient background you get a really ugly border */
+    *position: static  !important;
+*float: none !important;
+}
+button::-moz-focus-inner,
+input.button[type='submit']::-moz-focus-inner {
+border: 0;
+padding: 0;
+}
+.button span {
+display: block;
+}
+.button-ie7-wrapper {
+*display: inline;
+/* wrapper to fix the really ugly border */
+    *zoom: 1;
+position: relative;
+}
+.button-ie7-wrapper .button {
+margin: 0 !important;
+}
+.button:hover,
+.button:focus,
+.button:active  {
+text-decoration: none !important;
+}
+/******************
+ Button dimensions
+ ******************/
+.button.small span {
+line-height: 14px;
+height: 14px;
+}
+input.button.small,
+button.button.small {
+height: 16px;
+*height: 14px;
+}
+.button.medium span {
+line-height: 22px;
+height: 22px;
+}
+input.button.medium,
+button.button.medium {
+height: 24px;
+*height: 22px;
+}
+.button.large span {
+line-height: 32px;
+height: 32px;
+}
+input.button.large,
+button.button.large {
+font-size: 11px;
+height: 34px;
+*height: 32px;
+}
+.button-ie7-wrapper.medium {
+height: 22px;
+}
+.button-ie7-wrapper.small {
+height: 14px;
+}
+.button-ie7-wrapper.large {
+height: 32px;
+}
+.button.primary.medium,
+.button.primary.large,
+.button.secondary.large {
+padding: 0 12px;
+}
+.button.secondary.medium,
+.button.secondary.small {
+padding: 0 4px;
+}
+/******************
+ PRIMARY buttons
+ ******************/
+.button.primary {
+font-size: 1px;
+font-weight: bold;
+color: white;
+border: 1px solid #69aa47;
+background: #69aa47;
+background: -webkit-gradient(linear, left top, left bottom, from(#96c859), to(#69aa47));
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#96c859", endColorstr="#69aa47", GradientType=0);
+-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#96c859", endColorstr="#69aa47", GradientType=0);
+background: -moz-linear-gradient(top, #96c859 0%, #69aa47 100%);
+background: -webkit-linear-gradient(top, #96c859 0%, #69aa47 100%);
+background: -o-linear-gradient(top, #96c859 0%, #69aa47 100%);
+background: -ms-linear-gradient(top, #96c859 0%, #69aa47 100%);
+background: linear-gradient(top, #96c859 0%, #69aa47 100%);
+-moz-box-shadow: inset 0 1px 0 #96c859;
+-webkit-box-shadow: inset 0 1px 0 #96c859;
+box-shadow: inset 0 1px 0 #96c859;
+}
+.button-ie7-wrapper.primary {
+border: 1px solid #69aa47;
+}
+.button.primary:hover {
+background: #69aa47;
+-moz-box-shadow: inset 0 1px 0 #69aa47, 0 1px 3px #AAAAAA;
+-webkit-box-shadow: inset 0 1px 0 #69aa47, 0 1px 3px #AAAAAA;
+box-shadow: inset 0 1px 0 #69aa47, 0 1px 3px #AAAAAA;
+}
+.button.primary:active {
+background: #69aa47;
+-moz-box-shadow: inset 0 1px 1px #69aa47;
+-webkit-box-shadow: inset 0 1px 1px #69aa47;
+box-shadow: inset 0 1px 1px #69aa47;
+}
+.button.primary.disabled,
+.button.primary.large.disabled {
+color: #CBDDF2 !important;
+border: 1px solid #7FA4CF;
+background: #A8CBF4;
+background: -webkit-gradient(linear, left top, left bottom, from(#A8CBF4), to(#7FA4CF));
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#A8CBF4", endColorstr="#7FA4CF", GradientType=0) PROGID:DXImageTransform.Microsoft.DropShadow(Color='white', OffX=0, OffY=0);
+-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#A8CBF4", endColorstr="#7FA4CF", GradientType=0);
+background: -moz-linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+background: -webkit-linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+background: -o-linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+background: -ms-linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+background: linear-gradient(top, #A8CBF4 0%, #7FA4CF 100%);
+-moz-box-shadow: inset 0 1px 0 #BED9F7;
+-webkit-box-shadow: inset 0 1px 0 #BED9F7;
+box-shadow: inset 0 1px 0 #BED9F7;
+}
+.button-ie7-wrapper.primary.disabled,
+.button-ie7-wrapper.primary.large.disabled {
+border: 1px solid #7FA4CF;
+}
+
+</style> 
+</head>
+<body>
+    <div style="margin:15px; padding:0px; border:#81bb4d 2px solid;text-align: center">    
+    <table>
+        <tr>
+            <td>
+                <img style="margin-left:0px;" src='{!URLFOR($Resource.GumtreeLiveChatSideBar)}' height="304px" width="140px"/>
+            </td>
+            <td width="15px">
+                &nbsp;
+            </td>
+            <td>
+
+                    <br/>
+                    <span style="font-size:18px; font-weight:bold;">There was a problem loading Live Chat, please try again!</span>
+                    <br/>
+                    <br/>
+                    <div style="text-align: center">
+                      <input type='submit' value='OK' class='button primary large' style="align:centre; font-size:15px; font-family:Arial, Helvetica, sans-serif;" onClick="closeChat();"/>
+                    </div>
+                    <br/>
+                    <br/>
+                
+            </td>
+        </tr>
+     </table>
+     </div>
+</body>
+</apex:page>

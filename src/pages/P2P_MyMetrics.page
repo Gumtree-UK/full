@@ -1,0 +1,2020 @@
+<apex:page Controller="P2P_MyMetricsController" standardStylesheets="false" showHeader="false" sidebar="false" action="{!deleteAttChart}" doctype="html-5.0" id="pg"  title="My Gumtree | Gumtree.com"> 
+    <html>
+          <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+                <link rel="icon" type="image/png" href="{!$Resource.FavouriteSiteIcon}" />
+                <style>
+
+                    div[dir="ltr"]{
+                        float: left;
+                    }
+                    .wrapTab{
+                       margin-top: 15px;
+                    }
+                    .wrapBtnTop{
+                        background-color: #fff;
+                        float: left;
+                        padding: 15px;
+                        width: 100%;
+                        border-radius: 0 0 5px 5px;
+                    }
+                    .wrapByBlock{
+                        float: left;
+                        width: 50%;
+                    }
+                    .wrapByBlock:first-child{
+                        padding-right: 15px;
+                    }
+                    .editChart{
+                        float: right;
+                    }
+                    .popupChart{
+                        cursor: pointer;
+                        float: right;
+                        margin-right: 10px;
+                        width: 23px;
+                        display: none;
+                    }
+                    .wrapTitleChart:HOVER .popupChart{
+                        display: block;
+                    }
+                    .wrapChartSignal{
+                        border-bottom: 1px solid #cdcdcd;
+                        float: left;
+                        width: 100%;
+                        overflow:hidden;
+                    }
+                    .miniTitle{
+                        font-size: 20px;
+                        margin-right: 15px;
+                        float: left;
+                    }
+                    .btnAddNewChart{
+                        float: left;
+                        padding-left: 35px;
+                        text-decoration: none !important;
+                        background: url("{!URLFOR($Resource.P2P_Touchpunch, 'P2P_Touchpunch/add_new_icon.png')}") no-repeat scroll 10px center #fc7431;
+                    }
+                    .btnExportPdf{
+                        float: left;
+                        margin-bottom: 3px;
+                        margin-left: 15px;
+                    }
+                    
+                    .myBtn{
+                        float: left;
+                    }
+                    .adsBdlabel{
+                        margin-top: 6px;
+                        margin-bottom: 6px;
+                    }
+                    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+                        border: 0;
+                        padding-bottom: 10px;
+                    }
+                    .nav-tabs{
+                        border-bottom: 0;
+                    }
+                    .nav-tabs > li{
+                        
+                    }
+                    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+                        border: 0;
+                        padding-bottom: 10px;
+                        background-image: none;
+                        background-color: #fff !important;
+                    }
+                    .nav-tabs{
+                        border-bottom: 0;
+                    }
+                    .nav-tabs > li{
+                        
+                    }
+                    .nav-tabs > li > a{
+                         background-color: #f2f3f3 !important;
+                        color: inherit;
+                        padding-bottom: 9px;
+                        font-size: 16px;
+                        border-left: 0;
+                        border-right: 0;
+                        border-top: 0;
+                        width: 150px;
+                        background-image: url("{!URLFOR($Resource.P2P_ResMySupport, 'bgTab.png')}");
+                        background-position: left bottom;
+                        background-repeat: repeat-x;
+                        text-align: center;
+                        font-size: 18px;
+                    }
+                    .nav-tabs > li:last-child a{
+                        margin-right: 0;
+                    }
+                    .isSafari .nav-tabs > li:last-child{
+                        position: relative;
+                        right: -1px;
+                     }
+                     .isSafari .nav-tabs > li:first-child{
+                        position: relative;
+                        left: 0;
+                     }
+                    .nav > li > a:hover, .nav > li > a:focus{
+                        border-right: 0;
+                        border-top: 0;
+                        border-left: 0;
+                        outline: none;
+                        border-bottom: 0;
+                    }
+                    .tab-content{
+                    
+                    }
+                    
+                    #addNewChartError{
+                        color: #ff0000; 
+                        float: left; 
+                        width: 100%; 
+                        margin-top: 15px;
+                        display: none;
+                    }
+                    
+                    #sortable{
+                        float: left;
+                        padding: 0;
+                        width: 100%;
+                    }
+                    #sortable li{
+                        list-style: none;
+                        float: left;
+                        width: 33.33%;
+                    }
+                    #sortable li .wrapTitleChart:HOVER{
+                        -webkit-box-shadow: 0 2px 19px -6px rgba(5, 1, 5, 1);
+                        -moz-box-shadow: 0 2px 19px -6px rgba(5, 1, 5, 1);
+                        box-shadow: 0 2px 19px -6px rgba(5, 1, 5, 1);
+                    }
+                    
+                    .wrapTitleChart{
+                        background-color: #fff;
+                        border-radius: 5px;
+                        float: left;
+                        margin-top: 15px;
+                        padding: 15px;
+                        width: 100%;
+                        min-height: 567px;
+                    }
+                    .titleBottom{
+                        float: left;
+                        clear: left;
+                        font-size: 19px;
+                        padding-left: 5px;
+                    }
+                    .titleTop{
+                        float: left;
+                        font-size: 19px;
+                        padding-left: 5px;
+                        width: 84%;
+                    }
+                    .clearPadding{
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                    
+                    .chartItem{
+                        padding-left: 15px;
+                    }
+                    
+                    .wrapChartDescription{
+                        float: left;
+                        width: 100%;
+                        margin-bottom: 15px;
+                        height: 120px;
+                    }
+                    .labelChartDescription{
+                        float: left;
+                        font-family: "SourceSansPro Bold";
+                        margin-top: 10px;
+                        width: 100%;
+                    }
+                    .chartDescription{
+                        float: left;
+                        padding-bottom: 5px;
+                        height: 85px;
+                        overflow: hidden;
+                    }
+                    .adsBreakdowrCol1{
+                        float: left;
+                        width: 50%;
+                        padding-right: 15px;
+                        margin-top: 15px;
+                    }
+                    .adsBreakdowrCol2{
+                        float: left;
+                        width: 50%;
+                        margin-top: 15px;
+                    }
+                    
+                    .adsBreakdowrCol3{
+                        float: left;
+                        width: 65%;
+                        padding-right: 15px;
+                        margin-top: 15px;
+                    }
+                    
+                    .adsBreakdowrCol4{
+                        float: left;
+                        width: 35%;
+                        margin-top: 15px;
+                    }
+                    
+                    .inputFullWidth{
+                        width: 100%;
+                    }
+                    
+                    .selectFrom{
+                        margin-right: 6%;
+                        width: 46%;
+                    }
+                    .selectTo{
+                        width: 46%;
+                    }
+                    .monthView{
+                        margin-right: 5px;
+                    }
+                    .yearView{
+                        margin-right: 5px;
+                        padding-left: 5px;
+                    }
+                    
+                    .defaulMarginTop{
+                        margin-top: 10px;
+                    }
+                    
+                    
+                    
+                    .wrapSummery{
+                        background-color: #fff;
+                        border-radius: 5px;
+                        float: left;
+                        margin-top: 15px;
+                        padding: 15px 0;
+                        width: 100%;
+                    }
+                    .wrapSummeryInfo{
+                                
+                    }
+                    .sumLabel{
+                        float: left;
+                        font-family: "SourceSansPro Bold";
+                        margin-right: 5px;
+                        margin-top: 5px;
+                    }
+                    .sumValue{
+                        margin-top: 5px;
+                        margin-right: 15px;
+                        float: left;
+                    }
+                    .wrapListFieldSummery{
+                        float: left;
+                        width: 100%;
+                        margin-top: 15px;
+                    }
+                    .wrapFieldInfo{
+                        border-bottom: 1px solid #cdcdcd;
+                        float: left;
+                        width: 100%;
+                    }
+                    .fieldName{
+                        float: left;
+                        width: 80%;
+                        padding-bottom: 5px;
+                        padding-top: 5px;
+                        line-height: 18px;
+                    }
+                    .fieldValue{
+                        float: left;
+                        padding-bottom: 5px;
+                        padding-top: 5px;
+                        width: 20%;
+                    }
+                    .wrapListAdBreakdowr{
+                        background-color: #fff;
+                        border-radius: 5px;
+                        float: left;
+                        margin-top: 15px;
+                        padding: 15px;
+                        width: 100%;
+                    }
+                    .rowAdBreakdowr{
+                        border-bottom: 1px solid #cdcdcd;
+                        float: left;
+                        width: 100%;
+                        padding: 5px 0;
+                        position: relative;
+                    }
+                    .rowAdBreakdowrHeader{
+                        border-bottom: 2px solid #cdcdcd;
+                    }
+                    .colAdBreakdowrSmall{
+                        float: left;
+                        padding-right: 5px;
+                        width: 10%;
+                    }
+                    .colAdBreakdowrMedium{
+                        float: left;
+                        padding-right: 5px;
+                        width: 17%;
+                    }
+                    .colAdBreakdowrBig{
+                        float: left;
+                        padding-right: 5px;
+                        width: 18%;
+                    }
+                    .colAdBreakdowr{
+                        float: left;
+                        padding-right: 5px;
+                        width: 14%;
+                    }
+                    .hideAllSize{
+                        display: none;
+                    }
+                    .wrapBlockMoreItem{
+                        border-top: 1px solid #cdcdcd;
+                        float: left;
+                        width: 90%;
+                        display: none;
+                        padding: 3px 0;
+                    }
+                    .moreItemField{
+                        float: left;
+                        width: 165px;
+                        font-family: "SourceSansPro Bold";
+                        background: url("{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/info-icon.png')}") no-repeat scroll left center transparent;
+                        padding-left: 23px;
+                    }
+                    .moreItemValue{
+                        float: left;
+                    }
+                    .open + .pc_more_item{
+                        display: none;
+                    }
+                    .vbox-inline{
+                        width: 100% !important;
+                    }
+                    .vbox-title{
+                        font-size: 23px;
+                    }
+                    .spacingTop{
+                        margin-top: 15px;
+                    }
+                    .editPopupChart{
+                        position: absolute;
+                        right: 15px;
+                        top: 15px;
+                        z-index: 1;
+                    }
+                    .clearMe{
+                        float: left;
+                        width: 100%;
+                        clear: both;
+                    }
+                    .cancelAddNew{
+                        color: #f47421;
+                        cursor: pointer;
+                        float: right;
+                        margin-top: 5px;
+                        margin-bottom: 5px;
+                        line-height: 1;
+                        border:none;
+                        background:none;
+                        text-shadow: none;
+                        opacity: 1;
+                    }
+                    .wrapAddNewTitleChart{
+                        float: left;
+                        width: 100%;
+                    }
+                    .wrapAddNewTitleChart textarea{
+                        border: 2px solid #cfcece;
+                        border-radius: 5px;
+                        height: 73px;
+                        padding: 5px 10px;
+                    }
+                    .wrapAddNewTitleChart li{
+                        list-style: none;
+                        float: left;
+                        width: 100%;
+                        margin-bottom: 5px;
+                    }
+                    .largeBorderRight{
+                        height: 100%;
+                        -webkit-box-shadow: 1px 0 11px -2px #e0e0e0;
+                        -moz-box-shadow: 1px 0 11px -2px #e0e0e0;
+                        box-shadow: 1px 0 11px -2px #e0e0e0;
+                    }
+                    .paddingTop{
+                        padding-top: 15px;
+                    }
+                    .addNewLeft{
+                        float: left;
+                        width: 45%;
+                        padding-left: 5px;
+                    }
+                    .addNewRight{
+                        float: left;
+                        width: 55%;
+                        padding-left: 15px;
+                    }
+                    .AddNewRightClearPaddingLeft{
+                        padding-left: 15px;
+                    }
+                    .chart_input{
+                        width: 100%;
+                    }
+                    .barChartIcon{
+                        float: left;
+                    }
+                    
+                    .lineChartIcon{
+                        float: left;
+                        margin-left: 5px;
+                    }
+                    .pieChartIcon{
+                        float: left;
+                        margin-left: 5px;
+                    }
+                    .blankChartIcon{
+                        float: left; 
+                        margin-left: 15px;
+                    }
+                    .haftWidthLeft{
+                        width: 50%;
+                        float: left;
+                        margin-right: 0;
+                        white-space: nowrap;
+                    }
+                    .haftWidthRight{
+                        width: 50%;
+                        float: left;
+                        margin-right: 0;
+                        white-space: nowrap;
+                    }
+                    .paddingLeft{
+                        padding-left: 15px;
+                    }
+                    .fullWidth{
+                        width: 100%;
+                        float: left;
+                    }
+                    .btnSave{
+                        margin-bottom: 15px;
+                    }
+                    .addNewChart{
+                        display:none;   
+                    }
+                    #editChart{
+                        float: left; 
+                        width: 100%;
+                        border-bottom: 1px solid #cdcdcd;
+                    }
+                    #newChart{
+                        float: left; 
+                        width: 100%;
+                        border-bottom: 1px solid #cdcdcd;
+                    }
+                    .seperateDataRange{
+                        float: left;
+                        position: relative;
+                        width: 100%;
+                        margin-top: 5px;
+                        margin-bottom: 5px;
+                    }
+                    .seperateDataRange hr{
+                        border-color: #cdcdcd;
+                        border-width: 2px;
+                        margin-bottom: 10px;
+                        margin-top: 10px;
+                    }
+                    .seperateDataRange img{
+                        left: 48%;
+                        position: absolute;
+                        top: 0;
+                    }
+                    .actionShowHide{
+                        position: absolute;
+                        right: 0;
+                        width: 23px;
+                    }
+                    @media (max-width: 1024px){
+                        #sortable li{
+                            width: 50%;
+                        }
+                        .hideUnder1024{
+                            display: none;
+                        }
+                    }
+                    @media (max-width: 913px){
+                        .hideUnder913{display: none;}
+                        .showUnder913{display: block}
+                        .colAdBreakdowrMedium{width: 20%;}
+                        .colAdBreakdowrSmall{width: 12%;}
+                        .colAdBreakdowr{width: 17%;}
+                        
+                        .colAdBreakdowrAction{
+                            float: right;
+                            width: 23px;
+                            background-position: right center;
+                        }
+                        .open + .pc_more_item{
+                            display: block;
+                            float: left;
+                            margin-top: 5px;
+                            width: 100%;
+                        }
+                        .rowAdBreakdowr{
+                            padding-right: 30px;
+                        }
+                    }
+                    @media (max-width: 768px){
+                        .addNewLeft{
+                            width: 100%;
+                        }
+                        .addNewRight{
+                            width: 100%;
+                            padding-left: 0;
+                        }
+                        .AddNewRightClearPaddingLeft{
+                            padding-left: 15px;
+                        }
+                    }
+                    @media (max-width: 767px){
+                        
+                        #sortable li{
+                            width: 100%;
+                        }
+                        
+                        .removeFull:nth-child(2n){
+                            padding-right:0;
+                        }
+                        .removeFull:nth-child(3n){
+                            padding-right: 0;
+                        }
+                        .removeFull:nth-child(6n){
+                            padding-right:0;
+                        }
+                        .chartItem{
+                            padding-right:0;
+                        }
+                        .wrapByBlock:first-child {
+                            padding-right: 0;
+                        }
+                        .wrapByBlock{
+                            width: 100%;
+                        }
+                        .hideUnder767{
+                            display: none;
+                        }
+                        .showUnder767{
+                            display: block;
+                        }
+                        .largeBorderRight{
+                            border: none;
+                            height: auto;
+                            -webkit-box-shadow: none;
+                            -moz-box-shadow: none;
+                            box-shadow: none;
+                        }
+                        .editChart{
+                            display:none;
+                        }
+                    }
+                    @media (max-width: 737px){
+                        .hideUnder737{display: none;}
+                        .showUnder737{display: block}
+                        .colAdBreakdowrMedium{width: 25%;}
+                        .colAdBreakdowrSmall{width: 14%;}
+                        .colAdBreakdowr{width: 22%;}
+                    }
+                    
+                    @media (max-width: 650px){
+                        .hideUnder650{display: none;}
+                        .showUnder650{display: block}
+                        .colAdBreakdowrMedium{width: 31%;}
+                        .colAdBreakdowrSmall{width: 19%;}
+                    }
+                    @media (max-width: 550px){
+                        .col-xs-6{
+                            width: 100%;
+                        }
+                    }
+                    @media (max-width: 510px){
+                        .hideUnder510{display: none;}
+                        .showUnder510{display: block}
+                        .colAdBreakdowrMedium{width: 47%;}
+                        .colAdBreakdowrSmall{width: 26%;}
+                    }
+                    @media (max-width: 480px){
+                        .adsBreakdowrCol1{
+                            width: 100%;
+                            padding-right: 0;
+                        }
+                        .adsBreakdowrCol2{
+                            width: 100%;
+                        }
+                        .defaulMarginTop{
+                            margin-top: 0;
+                        }
+                        .miniTitle{
+                            width: 100%;
+                        }
+                        .wrapSummeryInfo{
+                            width: 100%;
+                        }
+                        .nav-tabs > li > a {
+                            width: 100%;
+                        }
+                        .nav-tabs > li {
+                            padding-right: 15px;
+                            width: 50%;
+                        }
+                        .nav-tabs > li:last-child{
+                            padding-right: 0;
+                        }
+                        .myBtn{
+                            white-space: nowrap;
+                        }
+                        .adsBreakdowrCol3 select{
+                            width: 100%;
+                        }
+                    }
+                    @media (max-width: 379px){
+                        .adsBreakdowrCol3{width: 62%;}
+                        .exportExcel{
+                            padding: 0 6px;
+                            font-weight: normal;
+                        }
+                        .pcTitleItem{width: 65%;}
+                        .pcValueItem{width: 30%;}
+                        .nav-tabs > li > a{
+                            font-size: 14px;
+                        }
+                        .hideMeUnder480{
+                            display: none;
+                        }
+                        .col-xs-6{
+                            width: 100%;
+                        }
+                        .hideUnder379{
+                            display: none;
+                        }
+                        .showUnder379{
+                            display: block;
+                        }
+                        .colAdBreakdowrSmall{
+                            width: 50%
+                        }
+                        
+                        .btnAddNewChart{ width: 58%;}
+                        .btnExportPdf{
+                            width: 38%;
+                            margin-left: 4%;
+                            padding: 0 5px;
+                        }
+                    }
+                    .container{
+                        min-width: 320px;
+                    }
+                    .dateFormat{float:left;}
+                    .inputData{width:100%;}
+                    .disableHover{
+                        box-shadow: none !important;
+                        -webkit-box-shadow:  none !important;
+                        -moz-box-shadow:  none !important;
+                        cursor: pointer;
+                    }
+                    .enableHover{
+                        cursor: move;
+                    }
+                    .dropdown-menu{
+                        z-index: 1100;
+                    }
+                    .btnSaveSort{
+                        float: left;
+                        padding: 0 40px 0 65px;
+                        background: url("{!URLFOR($Resource.P2P_Resources, 'img/save_icon.png')}") no-repeat scroll 35% center #f4731e;
+                        display: none;
+                    }
+                    
+                    .dateFormat{
+                        display: none;
+                    }
+                    body {
+                        overflow-y: scroll;
+                    }
+                    body.modal-open {
+                        overflow-y: scroll;
+                        margin: 0;
+                    }
+                    .modal {
+                        overflow: auto;
+                    }
+                    .modal-content{padding: 0 15px;}
+                    
+                    <!--11-Dec-2014 to move text under Finalcial Update to icon -->
+                    .remove-padding-right {
+                        padding-right: 0;
+                        text-align: right;
+                    }
+                    
+                 @media (max-width: 767px){
+                    .padding-zero {
+                        padding-left:0;
+                    }
+                    .remove-padding-right {
+                        padding-right: 0;
+                        text-align: left;
+                    }
+                    .modal-content{
+                        padding: 0;
+                    }
+                 }
+                 .ui-state-highlight {
+                    padding-left: 15px;
+                    padding-top: 15px;
+                 }
+                 .ui-state-highlight div{
+                    background-color: #d1d3d4;
+                    float: left;
+                    min-height: 567px;
+                    width: 100%;
+                    border-radius: 5px;
+                    border: 2px solid #ddd;
+                 }
+                 .overflowEle{display:none;}
+                </style>
+                
+           <script>
+              var dataLayer = [{"p": {"t": "MyAdsProMetrics","lng": "EN-GB", "pl": "SFDC", "v": "2015-02-25 v1.00"}, 
+                                "u": {"at": "Pro", "li": true },   
+                                "d": {"ua": "{!UA}" }
+                              }];
+    
+    <!-- GTM Pt1 -->
+                     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                     j.async=true;
+                     j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;
+                     f.parentNode.insertBefore(j,f);
+                     })(window,document,'script','dataLayer','GTM-FF7Z');
+              </script>
+     <!-- End GTM Pt1 -->
+
+      </head>
+  
+     <!-- GTM Pt2 -->
+        <noscript>
+            <iframe src="//www.googletagmanager.com/ns.html?id=GTM-FF7Z" height="0" width="0" style="display:none;visibility:hidden">
+            </iframe>
+        </noscript>
+     <!-- End GTM Pt2 -->
+          
+          <apex:composition template="P2P_Template">
+              <apex:define name="body" >
+                  <body id="comp" class="metrics">
+                   
+                    <apex:pageMessages id="errormessages" />
+                    
+                    <!-- 2015-01-02 - Feedback tab integrated with Clicktools by Steve Paul -->          
+                    <div class="feedback" id="feedback">
+                          <!--- hard code Q1 for testing - replace with {!acc.Id} --->
+                          <a href="http://supportsurvey.gumtree.com/go?iv=18xfknvyio31q&q1={!acc.id}&q2=&q3=Metrics&q4=Web">Feedback</a>
+                    </div>
+                    
+                    <apex:form id="theForm">
+                        <apex:inputHidden value="{!saveIndex}" id="saveIndex" />
+                        <apex:inputHidden value="{!pickFromDate}" id="pickFromDate" />
+                        <apex:inputHidden value="{!pickUtilDate}" id="pickUtilDate" />
+                        
+                        <apex:inputHidden value="{!displayType}" id="displayType" />
+                        <apex:inputHidden value="{!pmFromDatestr}" id="pmFromDate" />
+                        <apex:inputHidden value="{!pmEndDatestr}" id="pmEndDate" />
+                        
+                        <apex:actionFunction name="refreshNewChartData" action="{!refreshNewChartData}" rerender="scriptPanel" oncomplete="refreshNewChart();" /> 
+                        <apex:actionFunction name="saveNewChart" action="{!saveNewChart}" rerender="chartsBlock, popupChartBlock, scriptPanel" oncomplete="closeProgressBar();closeModalPopup();" />
+                        <apex:actionFunction name="saveEditChart" action="{!saveEditChart}" rerender="chartsBlock, popupChartBlock, scriptPanel" oncomplete="closeProgressBar();closeModalPopup();" />
+                        <apex:actionFunction name="refreshEditChartData" action="{!refreshEditChartData}" rerender="scriptPanel" oncomplete="refreshEditChart();closeProgressBar();" /> 
+                        <apex:actionFunction name="deleteChart" action="{!deleteChart}" rerender="chartsBlock, popupChartBlock, scriptPanel" oncomplete="checkEditMode();" />
+                        <apex:actionFunction action="{!refreshTable}" name="refreshTable" reRender="theSummaryBlock, theDetailDataTable, errormessages, exportExcelBlock" oncomplete="closeProgressBar();" />
+                        <apex:actionFunction name="fncCancelAddOrEditChart" action="{!cancelAddOrEditChart}" rerender="chartsBlock, popupChartBlock, scriptPanel" 
+                            oncomplete="closeProgressBar();"/>
+                        
+                                                  
+                        <div class="container wrapContentBg">
+                             <apex:outputPanel id="msgSysPanel" rendered="{!msgErr.size!=0}">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <!-- 11-Dec-2014 add 'padding-right: 10px;' to rigth aligne, remove padding rigth -->
+                                        <div class="accountTitle" style="float: left; width: 100%; padding-right: 10px;">
+                                            <div class="col-md-5 col-xs-12 col-sm-5" style="padding-left: 0; ">
+                                                <img class="imageSignal" src="{!URLFOR($Resource.P2P_Icons, 'gumtree-icons/signal-icon.png')}"/> <h1 style="color: #009BDF;">Update</h1>
+                                            </div>
+                                            <div class="col-md-7 col-xs-12 col-sm-7 padding-zero remove-padding-right">
+                                             
+                                               <apex:repeat value="{!msgErr}" var="msg">
+                                                 <span style="margin-top: 3px; font-size: 15px; display: block; line-height: 18px;">  
+                                                   <apex:outputText value="{!msg.MessageText__c}" escape="false" /> 
+                                                 </span>
+                                               </apex:repeat>
+                                             
+                                            </div>
+                                         </div>
+                                    </div>
+                                </div>
+                             </apex:outputPanel>             
+         
+                            <div class="row">
+                                <div class="col-md-12 removePaddingLeft">
+                                    <div class="wrapTab">
+                                        <ul class="nav nav-tabs" role="tablist" id="myTab" style="padding-left: 15px;">
+                                          <li role="presentation" class="active"><a href="#ads_dashboard" role="tab" data-toggle="tab">Ads Dashboard</a></li>
+                                          <li role="presentation"><a href="#ads_breakdowr" role="tab" data-toggle="tab">Ads Breakdown</a></li>
+                                        </ul>
+                                        
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="ads_dashboard">
+                                                <div style="float: left; padding-left: 15px; width: 100%;">
+                                                    <div class="wrapBtnTop">
+                                                        <input type="button" value="Add new chart" class="btnAddNewChart btnOrange" onclick="addNewChart();" />
+                                                        <apex:commandButton styleClass="btnSaveSort btnOrange" value="Save" action="{!saveSortCharts}" oncomplete="cancelSortCharts();"  rerender="chartsBlock, popupChartBlock, scriptPanel" 
+                                                            onclick="showProgressBar('Updating Charts...');"    />
+                                                        <a href="{!SitePrefix}/apex/P2P_MyMetricsPDF?accid={!acc.Id}" target="_blank" class="btnGrey btnExportPdf">Export PDF</a>
+                                                        <span class="editChart makeUpEdit" onclick="enableSortCharts();">Customise</span>
+                                                        <apex:commandButton action="{!cancelSortCharts}" styleClass="cancelAddNew cancelIcon" rerender="chartsBlock, popupChartBlock, scriptPanel" onclick="showProgressBar('Updating Charts...');"
+                                                            style="display:none;border:none;background:none;" value="Cancel" oncomplete="cancelSortCharts();" />
+                                                        <span id="addNewChartError">The maximum number of charts on a dashboard is 6. Please remove one of your current charts if you would like to add a different metric.</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <apex:outputPanel id="chartsBlock">
+                                                <div class="wrapCharts">
+                                                    <ul id="sortable">
+                                                        <apex:repeat value="{!lstDashBoardCharts}" var="dbChart">
+                                                            <li class="ui-state-default chartItem removeFull">
+                                                                <div class="col-md-12 clearPadding">
+                                                                        <div class="wrapTitleChart disableHover">
+                                                                            <input type="button" value="Delete" style="display:none;padding-right:19px;" class="delChart" onclick="callDeleteChart({!FLOOR(dbChart.Position__c)});" />
+                                                                            <input type="button" value="Edit" class="editChart makeUpEdit" onclick="openEditChart(event,'wrapEditChart{!FLOOR(dbChart.Position__c)}');" />
+                                                                            <span class="titleTop" style="width:79%;">{!dbChart.Chart_Title__c}</span>
+                                                                            <span class="titleBottom">{!dbChart.Timeframe__c}</span>
+                                                                            <div class="wrapChartSignal" >
+                                                                                <div id="gchart{!FLOOR(dbChart.Position__c)}" name="gchart" style="height:320px;"></div>
+                                                                                <apex:inputHidden value="{!dbChart.Id}" />
+                                                                                <apex:inputHidden value="{!dbChart.Position__c}" />
+                                                                            </div>
+                                                                            <div class="wrapChartDescription">
+                                                                                <span class="labelChartDescription iLabel">
+                                                                                   Description   
+                                                                                </span>
+                                                                                <span class="chartDescription">
+                                                                                    {!dbChart.Chart_Description__c}
+                                                                                </span>
+                                                                                <div class="overflowEle"><br/>&hellip;</div>
+                                                                            </div>
+                                                                        </div>
+                                                                </div>
+                                                            </li>
+                                                        </apex:repeat>
+                                                    </ul>
+                                                </div>
+                                                </apex:outputPanel>
+                                            </div>
+                                            
+                                            <!-- Ads Breakdown Tab -->
+                                            <div role="tabpanel" class="tab-pane" id="ads_breakdowr">
+                                                <div style="float: left; padding-left: 15px; width: 100%;">
+                                                    <div class="wrapBtnTop" style="padding-top: 0;">
+                                                        <div class="wrapByBlock">
+                                                            <div class="adsBreakdowrCol1">
+                                                                <div class="adsBdlabel iLabel col-md-12 clearPadding iSpaceBottom10px">Filter by location:</div>
+                                                                <apex:selectList styleClass="inputFullWidth" size="1" value="{!location}">
+                                                                    <apex:selectOptions value="{!Locations}" />
+                                                                    <apex:actionSupport event="onchange" action="{!refreshTable}" reRender="theSummaryBlock, theDetailDataTable, exportExcelBlock" 
+                                                                    onsubmit="showProgressBar('Refreshing Data....')" oncomplete="closeProgressBar();" />
+                                                                </apex:selectList>
+                                                            </div>
+                                                            <div class="adsBreakdowrCol2">
+                                                                <div class="iLabel adsBdlabel col-md-12 clearPadding iSpaceBottom10px">Date Range:</div>
+                                                                <div class="haftWidthLeft fromDate">
+                                                                    <input type="text" id="pmFromDatePicker" 
+                                                                    name="datePicker" class="inputData" readonly="readonly" />
+                                                                    <input type="hidden" value="{!pmFromDate}" />
+                                                                </div>
+                                                                <div class="paddingLeft haftWidthRight utilDate">
+                                                                    <input type="text" id="pmEndDatePicker" 
+                                                                    name="datePicker" class="inputData" readonly="readonly" />
+                                                                    <input type="hidden" value="{!pmEndDate}" />
+                                                                </div>
+                                                                    
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="wrapByBlock">
+                                                            <div class="adsBreakdowrCol3">
+                                                                <div class="iLabel adsBdlabel col-md-12 clearPadding iSpaceBottom10px">Display:</div>
+                                                                <apex:selectList value="{!displayType}" size="1">
+                                                                    <apex:selectOptions value="{!DisplayTypePicklist}" />
+                                                                    <apex:actionSupport event="onchange" action="{!refreshTable}" reRender="theSummaryBlock, theDetailDataTable, exportExcelBlock" 
+                                                                    onsubmit="showProgressBar('Refreshing Data....')" oncomplete="closeProgressBar();" />
+                                                                </apex:selectList>
+                                                            </div>
+                                                            
+                                                            <div class="adsBreakdowrCol4">
+                                                                    <div class="adsBdlabel col-md-12 clearPadding iSpaceBottom10px">&nbsp;</div>
+                                                                    <div class="col-md-12 clearPadding">
+                                                                        <apex:outputPanel id="exportExcelBlock">
+                                                                            <a href="{!SitePrefix}/apex/P2P_MyMetricsExcel?accId={!acc.Id}&filter={!JsonStrFilter}" class="myBtn btnGrey exportExcel">Export Excel</a>
+                                                                        </apex:outputPanel>
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="setLeft inputFullWidth" style="padding-left: 15px;">
+                                                    <apex:outputPanel layout="block" styleClass="wrapSummery" id="theSummaryBlock">
+                                                        <div class="col-md-12">
+                                                            <span class="miniTitle">Summary</span>
+                                                            <div class="wrapSummeryInfo">
+                                                                <div class="sumLabel">Location:</div>
+                                                                <div class="sumValue">{!Location}</div>
+                                                                
+                                                                <div class="sumLabel hideMeUnder480">Date Range:</div>
+                                                                <div class="sumValue hideMeUnder480">
+                                                                    <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                                                                        <apex:param value="{!pmFromDate}" /> 
+                                                                    </apex:outputText> 
+                                                                    <apex:outputText value="{!IF((pmFromDate == null) || (pmFromDate != null && pmEndDate == null), '', ' to ')}" /> 
+                                                                    <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                                                                        <apex:param value="{!pmEndDate}" /> 
+                                                                    </apex:outputText>
+                                                                </div>
+                                                                
+                                                                <div class="sumLabel">View:</div>
+                                                                <div class="sumValue">{!displayType}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="wrapListFieldSummery">
+                                                            <apex:repeat value="{!fieldNames}" var="fieldName" >
+                                                                <div class="col-md-3 col-sm-6 col-xs-6">
+                                                                    <div class="wrapFieldInfo">
+                                                                        <div class="fieldName iLabel">
+                                                                            <span class="headerIcon" data-toggle="tooltip" title="{!dataSummaryHeadersInfos[fieldName]}"></span>
+                                                                            {!dataSummaryHeaders[fieldName]}
+                                                                        </div>
+                                                                        <div class="fieldValue">
+                                                                            <apex:outputText value="{!perMertsSummaryDto.PerformanceMartice[fieldName]}" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </apex:repeat>
+                                                        </div>
+                                                        <script>
+                                                            $(document).ready(function(){
+                                                                $('[data-toggle="tooltip"]').bind({
+                                                                    mouseover : function(){
+                                                                        var title = $(this).attr('title');
+                                                                        var data_title = $(this).attr('data-title');
+                                                                        $(this).attr('title','');
+                                                                        if(!data_title){
+                                                                            data_title = title;
+                                                                            $(this).attr('data-title',title);
+                                                                        }
+                                                                        helperDialog.show($(this).get(0), data_title);
+                                                                    },
+                                                                    mouseout : function(){
+                                                                        helperDialog.hide();
+                                                                    }
+                                                                });
+                                                            });
+                                                        </script>
+                                                    </apex:outputPanel>
+                                                </div>
+                                                <!-- end summary block -->
+                                                <div class="setLeft inputFullWidth" style="padding-left: 15px;">
+                                                    <apex:outputPanel layout="block" styleClass="wrapListAdBreakdowr" id="theDetailDataTable">
+                                                        <div class="rowAdBreakdowr rowAdBreakdowrHeader">
+                                                            <div class="colAdBreakdowrSmall">
+                                                                <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Date','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                    <apex:outputText value="Date" rendered="{!displayType == 'Month'}" />
+                                                                    <apex:outputText value="Quarter" rendered="{!displayType == 'Quarter'}" />
+                                                                    <apex:outputText value="Year" rendered="{!displayType == 'Year'}" />
+                                                                    <apex:param name="pmDate" value="Date" assignTo="{!sortFieldName}" />
+                                                               </apex:commandLink>
+                                                            </div>
+                                                            <div class="colAdBreakdowrSmall">
+                                                                <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Live_ads','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                    Live Ads
+                                                                    <apex:param name="pmDate" value="Live_ads" assignTo="{!sortFieldName}" />
+                                                                </apex:commandLink>
+                                                            </div>
+                                                            <div class="colAdBreakdowrMedium hideUnder379">
+                                                                <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Ads_posted','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                    <apex:param name="pmTotalAdsPosted" value="Ads_posted" assignTo="{!sortFieldName}" />
+                                                                    Total Ads Posted
+                                                                </apex:commandLink>
+                                                            </div>
+                                                            <div class="colAdBreakdowrMedium hideUnder510">
+                                                                <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'New_ads_posted','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                    <apex:param name="pmNewAdsPosted" value="New_ads_posted" assignTo="{!sortFieldName}" />
+                                                                    New Ads Posted
+                                                                </apex:commandLink>
+                                                            </div>
+                                                            <div class="colAdBreakdowr hideUnder650">
+                                                                <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Reposted_Ads','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                    <apex:param name="pmAdsReposted" value="Reposted_Ads" assignTo="{!sortFieldName}" />
+                                                                    Ads Reposted
+                                                                </apex:commandLink>
+                                                            </div>
+                                                            <div class="colAdBreakdowr hideUnder737">
+                                                                <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Email_replies','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                    <apex:param name="pmEmailReplies" value="Email_replies" assignTo="{!sortFieldName}" />
+                                                                    Email Replies
+                                                                </apex:commandLink>
+                                                            </div>
+                                                            <div class="colAdBreakdowrBig hideUnder913">
+                                                                <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Email_replies_per_ad','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                    <apex:param name="pmEmialRepliesPerAds" value="Email_replies_per_ad" assignTo="{!sortFieldName}" />
+                                                                    Email Replies Per Ad
+                                                                </apex:commandLink>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Editing -->
+                                                        <apex:repeat value="{!listPMDto}" var="pm" >
+                                                            <div class="rowAdBreakdowr">
+                                                                <div class="colAdBreakdowrSmall">
+                                                                    <apex:outputText value="{!pm.pmDate}" rendered="{!displayType == 'Month'}" /> 
+                                                                    <apex:outputText value="{!pm.pmQuarter}" rendered="{!displayType == 'Quarter'}" />
+                                                                    <apex:outputText value="{!pm.pmYear}" rendered="{!displayType == 'Year'}" />
+                                                                </div>
+                                                                <div class="colAdBreakdowrSmall">
+                                                                    <apex:outputText value="{!pm.Live_ads}" />
+                                                                </div>
+                                                                <div class="colAdBreakdowrMedium hideUnder379">
+                                                                    <apex:outputText value="{!pm.Ads_posted}" />
+                                                                </div>
+                                                                <div class="colAdBreakdowrMedium hideUnder510">
+                                                                    <apex:outputText value="{!pm.New_ads_posted}" />
+                                                                </div>
+                                                                <div class="colAdBreakdowr hideUnder650">
+                                                                    <apex:outputText value="{!pm.Reposted_Ads}" />
+                                                                </div>
+                                                                <div class="colAdBreakdowr hideUnder737">
+                                                                    <apex:outputText value="{!pm.Email_replies}" />
+                                                                </div>
+                                                                <div class="colAdBreakdowrBig hideUnder913">
+                                                                    <apex:outputText value="{!pm.Email_replies_per_ad}" />
+                                                                </div>
+                                                                <div class="hideAllSize showUnder913 inActive actionShowHide">
+                                                                    &nbsp;
+                                                                </div>
+                                                                
+                                                                <!-- More Details Columns -->
+                                                                <div class="pc_more_item">
+                                                                    <div class="pcTitleItem hideAllSize showUnder379">
+                                                                        <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Ads_posted','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                        <apex:param name="pmTotalAdsPosted" value="Ads_posted" assignTo="{!sortFieldName}" />
+                                                                            Total Ads Posted
+                                                                        </apex:commandLink>
+                                                                    </div>
+                                                                    <div class="pcValueItem hideAllSize showUnder379">
+                                                                        <apex:outputText value="{!pm.Ads_posted}" />
+                                                                    </div>
+                                                                    <div class="pcTitleItem hideAllSize showUnder510">
+                                                                        <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'New_ads_posted','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                            <apex:param name="pmNewAdsPosted" value="New_ads_posted" assignTo="{!sortFieldName}" />
+                                                                            New Ads Posted
+                                                                        </apex:commandLink>
+                                                                    </div>
+                                                                    <div class="pcValueItem hideAllSize showUnder510">
+                                                                        <apex:outputText value="{!pm.New_ads_posted}" />
+                                                                    </div>
+                                                                    
+                                                                    <div class="pcTitleItem hideAllSize showUnder650">
+                                                                        <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Reposted_Ads','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                            <apex:param name="pmAdsReposted" value="Reposted_Ads" assignTo="{!sortFieldName}" />
+                                                                            Ads Reposted
+                                                                        </apex:commandLink>
+                                                                    </div>
+                                                                    <div class="pcValueItem hideAllSize showUnder650">
+                                                                        <apex:outputText value="{!pm.Reposted_Ads}" />
+                                                                    </div>
+                                                                    <div class="pcTitleItem hideAllSize showUnder737">
+                                                                        <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Email_replies','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                            <apex:param name="pmEmailReplies" value="Email_replies" assignTo="{!sortFieldName}" />
+                                                                            Email Replies
+                                                                        </apex:commandLink>
+                                                                    </div>
+                                                                    <div class="pcValueItem hideAllSize showUnder737">
+                                                                        <apex:outputText value="{!pm.Email_replies}" />
+                                                                    </div>
+                                                                    
+                                                                    <div class="pcTitleItem hideAllSize showUnder913">
+                                                                        <apex:commandLink action="{!sortPerMetriceDatatable}" reRender="theDetailDataTable, exportExcelBlock" styleClass="{!IF(sortFieldName != 'Email_replies_per_ad','headSort',(IF(isSortByASC == false, 'headSortDESC','headSortASC')))}">
+                                                                            <apex:param name="pmEmialRepliesPerAds" value="Email_replies_per_ad" assignTo="{!sortFieldName}" />
+                                                                            Email Replies Per Ad
+                                                                        </apex:commandLink>
+                                                                    </div>
+                                                                    <div class="pcValueItem hideAllSize showUnder913">
+                                                                        <apex:outputText value="{!pm.Email_replies_per_ad}" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </apex:repeat>
+                                                        <script>
+                                                            $('.inActive').off('click').on('click',function(){
+                                                                  var that = $(this);
+                                                                  var fadeActive = that.attr('class');
+                                                                  if(fadeActive.match(/open/gi)){
+                                                                      that.removeClass('open');
+                                                                  }else{
+                                                                      that.addClass('open');
+                                                                  }
+                                                              });
+                                                        </script>
+                                                        <apex:outputText rendered="{!listPMDto.size > 0}">
+                                                            <div class="listViewport" style="display:block; padding-bottom: 0;">
+                                                                <div class="bottomNav">
+                                                                    <div class="paginator" style="padding-bottom:8px;margin-top:10px;">
+                                                                        <div class="iWrapPagination" style="padding-left: 0; padding-right: 0;">
+                                                                            <div class="wrapShowPerPage">
+                                                                                <div class="invListSizeChange">
+                                                                                    <apex:actionStatus id="invListSizeChange">
+                                                                                        <apex:facet name="start">
+                                                                                            <img src="/img/loading.gif" /> 
+                                                                                        </apex:facet>
+                                                                                        <apex:facet name="stop">
+                                                                                            <apex:outputPanel >
+                                                                                                Showing : &nbsp;&nbsp;&nbsp;
+                                                                                                <apex:outputPanel rendered="{!totalResultSize > listSize}">
+                                                                                                    <apex:selectList value="{!listSize}" size="1">
+                                                                                                        <apex:selectOptions value="{!listSizeOptions}"/>
+                                                                                                        <apex:actionSupport event="onchange" action="{!loadPMData}" reRender="theDetailDataTable" status="invListSizeChange"/>
+                                                                                                    </apex:selectList>
+                                                                                                    &nbsp;&nbsp;&nbsp;of
+                                                                                                </apex:outputPanel>
+                                                                                                {!totalRecords} Record <apex:outputText rendered="{!totalRecords>1}" value="s" />
+                                                                                            </apex:outputPanel>
+                                                                                        </apex:facet>
+                                                                                    </apex:actionStatus>
+                                                                                </div>
+                                                                             </div>
+                                                                            <div class="wrapPaginationAction">
+                                                                                <div class="prevNextLinks">
+                                                                                    <span class="prevNextLeft">
+                                                                                        <apex:commandLink action="{!goPreviousPage}" rendered="{!PrevRequired}" value="Previous" status="navigateStatus" reRender="theDetailDataTable" styleClass="previousButton"><img src="/s.gif" class="prev" alt="Previous"/></apex:commandLink>
+                                                                                    </span>
+                                                                                    <apex:repeat value="{!pageNumList}" var="pnum">
+                                                                                        <apex:commandLink action="{!goToPage}" rendered="{!pageNumList.size>1}" value="{!pnum}" status="navigateStatus" reRender="theDetailDataTable" styleClass="{!IF(pnum == curPage,'activePageNum','pageNum')}" onclick="if('{!pnum}' == '{!curPage}') return false;">
+                                                                                            <apex:param name="ptoPage" assignTo="{!curPage}" value="{!pnum}"/>
+                                                                                        </apex:commandLink>
+                                                                                    </apex:repeat>
+                                                                                    &nbsp;&nbsp;&nbsp;
+                                                                                    <span class="prevNext">
+                                                                                        <apex:commandLink action="{!goNextPage}" rendered="{!NextRequired}" value="Next" status="navigateStatus" reRender="theDetailDataTable" styleClass="nextButton setLeft"><img src="/s.gif" class="next" alt="Next"/></apex:commandLink>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="clearingBox"></div>
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputText>
+                                                        
+                                                    </apex:outputPanel>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <apex:outputPanel id="popupChartBlock">
+                        <!-- View Chart -->
+                        <apex:repeat value="{!lstDashBoardCharts}" var="dbChart">
+                        <div class="modal fade popupViewChart" id="wrapViewChart{!FLOOR(dbChart.Position__c)}">
+                            <div class="modal-dialog" style="padding:0;width:95%;">
+                                <div class="modal-content">
+                                    <img class="close_popup" onclick="$('.popupViewChart').modal('hide');" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                                    <div class="row">
+                                        <span class="editChart makeUpEdit editPopupChart" style="margin-right: 15px;" data-toggle="modal" data-target="#wrapEditChart{!FLOOR(dbChart.Position__c)}">Edit</span>
+                                        <div class="col-md-4 col-sm-4 col-xs-12 spacingTop">
+                                            <span class="titleTop">{!dbChart.Chart_Title__c}</span>
+                                            <span class="titleBottom">{!dbChart.Timeframe__c}</span>
+                                            <div class="wrapChartDescription">
+                                                <span class="labelChartDescription iLabel">
+                                                    Chart Description
+                                                </span>
+                                                <span class="chartDescription">
+                                                    {!dbChart.Chart_Description__c}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8 col-sm-8 col-xs-12 spacingTop">
+                                            <div id="viewChart{!FLOOR(dbChart.Position__c)}" style="height:350px;width:100%;overflow:hidden;" name="viewChart"></div>
+                                            <apex:inputHidden value="{!dbChart.Id}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </apex:repeat>
+                        
+                        <!-- Add new chart -->
+                        <div class="modal fade" id="wrapAddChart">
+                          <div class="modal-dialog" style="padding:0;width:95%;">
+                            <div class="modal-content">
+                                <img class="close_popup" onclick="fncCancelAddOrEditChartPopup();" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                                <div class="row">
+                                    <div class="col-md-5 col-sm-5 paddingTop largeBorderRight">
+                                        <div class="wrapAddNewTitleChart">
+                                            <span class="titleTop" style="width:65%;"></span>
+                                            <!-- <apex:commandButton styleClass="cancelAddNew cancelIcon" value="Cancel" action="{!cancelAddOrEditChart}" rerender="chartsBlock, popupChartBlock, scriptPanel" 
+                                            onclick="closeModalPopup();showProgressBar('Reloading Chart....');" oncomplete="closeProgressBar();" /> -->
+                                            
+                                            <input type="button" value="Refresh" class="cancelAddNew refreshIcon" onclick="refreshNewChartDataHandler('wrapAddChart');" />
+                                                 
+                                            <div id="newChart" name="newChart" style="height:300px;width:100%;overflow:hidden;"></div>
+                                            <apex:inputHidden value="{!newDashBoard.Position__c}" />
+                                            
+                                            <div class="wrapChartDescription">
+                                                <span class="labelChartDescription iLabel">
+                                                    Chart Description
+                                                </span>
+                                                <span class="chartDescription">
+                                                </span>
+                                            </div>
+                                        </div>
+                                     </div>
+                                    
+                                    <div class="col-md-7 col-sm-7 paddingTop AddNewRightClearPaddingLeft">
+                                        <div class="wrapAddNewTitleChart">
+                                            <span class="titleTop fullWidth">Make your chart</span>
+                                            <div class="addNewLeft">
+                                                <div class="chartTitle">
+                                                    <span class="adsBdlabel fullWidth iLabel">Chart Title*</span>
+                                                    <apex:inputField value="{!newDashBoard.Chart_Title__c}" html-placeholder="Chart title" styleClass="chart_input" />
+                                                </div>
+                                                <div>
+                                                    <span class="adsBdlabel fullWidth iLabel">Chart Description</span>
+                                                    <apex:inputField value="{!newDashBoard.Chart_Description__c}" html-placeholder="Enter Chart Description" html-length="256" styleClass="chart_input input" />
+                                                </div>
+                                                <div class="wrapRadio timeFrame">
+                                                    <span class="adsBdlabel fullWidth iLabel">Display*</span>
+                                                    <apex:inputField value="{!newDashBoard.Timeframe__c}" />
+                                                    <!--<input id="month_" checked="checked" type="radio" name="dipslayBy"/><label for="month_" class="monthView">Month View</label>
+                                                    <input id="year_" type="radio" name="dipslayBy"/><label for="year_" class="yearView">Year View</label>-->
+                                                </div>
+                                                <div class="chartType">
+                                                    <span class="adsBdlabel fullWidth iLabel">Chart Type*</span>
+                                                    <a href="javascript:void(0);" onclick="chartTypeChange(this, 'Bar');" name="chartType{!newDashBoard.Position__c}"><img alt="Bar" title="Bar" class="barChartIcon" src="{!URLFOR($Resource.P2P_Touchpunch, IF(newDashBoard.Chart_Type__c=='Bar','P2P_Touchpunch/bar_active.png','P2P_Touchpunch/bar_inactive.png'))}"/></a>
+                                                    <a href="javascript:void(0);" onclick="chartTypeChange(this, 'Line');" name="chartType{!newDashBoard.Position__c}"><img alt="Line" title="Line" class="lineChartIcon" src="{!URLFOR($Resource.P2P_Touchpunch, IF(newDashBoard.Chart_Type__c=='Line','P2P_Touchpunch/line_active.png','P2P_Touchpunch/line_inactive.png'))}"/></a>
+                                                    <a href="javascript:void(0);" onclick="chartTypeChange(this, 'Pie');" name="chartType{!newDashBoard.Position__c}"><img alt="Pie" title="Pie" class="pieChartIcon" src="{!URLFOR($Resource.P2P_Touchpunch, IF(newDashBoard.Chart_Type__c=='Pie','P2P_Touchpunch/pie_active.png','P2P_Touchpunch/pie_inactive.png'))}"/></a>
+                                                    <apex:inputHidden value="{!newDashBoard.Chart_Type__c}" />
+                                                </div>
+                                            </div>
+                                            <div class="addNewRight">
+                                                <div>
+                                                    <span class="adsBdlabel fullWidth iLabel">Data Range*</span>
+                                                    <div class="haftWidthLeft">
+                                                        <span class="adsBdlabel haftWidthLeft iLabel">From:</span>
+                                                    </div>
+                                                    <div class="paddingLeft haftWidthRight">
+                                                        <span class="adsBdlabel haftWidthRight iLabel">To:</span>
+                                                    </div>
+                                                    
+                                                    <div class="haftWidthLeft fromDate">
+                                                        <input type="text" id="fromPicker{!FLOOR(newDashBoard.Position__c)}" 
+                                                        name="datePicker" class="inputData" readonly="readonly" />
+                                                        <input type="hidden" value="{!newDashBoard.from_Date__c}" />
+                                                    </div>
+                                                    <div class="paddingLeft haftWidthRight utilDate">
+                                                        <input type="text" id="utilPicker{!FLOOR(newDashBoard.Position__c)}" 
+                                                        name="datePicker" class="inputData" readonly="readonly" />
+                                                        <input type="hidden" value="{!newDashBoard.until_Date__c}" />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="seperateDataRange">
+                                                        <hr/>
+                                                        <img src="{!URLFOR($Resource.P2P_Touchpunch, 'P2P_Touchpunch/center_plus.png')}"/>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="haftWidthLeft">
+                                                        <span class="adsBdlabel haftWidthLeft iLabel">Data Point*</span>
+                                                    </div>
+                                                    <div class="paddingLeft haftWidthRight">
+                                                        <span class="adsBdlabel haftWidthRight iLabel">Ad Location*</span>
+                                                    </div>
+                                                    <div class="haftWidthLeft dataPointA">
+                                                        <apex:inputField value="{!newDashBoard.Data_Point_A__c}" styleClass="inputData" />
+                                                    </div>
+                                                      <div class="paddingLeft haftWidthRight locationA">
+                                                        <apex:inputField value="{!newDashBoard.Location_A__c}" styleClass="inputData" /> 
+                                                    </div>                                            
+                                                </div>
+        
+                                                <div>
+                                                    <div class="seperateDataRange">
+                                                        <hr/>
+                                                        <img src="{!URLFOR($Resource.P2P_Touchpunch, 'P2P_Touchpunch/center_plus.png')}"/>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <button class="btnSave btnOrange inputFullWidth" onclick="saveNewChartClickHandler('wrapAddChart'); return false;"><span class="btnSaveBG"><img src="{!URLFOR($Resource.P2P_Resources, 'img/save_icon.png')}"/></span>Save</button>             
+                                                </div>
+                                                <!--- 2015-01-12 - Added by Steve Paul - Disclaimer to show current metrics are part of BETA -->
+                                                <div>
+                                                     * Inclusive of all platforms; Desktop, Mobile, iPhone App, iPad App, Android App, Android Tablet App
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                        </div>
+                        
+                        <!-- Edit chart -->
+                        <apex:repeat value="{!lstDashBoardCharts}" var="dbChart">
+                        <div class="modal fade" id="wrapEditChart{!FLOOR(dbChart.Position__c)}">
+                          <div class="modal-dialog" style="padding:0;width:95%;">
+                            <div class="modal-content">
+                                <img class="close_popup" onclick="fncCancelAddOrEditChartPopup();" alt="Close" src="{!URLFOR($Resource.P2P_Resources, 'svg/close.svg')}"/>
+                                <div class="row">
+                                    <div class="col-md-5 col-sm-5 paddingTop largeBorderRight">
+                                        <div class="wrapAddNewTitleChart">
+                                            <span class="titleTop" style="width:65%;"><apex:outputText value="{!dbChart.Chart_Title__c}" /></span>
+                                            
+                                            <!-- <apex:commandButton styleClass="cancelAddNew cancelIcon" value="Cancel" action="{!cancelAddOrEditChart}" rerender="chartsBlock, popupChartBlock, scriptPanel" 
+                                            onclick="closeModalPopup();showProgressBar('Reloading Chart....');" oncomplete="closeProgressBar();"  /> -->
+                                             
+                                            <input type="button" value="Refresh" class="cancelAddNew refreshIcon" onclick="refreshEditChartDataHandler({!FLOOR(dbChart.Position__c)}, 'wrapEditChart{!FLOOR(dbChart.Position__c)}');" />
+                                            
+                                            <div id="editChart{!FLOOR(dbChart.Position__c)}" name="editChart" style="height:300px;width:100%;overflow:hidden;"></div>
+                                            <apex:inputHidden value="{!dbChart.Id}" />
+                                            
+                                            <div class="wrapChartDescription">
+                                                <span class="labelChartDescription iLabel">
+                                                    Chart Description
+                                                </span>
+                                                <span class="chartDescription">
+                                                    <apex:outputText value="{!dbChart.Chart_Description__c}" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                     </div>
+                                    
+                                    <div class="col-md-7 col-sm-7 paddingTop AddNewRightClearPaddingLeft">
+                                        <div class="wrapAddNewTitleChart">
+                                            <span class="titleTop fullWidth" style="width:56%;">Edit your chart</span>
+                                            <input type="button" value="Delete" class="delChart" onclick="callDeleteChart({!FLOOR(dbChart.Position__c)});" />
+                                            <div class="addNewLeft">
+                                                <div class="chartTitle">
+                                                    <span class="adsBdlabel fullWidth chartTitle iLabel">Chart Title*</span>
+                                                    <apex:inputField value="{!dbChart.Chart_Title__c}" html-placeholder="Chart title" styleClass="chart_input" />
+                                                </div>
+                                                <div>
+                                                    <span class="adsBdlabel fullWidth iLabel">Chart Description</span>
+                                                    <apex:inputField value="{!dbChart.Chart_Description__c}" html-length="256" html-placeholder="Enter Chart Description" styleClass="chart_input input" />
+                                                </div>
+                                                <div class="wrapRadio timeFrame">
+                                                    <span class="adsBdlabel fullWidth iLabel">Display*</span>
+                                                    <apex:inputField value="{!dbChart.Timeframe__c}" />
+                                                    <!--<input id="month_" checked="checked" type="radio" name="dipslayBy"/><label for="month_" class="monthView">Month View</label>
+                                                    <input id="year_" type="radio" name="dipslayBy"/><label for="year_" class="yearView">Year View</label>-->
+                                                </div>
+                                                <div>
+                                                    <span class="adsBdlabel fullWidth iLabel">Chart Type*</span>
+                                                    <a href="javascript:void(0);" onclick="chartTypeChange(this, 'Bar');" name="chartType{!dbChart.Position__c}"><img alt="Bar" title="Bar" class="barChartIcon" src="{!URLFOR($Resource.P2P_Touchpunch, IF(dbChart.Chart_Type__c=='Bar','P2P_Touchpunch/bar_active.png','P2P_Touchpunch/bar_inactive.png'))}"/></a>
+                                                    <a href="javascript:void(0);" onclick="chartTypeChange(this, 'Line');" name="chartType{!dbChart.Position__c}"><img alt="Line" title="Line" class="lineChartIcon" src="{!URLFOR($Resource.P2P_Touchpunch, IF(dbChart.Chart_Type__c=='Line','P2P_Touchpunch/line_active.png','P2P_Touchpunch/line_inactive.png'))}"/></a>
+                                                    <a href="javascript:void(0);" onclick="chartTypeChange(this, 'Pie');" name="chartType{!dbChart.Position__c}"><img alt="Pie" title="Pie" class="pieChartIcon" src="{!URLFOR($Resource.P2P_Touchpunch, IF(dbChart.Chart_Type__c=='Pie','P2P_Touchpunch/pie_active.png','P2P_Touchpunch/pie_inactive.png'))}"/></a>
+                                                    <apex:inputHidden value="{!dbChart.Chart_Type__c}" />
+                                                </div>
+                                            </div>
+                                            <div class="addNewRight">
+                                                <div>
+                                                    <span class="adsBdlabel fullWidth iLabel">Data Range*</span>
+                                                    <div class="haftWidthLeft">
+                                                        <span class="adsBdlabel haftWidthLeft iLabel">From:</span>
+                                                    </div>
+                                                    <div class="paddingLeft haftWidthRight">
+                                                        <span class="adsBdlabel haftWidthRight iLabel">To:</span>
+                                                    </div>
+                                                    
+                                                    <div class="haftWidthLeft fromDate">
+                                                        <input type="text" id="fromPicker{!FLOOR(dbChart.Position__c)}" 
+                                                        name="datePicker" class="inputData" readonly="readonly" />
+                                                        <input type="hidden" value="{!dbChart.from_Date__c}" />
+                                                    </div>
+                                                    <div class="paddingLeft haftWidthRight utilDate">
+                                                        <input type="text" id="utilPicker{!FLOOR(dbChart.Position__c)}" 
+                                                        name="datePicker" class="inputData" readonly="readonly" />
+                                                        <input type="hidden" value="{!dbChart.until_Date__c}" />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="seperateDataRange">
+                                                        <hr/>
+                                                        <img src="{!URLFOR($Resource.P2P_Touchpunch, 'P2P_Touchpunch/center_plus.png')}"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div>
+                                                    <div class="haftWidthLeft">
+                                                        <span class="adsBdlabel haftWidthLeft iLabel">Data Point*</span>
+                                                    </div>
+                                                    <div class="paddingLeft haftWidthRight">
+                                                        <span class="adsBdlabel haftWidthRight iLabel">Ad Location*</span>
+                                                    </div>
+                                                    <div class="haftWidthLeft dataPointA">
+                                                        <apex:inputField value="{!dbChart.Data_Point_A__c}" styleClass="inputData" />
+                                                    </div>
+                                                      <div class="paddingLeft haftWidthRight locationA">
+                                                        <apex:inputField value="{!dbChart.Location_A__c}" styleClass="inputData" /> 
+                                                    </div>                                            
+                                                </div>
+                                                <div>
+                                                    <div class="seperateDataRange">
+                                                        <hr/>
+                                                        <img src="{!URLFOR($Resource.P2P_Touchpunch, 'P2P_Touchpunch/center_plus.png')}"/>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <button class="btnSave btnOrange inputFullWidth" onclick="saveEditChartClickHandler({!FLOOR(dbChart.Position__c)}, 'wrapEditChart{!FLOOR(dbChart.Position__c)}'); return false;"><span class="btnSaveBG"><img src="{!URLFOR($Resource.P2P_Resources, 'img/save_icon.png')}"/></span>Save</button>
+                                                </div>
+                                                <div>
+                                                     * Inclusive of all platforms; Desktop, Mobile, iPhone App, iPad App, Android App, Android Tablet App
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                        </div>
+                        </apex:repeat>
+                        </apex:outputPanel>
+                        </apex:form>
+                        
+                        <apex:outputPanel id="scriptPanel">
+                            <script>
+                                
+                                $(document).ready(function(){
+                                    
+                                    if($.browser.webkit) $("#sortable").css('overflow','auto');
+                                    $('#myTab a:first').tab('show')
+                                    
+                                    $('.wrapTitleChart .wrapChartDescription .chartDescription').each(function(){
+                                        var ele = $(this).get(0);
+                                        $(this).parent().find('.overflowEle').hide();
+                                        if(ele.innerHTML.trim() != '' && (ele.offsetHeight < ele.scrollHeight || ele.offsetWidth < ele.scrollWidth)){
+                                            $(this).parent().find('.overflowEle').show();
+                                        }
+                                    });
+                                    
+                                    $("#sortable").sortable({
+                                        disabled: true,
+                                        placeholder: 'ui-state-highlight',
+                                        start: function (e, ui) { 
+                                            ui.placeholder.empty().append($('<div></div>'));
+                                        },
+                                        stop: function(event, ui) {
+                                            $("#sortable li").each(function(index){
+                                                index = index + 1;
+                                                var gchartEle = $(this).find('[name="gchart"]');
+                                                
+                                                gchartEle.parent().find('input:hidden').last().val(index+'');
+                                                gchartEle.attr('id', 'gchart'+index);
+                                            });
+                                        }   
+                                    }).disableSelection();
+                                    $("#sortable li").each(function(index){
+                                        $(this).live('click', function(event){
+                                            if(event.target.tagName != 'path'){
+                                                $('#wrapViewChart'+(index+1)).modal('show');
+                                                clearPopupChart();
+                                            }
+                                        });
+                                    });
+                                    
+                                    $('[name="datePicker"]').datepicker({format: 'dd/mm/yyyy'});
+                                    $('[name="datePicker"]').each(function(){
+                                        var defaultDate = $(this).next().val(),
+                                            dateObj = new Date(defaultDate),
+                                            dateStr = $.datepicker.formatDate("dd/mm/yy", dateObj);
+                                        if(defaultDate != ''){
+                                            $(this).val(dateStr);
+                                            $(this).datepicker('setValue', dateObj);
+                                            $(this).datepicker('update');
+                                        }
+                                    });
+                                    
+                                    $('[name="datePicker"]').datepicker().on('changeDate', function(ev){
+                                        var pickDate = new Date(ev.date),
+                                            dateStr = $.datepicker.formatDate("dd/mm/yy", pickDate),
+                                            eleId = $(this).attr('id'); 
+                                        
+                                        if(eleId.indexOf('fromPicker') != -1) document.getElementById('{!$Component.theForm.pickFromDate}').value = dateStr;
+                                        if(eleId.indexOf('utilPicker') != -1) document.getElementById('{!$Component.theForm.pickUtilDate}').value = dateStr;
+                                        
+                                        //set from/end date to ads breakdown tab
+                                        if (eleId.indexOf('pmFromDatePicker') != -1 || eleId.indexOf('pmEndDatePicker') != -1) {
+                                            var dateId = (eleId.indexOf('pmFromDatePicker') != -1) ? '{!$Component.theForm.pmFromDate}' : '{!$Component.theForm.pmEndDate}'
+                                            document.getElementById(dateId).value = dateStr;
+                                            showProgressBar('Refreshing Data....');
+                                            refreshTable();
+                                        }
+                                        
+                                        $(this).next().val(dateStr);
+                                        $(this).datepicker('hide'); 
+                                    });
+                                    
+                                    drawChart();
+                                    $('.modal').on('shown.bs.modal', drawPopupChart);
+                            });
+                            
+                            function addNewChart(){
+                                if({!lstDashBoardCharts.size} == 6){
+                                    $('#addNewChartError').show();
+                                }else{
+                                    $('#addNewChartError').hide();
+                                    $('#wrapAddChart').modal('show');
+                                }
+                            }
+                            
+                            function getDBCharts(dbId){
+                                var mDBCharts = JSON.parse('{!JSENCODE(mDBChartsJsonStr)}');
+                                return mDBCharts[dbId];
+                            }
+                              
+                            function getDateRange(dbId){
+                                var mDateRange = JSON.parse('{!mDateRangeJsonStr}');
+                                return mDateRange[dbId];
+                            }
+                              
+                            function getDateRangeYearOnYear(dbId){
+                                var mDateRangeYearOnYear = JSON.parse('{!mDateRangeYearOnYearJsonStr}');
+                                return mDateRangeYearOnYear[dbId];
+                            }
+                              
+                            function getPerformData(timeFrame){
+                                if(timeFrame == 'Month on month' || timeFrame == 'Year on year'){
+                                    var mPerformDataMonOnMon = JSON.parse('{!mMonthOnMonthJsonStr}');
+                                    return mPerformDataMonOnMon;
+                                //Quarter on quarter
+                                }else{
+                                    var mPerformDataQuartOnQuart = JSON.parse('{!mQuartOnQuartJsonStr}');
+                                    return mPerformDataQuartOnQuart;
+                                }
+                            }
+                            </script>
+                        </apex:outputPanel>
+                        
+                        <script>
+                          
+                          // Load the Visualization API and the piechart package.
+                          google.load('visualization', '1.0', {'packages':['corechart']});
+                          
+                          var resizeTimer;
+                          $(window).resize(function() {
+                                if($("#myTab li.active a").html() == 'Ads Dashboard'){
+                                    clearTimeout(resizeTimer);
+                                    resizeTimer = setTimeout(doneResizing, 500);
+                                }
+                          });
+                          function doneResizing(){
+                                drawChart();
+                                drawPopupChart();
+                          }
+                          function drawChart(){
+                                $('[name="gchart"]').each(function(){
+                                      var chartId = $(this).attr('id');
+                                      var dbId = $(this).parent().find('input:hidden').first().val();
+                                      var dbChart = getDBCharts(dbId);
+                                      var xData = getDateRange(dbId);
+                                    
+                                      if(dbChart != undefined && xData != null){
+                                        if(dbChart['Id'] == undefined) dbChart['Id'] = dbChart['Position__c'];;
+                                          var mapYData = getPerformData(dbChart['Timeframe__c']);
+                                          drawChartByType(dbChart, chartId, xData, mapYData, $(this));
+                                      }
+                                });
+                          }
+                          
+                          function drawPopupChart(){
+                                $('[name="viewChart"], [name="editChart"]').each(function(){
+                                
+                                   var chartId = $(this).attr('id');
+                                   var dbId = $(this).parent().find('input:hidden').first().val();
+                                   var dbChart = getDBCharts(dbId);
+                                   var xData = getDateRange(dbId);
+                                   
+                                   if(dbChart != undefined && xData != null){
+                                       if(dbChart['Id'] == undefined) dbChart['Id'] = dbChart['Position__c'];;
+                                       var mapYData = getPerformData(dbChart['Timeframe__c']);
+                                       drawChartByType(dbChart, chartId, xData, mapYData, $(this));
+                                   }
+                                });
+                          }
+                          
+                          function chartTypeChange(ele, value){
+                                var chartTypeGroup = $(ele).attr('name');
+                                
+                                //clear out old selected
+                                $('[name="'+chartTypeGroup+'"]').each(function(){
+                                    var src = $(this).find('img').attr('src');
+                                    if(src.indexOf('inactive') == -1){ 
+                                        src = src.replace('active','inactive');
+                                        $(this).find('img').attr('src', src);
+                                    }
+                                });
+                                
+                                var src = $(ele).find('img').attr('src');
+                                src = src.replace('inactive','active');
+                                $(ele).find('img').attr('src', src);
+                                $(ele).siblings('input:hidden').val(value);
+                          }
+                          
+                          function callDeleteChart(index){
+                                if(confirm('Are you sure to delete ? ')){
+                                    $('.modal').modal('hide');
+                                    document.getElementById('{!$Component.theForm.saveIndex}').value = index;
+                                    showProgressBar('Deleting Chart....');
+                                    deleteChart();
+                                }else{
+                                    return false;
+                                }
+                          }
+                          
+                          function clearPopupChart(){
+                                $('[name="viewChart"], [name="editChart"]').empty();
+                          }
+                          
+                          function refreshNewChartDataHandler(modalId){
+                                if(validateChartData(modalId)){
+                                    showProgressBar('Refreshing Chart Data...');
+                                    refreshNewChartData();
+                                }
+                          }
+                          
+                          function saveNewChartClickHandler(modalId){
+                                if(validateChartData(modalId)){
+                                    $('.modal').modal('hide');
+                                    showProgressBar('Saving New Chart...');
+                                    saveNewChart();
+                                }
+                          }
+                          
+                          function refreshEditChartDataHandler(pos, modalId){
+                                if(validateChartData(modalId)){
+                                    document.getElementById('{!$Component.theForm.saveIndex}').value = pos;
+                                    showProgressBar('Refreshing Chart Data...');
+                                    refreshEditChartData();
+                                }
+                          }
+                          
+                          function saveEditChartClickHandler(pos, modalId){
+                                if(validateChartData(modalId)){
+                                    $('.modal').modal('hide');
+                                    document.getElementById('{!$Component.theForm.saveIndex}').value = pos;
+                                    showProgressBar('Saving Chart Data...');
+                                    saveEditChart();
+                                }
+                          }
+                          
+                          function validateChartData(modalId){
+                                var isValid = true;
+                                var requiredComponents = [
+                                    //$('#'+modalId+' .chartTitle').find('input[type="text"]'),
+                                    $('#'+modalId+' .timeFrame').find('select'),
+                                    $('#'+modalId+' .fromDate').find('input[type="text"]'),
+                                    $('#'+modalId+' .utilDate').find('input[type="text"]'),
+                                    $('#'+modalId+' .dataPointA').find('select'),
+                                    $('#'+modalId+' .locationA').find('select')
+                                ];
+                                for(var i = 0; i < requiredComponents.length ; i++){
+                                    requiredComponents[i].removeClass('error');
+                                    requiredComponents[i].parent().find('.errorMsg').remove();
+                                    if(requiredComponents[i].val() == ''){
+                                        var errBlock = $("<div class='errorMsg'><strong>Error: </strong>You must enter a value</div>");
+                                        requiredComponents[i].toggleClass('error');
+                                        requiredComponents[i].parent().append(errBlock);
+                                        isValid = false;
+                                    }
+                                }
+                                if(!isValid) return isValid;
+                                var fromDate = new Date($('#'+modalId+' .fromDate').find('input[type="text"]').val());
+                                var toDate = new Date($('#'+modalId+' .utilDate').find('input[type="text"]').val());
+                                if(fromDate > toDate){
+                                    $('#'+modalId+' .utilDate').find('input[type="text"]').toggleClass('error');
+                                    $('#'+modalId+' .utilDate').append($("<div class='errorMsg'><strong>Error: </strong>From Date must be less or equals to To Date</div>"));
+                                    isValid = false;
+                                }
+                                return isValid;
+                          }
+                          
+                          function refreshEditChart(){
+                                
+                                var index = document.getElementById('{!$Component.theForm.saveIndex}').value;
+                                var chartId = 'editChart' + index;
+                                var dbId = $('#'+chartId).parent().find('input:hidden').first().val();
+                                var dbChart = getDBCharts(dbId);
+                                
+                                if(dbChart != undefined){
+                                    $('#wrapEditChart'+index+' .titleTop:first').html(dbChart['Chart_Title__c']);
+                                    $('#wrapEditChart'+index+' .chartDescription').html(dbChart['Chart_Description__c']);
+                                    $('#wrapEditChart'+index+' .chartTitle').find('input[type="text"]').val(dbChart['Chart_Title__c']);
+                                }
+                                drawPopupChart();
+                                closeProgressBar();
+                          }
+                          
+                          function refreshNewChart(){
+                                var chartId = 'newChart';
+                                var dbId = $('#'+chartId).next().val()+'';
+                                var dbChart = getDBCharts(dbId);
+                                var xData = getDateRange(dbId);
+                                
+                                if(dbChart != undefined && xData != null){
+                                    dbChart['Id'] = dbChart['Position__c'];
+                                    
+                                    $('#wrapAddChart .titleTop:first').html(dbChart['Chart_Title__c']);
+                                    $('#wrapAddChart .chartDescription').html(dbChart['Chart_Description__c']);
+                                    $('#wrapAddChart .chartTitle').find('input[type="text"]').val(dbChart['Chart_Title__c']);
+                                    
+                                    var mapYData = getPerformData(dbChart['Timeframe__c']);
+                                    drawChartByType(dbChart, chartId, xData, mapYData, $('#'+chartId));
+                                }
+                                closeProgressBar();
+                          }
+                          
+                          function showProgressBar(message){
+                                waitingDialog.show(message);
+                          }
+                                            
+                          function closeProgressBar(){
+                                waitingDialog.hide();
+                          }
+                          
+                          function closeModalPopup(){
+                                $('.modal').modal('hide');
+                                document.getElementById('{!$Component.theForm.saveIndex}').value = '';
+                                document.getElementById('{!$Component.theForm.pickUtilDate}').value = '';
+                                document.getElementById('{!$Component.theForm.pickFromDate}').value = '';
+                          }
+                          
+                          function checkEditMode(){
+                                closeProgressBar();
+                                closeModalPopup();
+                                if(isEditMode){
+                                    enableSortCharts();
+                                }
+                          }
+                          
+                          var isEditMode = false;
+                          function enableSortCharts(){
+                                $("#sortable").sortable({ disabled: false });
+                                $('.wrapTitleChart').removeClass('disableHover').addClass('enableHover');
+                                $('.wrapTitleChart .delChart').show();;
+                                $("#sortable li").unbind("click");
+                                
+                                $('.wrapBtnTop .btnAddNewChart').hide();
+                                $('.wrapBtnTop .btnExportPdf').hide();
+                                $('.editChart').hide();
+                                $('.wrapBtnTop .btnSaveSort').show();
+                                $('.wrapBtnTop .cancelAddNew').show();
+                                isEditMode = true;
+                          }
+                          
+                          function cancelSortCharts(){
+                                $("#sortable" ).sortable({ disabled: true });
+                                $('.wrapTitleChart').removeClass('enableHover').addClass('disableHover');
+                                $('.wrapTitleChart .delChart').hide();;
+                                $("#sortable li").each(function(index){
+                                    $(this).live('click', function(event){
+                                        if(event.target.tagName != 'path'){
+                                            $('#wrapViewChart'+(index+1)).modal('show');
+                                        }
+                                    });
+                                });
+                                
+                                $('.wrapBtnTop .btnAddNewChart').show();
+                                $('.wrapBtnTop .btnExportPdf').show();
+                                $('.editChart').show();
+                                $('.wrapBtnTop .btnSaveSort').hide();
+                                $('.wrapBtnTop .cancelAddNew').hide();
+                                closeProgressBar();
+                                isEditMode = false;
+                          }
+                         
+                          function openEditChart(event, wrapEditId){
+                                event.stopPropagation();
+                                $('#'+wrapEditId).modal('show');
+                                clearPopupChart();
+                          }
+                          
+                          function getDataTableByTimeFrame(dbChart, xData, mapYData){
+                                var dataTable = [];
+                                
+                                if(dbChart['Timeframe__c'] == 'Month on month' || dbChart['Timeframe__c'] == 'Quarter on quarter'){
+                                
+                                    for(var i=0;i<xData.length;i++){
+                                        var key = dbChart['Id'] + " " + xData[i];
+                                        var yData = mapYData[key];
+                                        
+                                        if(yData != undefined){
+                                            var itemData = [xData[i], yData];
+                                            dataTable.push(itemData);
+                                        }
+                                    }
+                                
+                                //Year on year
+                                }else{
+                                    
+                                    var dateRangeYearOnYear = getDateRangeYearOnYear(dbChart['Id']);
+                                    if(dbChart['Chart_Type__c'] == 'Pie'){
+                                        
+                                        for(var i=0;i<dateRangeYearOnYear.length;i++){
+                                            for(var j=0;j<xData.length;j++){
+                                                
+                                                var itemData = [xData[j] + " " + dateRangeYearOnYear[i]];
+                                                var key = dbChart['Id'] + " " + xData[j] + " " + dateRangeYearOnYear[i];
+                                                var yData = mapYData[key];
+                                                if(yData != undefined){
+                                                    itemData.push(yData);
+                                                }else{
+                                                    itemData.push(null);
+                                                }
+                                                dataTable.push(itemData);
+                                            }
+                                        }   
+                                    }else{
+                                        for(var i=0;i<xData.length;i++){
+                                            var itemData = [];
+                                            for(var j=0;j<dateRangeYearOnYear.length;j++){
+                                                var key = dbChart['Id'] + " " + xData[i] + " " + dateRangeYearOnYear[j];
+                                                var yData = mapYData[key];
+                                                if(yData != undefined){
+                                                    itemData.push(yData);
+                                                }else{
+                                                    itemData.push(null);
+                                                }
+                                            }
+                                            
+                                            if(itemData.length > 0){
+                                                itemData.unshift(xData[i]);
+                                                dataTable.push(itemData);
+                                            }
+                                        }
+                                    }
+                                }
+                                return dataTable;
+                          }
+                          
+                          function gernerateChartData(dbChart, xData, mapYData, ele){
+                                var dataTable = new google.visualization.DataTable();
+                                var options = {};
+                                
+                                var data = getDataTableByTimeFrame(dbChart, xData, mapYData);
+                                if(dbChart['Chart_Type__c'] == 'Bar' || dbChart['Chart_Type__c'] == 'Line'){
+                                    
+                                    dataTable.addColumn('string', 'Year');
+                                    if(dbChart['Timeframe__c'] == 'Month on month' || dbChart['Timeframe__c'] == 'Quarter on quarter'){
+                                        dataTable.addColumn('number', '');
+                                        options.legend = {position: 'none'}
+                                    //Year on year
+                                    }else{
+                                        var dateRangeYearOnYear = getDateRangeYearOnYear(dbChart['Id']);
+                                        for(var i=0;i<dateRangeYearOnYear.length;i++){
+                                            dataTable.addColumn('number', dateRangeYearOnYear[i]);
+                                        }
+                                        if(dateRangeYearOnYear.length > 1) options.legend = {position: 'top'};
+                                        else options.legend = {position: 'none'};
+                                    }
+                                    
+                                    options.width = ele.parent().width() + 100;
+                                    options.chartArea = {left:40};
+                                    options.vAxis = {titleTextStyle: {color: 'black'}, count: -1};
+                                    options.hAxis = {titleTextStyle: {color: 'black'}, slantedText:true, viewWindowMode: 'pretty', slantedTextAngle:55, 
+                                                    gridlines: { count: 3, color: '#CCC' }};
+                                    
+                                }else{
+                                    
+                                    options = {
+                                        width: ele.parent().width() + 150,
+                                        height: 320,
+                                        pieHole: 0.4,
+                                        legend: {alignment: 'center'}
+                                    };
+                                    
+                                    if(ele.attr("name") == 'gchart'){
+                                        options.chartArea = {top: 40, left: 20}
+                                    }
+                                    
+                                    // Create the data table.
+                                    dataTable.addColumn('string', 'Topping');
+                                    dataTable.addColumn('number', 'Slices');
+                                }
+                                
+                                if(ele.attr("name") == 'viewChart'){
+                                    options.height = dbChart['Chart_Type__c'] == 'Pie' ? 400 : 330;
+                                    if(dbChart['Chart_Type__c'] == 'Pie'){ 
+                                        options.chartArea = {top: 20, left: 0}
+                                    }
+                                }
+                                if(ele.attr("name") == 'editChart'){
+                                    options.height = dbChart['Chart_Type__c'] == 'Pie' ? 350 : 300;
+                                    if(dbChart['Chart_Type__c'] == 'Pie'){ 
+                                        options.chartArea = {top: 20, left: 0}
+                                    }
+                                }
+                                
+                                dataTable.addRows(data);
+                                return {data:dataTable, options:options};
+                          
+                          }
+                          
+                          function drawChartByType(dbChart, chartId, xData, mapYData, ele){
+                                
+                                var chartType = dbChart['Chart_Type__c'];
+                                var chart;
+                                
+                                if(chartType == 'Bar'){
+                                    chart = new google.visualization.ColumnChart(document.getElementById(chartId));
+                                }else if(chartType == 'Line'){
+                                    chart = new google.visualization.LineChart(document.getElementById(chartId));
+                                }else if(chartType == 'Pie'){
+                                    chart = new google.visualization.PieChart(document.getElementById(chartId));
+                                }
+                                
+                                //add event listener on success draw chart save chart as Attachment
+                                if(ele.attr("name") == 'gchart') saveChartAsAttachment(chartId, chart, dbChart);
+                                
+                                var chartData = gernerateChartData(dbChart, xData, mapYData, ele);
+                                var data = chartData['data'];
+                                var options = chartData['options'];
+                                
+                                chart.draw(data, options);
+                                
+                         }
+                          
+                         function saveChartAsAttachment(chartId, chart, dbChart){
+                         
+                                //Wait for the chart to finish drawing before calling the getImageURI() method.
+                                google.visualization.events.addListener(chart, 'ready', function () {
+                                    Visualforce.remoting.Manager.invokeAction(
+                                        '{!$RemoteAction.P2P_MyMetricsController.createAttChartImage}',
+                                        chartId,
+                                        chart.getImageURI(),
+                                        dbChart["Id"],
+                                        function(result, event) {
+                                        }
+                                    );                         
+                                });
+                         }
+                         
+                         function setDisplayType(ele, displayTypeName) {
+                            var displayType = document.getElementById('{!$Component.theForm.displayType}');
+                            if (ele.checked) displayType.value = displayTypeName;
+                            refreshTable();
+                         }
+                         
+                         function fncCancelAddOrEditChartPopup(){
+                            closeModalPopup();
+                            showProgressBar('Reloading Chart....');
+                            fncCancelAddOrEditChart();
+                         }
+                         $(document).ready(function(){
+                            $.browser.safari = ($.browser.webkit && !(/chrome/.test(navigator.userAgent.toLowerCase())));
+                            if ($.browser.safari) {
+                                $('.container').addClass('isSafari');
+                            }
+                         });
+                    </script>
+                   
+                   
+                   <script type="text/javascript">
+                    setTimeout(function(){var a=document.createElement("script");
+                    var b=document.getElementsByTagName("script")[0];
+                    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0012/7064.js?"+Math.floor(new Date().getTime()/3600000);
+                    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+                   </script>
+                      
+                  </body>
+                  
+              </apex:define>    
+         </apex:composition>
+              
+                  
+  </html>
+</apex:page>

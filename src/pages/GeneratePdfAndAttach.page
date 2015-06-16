@@ -1,0 +1,17 @@
+<apex:page standardController="Opportunity" showHeader="true"  Sidebar="false" extensions="IODisplayController" action="{!createAgreementAndAttachPDF}">
+
+    <apex:sectionHeader title="Generate Agreement and Attach PDF"
+        subtitle="{!opportunity.Name}">
+    </apex:sectionHeader>
+    
+ <apex:form >
+   <apex:pageBlock id="NotClosed" rendered="{!showErrorMessage}">
+
+        <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!cancel}" value="Exit" />
+        </apex:pageBlockButtons>
+        {!ErrorMessage}
+    </apex:pageBlock>
+</apex:form>
+
+</apex:page>

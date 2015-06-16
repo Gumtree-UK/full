@@ -1,0 +1,106 @@
+<apex:page id="thePage" showHeader="true" sidebar="false" standardController="Invoices__c" recordSetVar="invs" extensions="InvoicesPayment" action="{!synInvoicesFromFiqas}" docType="html-5.0">
+    <head>
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    </head>
+    <div class="bPageTitle">
+        <div class="ptBody secondaryPalette">
+            <div class="content">
+            <apex:image id="theImage" value="/s.gif" styleClass="pageTitleIcon"/>
+            <apex:outputPanel >
+            <h2 class="pageType"><apex:outputText value="Pay Invoices"/></h2>
+            <h1 class="pageDescription"><apex:outputText value="{!accName}"/></h1>
+            <!-- <h1 class="pageDescription"><apex:outputText value="Confirm amount"/></h1> -->
+            </apex:outputPanel>
+            </div> 
+        </div> 
+    </div>
+          
+    <apex:form id="theForm">  
+        <apex:inputHidden value="{!strInvsWithPayAmount}" id="stringInvsAndTopays"/>
+        <apex:pageMessages />
+        <apex:pageBlock title="" mode="edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!gotoPaymentPage}" value="Pay now" rerender="stringInvsAndTopays" oncomplete="popupPaymentMethod();"/>
+                <apex:commandButton value="Cancel" onClick="window.location='/{!accId}';return false;"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!lstDtoInv}" var="dto" id="listInvs">
+                <apex:column value="{!dto.inv.Name}"/> 
+                <apex:column value="{!dto.inv.Invoice_Date__c}"/>
+                <apex:column value="{!dto.inv.Payment_Due_Date__c}"/>
+                <apex:column value="{!dto.inv.Invoice_Status__c}"/>
+                <apex:column value="{!dto.inv.Invoice_Amount__c}">
+                    <apex:facet name="footer">£{!totalInvAmount}</apex:facet>
+                </apex:column> 
+                <apex:column value="{!dto.inv.Amount_Due__c}">
+                    <apex:facet name="footer">£{!totalDueAmount}</apex:facet>
+                </apex:column>  
+                <apex:column headerValue="Amount to pay"> 
+                    <apex:input value="{!dto.toPay}" disabled="{!NOT(isEditable)}" styleClass="clsToPay" onkeyup="calTotalPay();calRemaining(this);"/>
+                    <apex:facet name="footer"><div id="totalPay"></div></apex:facet>
+                    <apex:outputPanel rendered="{!IF(dto.errMsg=='',false,true)}">  
+                        <div class="errorMsg"><strong>Error:</strong>{!dto.errMsg}</div>
+                    </apex:outputPanel>  
+                </apex:column>
+                <apex:column headerValue="Amount remaining">
+                    <apex:outputPanel styleClass="clsRemaining">£0.00</apex:outputPanel>
+                    <apex:facet name="footer"><div id="totalRemaining">£0.00</div></apex:facet>
+                </apex:column>
+
+            </apex:pageBlockTable> 
+            
+        </apex:pageBlock> 
+    </apex:form>
+    
+    <script>
+        function popupPaymentMethod(){ 
+            var hiddenInvsWithPays = document.getElementById("thePage:theForm:stringInvsAndTopays").value;
+            if(hiddenInvsWithPays=='') return;
+             
+            var url = "/apex/InvoicesPaymentMethodsPopup?accId={!accId}&strInvsWithPayAmount="+hiddenInvsWithPays+"&refurl={!fromId}";
+            var strWindowFeatures ="location=yes,resizable=yes,scrollbars=yes,width=420,height=540";
+            window.open(url, "Payment", strWindowFeatures);  
+        }
+        
+        $(document).ready(function() {
+            calTotalPay();// when the page load
+        });
+    
+        function calTotalPay(){ 
+            var totalPay = 0;
+            var toPays = document.getElementsByClassName("clsToPay");
+            for (var i = toPays.length - 1; i >= 0; i--){
+                var amount = parseFloat(toPays[i].value); 
+                totalPay = totalPay + amount;
+            }
+            var elem = document.getElementById("totalPay").innerHTML = "£"+totalPay.toFixed(2);
+        } 
+         
+        function calRemaining(toPay){ 
+            var due = $(toPay).closest('td').prev().find('span').text().replace('£', '').replace(',', ''); 
+            due = parseFloat(due).toFixed(2); 
+             
+            var pay = parseFloat($(toPay).val()); 
+            
+            var remaining = (due - pay).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"); 
+            $(toPay).closest('td').next().find('span').text('£'+remaining);
+            
+            calTotalRemaining();
+        }
+    
+        function calTotalRemaining(){ 
+            var totalRemaining = 0;
+            var remainings = document.getElementsByClassName("clsRemaining");
+            for (var i = remainings.length - 1; i >= 0; i--){
+                var tem = $(remainings[i]).text().replace('£', '').replace(',', '');
+                var amount = parseFloat(tem); 
+                totalRemaining = totalRemaining + amount;
+            }
+            totalRemaining = totalRemaining.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"); 
+            var elem = document.getElementById("totalRemaining").innerHTML = "£"+totalRemaining;
+        }
+        
+    </script>
+     
+      
+</apex:page>

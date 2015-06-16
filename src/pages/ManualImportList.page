@@ -1,0 +1,43 @@
+<apex:page controller="ManualImportListController" action="{!checkProductListServers}"> 
+	<head>
+		<link href="/sCSS/27.0/sprites/1362621144000/Theme3/default/gc/WaitingPages.css" rel="stylesheet" type="text/css"/>
+		<style>
+			.wpTable {
+				font-size: 1.8em;
+				font-weight: bold;
+				position: fixed;
+				z-index: 99999;
+				left: 35%;
+			}
+		</style>
+	</head>
+	<body class="wpFullPage">
+	<apex:form id="frm">
+		<div class="overlayBackground" style="width: 100%; height: 100%; display: block;"></div>
+		<apex:pageMessages />
+		<apex:actionPoller action="{!pollReportRequest}" rerender="frm" interval="5" enabled="{!keepPollingReportRequest}"/>
+		<apex:actionPoller action="{!pollReportStatus}" rerender="frm" interval="5" enabled="{!keepPollingStatus}"/>
+		<div class="wpContainer fpc">
+			<table class="wpTable" cellpadding="0" cellspacing="0">
+				<tbody>
+					<tr><td class="wpCellTopLeft"></td><td class="wpCellTopRight"></td></tr>
+					<tr>
+						<td class="wpCellMiddleLeft">
+							<apex:outputText rendered="{!OR(keepPollingReportRequest,keepPollingStatus)}">
+								<img src="/img/loading32.gif" alt="Processing..." width="32" height="32" title="Processing..."/>
+							</apex:outputText>
+						</td>
+						<td class="wpCellMiddleRight wpText">
+							<apex:outputText rendered="{!keepPollingReportRequest}">Requesting Report(s) From Server</apex:outputText>
+							<apex:outputText rendered="{!keepPollingStatus}">Updating Records</apex:outputText>
+							<apex:outputText rendered="{!NOT(OR(keepPollingReportRequest,keepPollingStatus))}">Process Complete</apex:outputText>
+						</td>
+					</tr>
+					<tr><td class="wpCellBottomLeft"></td><td class="wpCellBottomRight"></td></tr>
+				</tbody>
+			</table>
+		</div>
+	</apex:form>
+	</body>
+	<apex:detail subject="{!oppId}" relatedList="true" title="true" showChatter="true"/>
+</apex:page>

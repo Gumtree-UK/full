@@ -1,0 +1,120 @@
+<apex:page standardController="Opportunity" extensions="IOSortOrderExtension" showHeader="false" renderas="pdf">
+<head>
+<style type="text/css" media="print,screen"> 
+   body { font-family: Arial Unicode MS; font-size: 12px } 
+   bold { font-family: Arial Unicode MS; font-size: 12px; font-weight:bold;} 
+   #s10 { font-family: Arial Unicode MS; font-size: 9px;}
+</style>
+</head>
+<body>
+
+                  <table width="100%" columns="2">
+    <tr>
+        <td width="50%" align="left"><img src='{!URLFOR($Resource.GumtreeMediaLogo)}' title="logo" /></td>
+        <td width="50%" align="right"><img  src='{!URLFOR($Resource.DirectDebit)}' style="right;" title="DD" /></td>
+                
+    </tr>  
+</table>
+<br/>
+ <table width="100%">
+    <tr valign="top">
+       <td align="left" width="50%">
+           <div id="">
+                              
+            {!$Organization.Name}<br/>
+           {!$Organization.Street}, {!$Organization.State}<br/>
+             {!$Organization.PostalCode}, {!$Organization.Country}<br/>
+             Phone: 01482 660 504<br/>
+             Email: accounts@gumtree.com<br/><br/>
+                   
+                Name(s) of account holder(s)<br/>
+                {{*Ttl1_es_:signer:BankAccountHoldersname}}<br/>
+                <br/>
+                Bank/building Society Account Number<br/>
+                {{*Ttl2_es_:signer:string(char=num,maxlen=10)}}
+                <br/>
+                Bank sort code<br/>
+               {{*Ttl3_es_:signer:string(char=num,maxlen=6)}}<br/>
+                <b>Name and full postal address of your bank or building society</b><br/>
+                <br/>
+                To: The Manager<br/>
+                Name:{{*Ttl4_es_:signer:bank_name}}<br/>
+               Address<br/>
+               Street:{{*Ttl5_es_:signer:bank_street}}<br/><br/>
+               City:&nbsp;&nbsp;{{*Ttl6_es_:signer:bank_city_br}}<br/><br/>
+               Postal Code:{{*Ttl7_es_:signer:post_c}}
+                <br/><br/>
+                Reference:<br/>
+               {!Opportunity.Mandate_Reference__c}<br/>
+       </div>
+       </td>
+       <td width="4%"></td>
+       <td align="left" width="50%">
+           <div id="">
+               <b>Instruction to your bank or building society to pay by Direct Debit</b><br/>
+               <b> Service User Number </b><br/>
+                 <img src='{!URLFOR($Resource.DirectDebit_ServiceUserNumber)}' title="SUN" /><br/><br/>
+                  <div id="border">
+                      <b>For {!$Organization.Name} Official Use Only.</b><br/>
+                      This is not part of the instruction to your bank or building society.The amounts, which represent current subscription rates, are to be debited monthly.
+                  </div>
+                  <br/>
+                  <b>Instruction to your Bank or Building Society</b><br/><br/>
+                  Please pay {!$Organization.Name} Direct Debits from the account detailed in this Instruction subject to the safeguards assured by the Direct Debit Guarantee. I understand that this Instruction may remain with {!$Organization.Name} and, if so, details will be passed electronically to my bank/building society.<br/>
+                  Signature(s)<br/>
+                 {{_es_signer_signature}}<br/>
+                  Date<br/>
+                  {{_es_signer_date}}<br/>  
+                  {{*[]}}Please review the Direct Debit details above and make any amendments necessary. Please confirm that the account you have provided is in your name and that you are the only signatory required to authorise direct debit. 
+            </div>
+       </td>
+   </tr>
+   
+</table>
+
+<hr style="border-top: dashed 2px #000" />
+
+<table width="100%" bgcolor="#dddddd">
+
+<tr>
+<td><br/>
+
+ <table width="100%" columns="1">
+        <tr colspan="2">
+            <td width="70%" align="center">
+                Banks and building societies may not accept Direct Debit Instructions for some types of account<br/><br/>
+                This guarantee should be detached and retained by the payer.
+            </td>
+        </tr>
+  </table>
+
+  <table width="100%" align="center" columns="2" style="background-color:#ffffff; margin-bottom:20px; border:solid; border-color:#999;" >
+     <tr>
+        <td width="100%" align="center">
+           <p> <font size="16"> The Direct Debit Guarantee</font></p>
+        </td>
+        <td width="30%" align="right">
+            <img  src='{!URLFOR($Resource.Directdebit)}' title="DirectDebit" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <ul>
+                <li>This Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits</li>
+                <li>If there are any changes to the amount, date or frequency of your Direct Debit {!$Organization.Name} will notify you <b>10</b> working days in advance of your account being debited or as otherwise agreed. If you request {!$Organization.Name} to collect a payment, confirmation of the amount and date will be given to you at the time of the request.</li>
+                <li>If an error is made in the payment of your Direct Debit, by {!$Organization.Name} or your bank or building society, you are entitled to a full and immediate refund of the amount paid from your bank or building society</li>
+                <li>If you receive a refund you are not entitled to, you must pay it back when {!$Organization.Name} asks you to</li>
+                <li>You can cancel a Direct Debit at any time by simply contacting your bank or building society. Written confirmation may be required. Please also notify us.</li>
+            </ul>
+        </td>
+    </tr>
+    
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+
+</apex:page>

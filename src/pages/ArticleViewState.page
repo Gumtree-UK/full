@@ -1,0 +1,49 @@
+<apex:page controller="ArticleViewStateController">
+<style>
+	
+	.content .pageTitleIcon {
+		background-image: url(/img/knowledge/publishing/knowledgemanagement32.png);
+		background-position: 0 0;
+		width: 32px;
+		height: 32px;
+	}
+	
+	</style>
+	
+	<div class="bPageTitle">
+		<div class="ptBody secondaryPalette brandSecondaryBrd">
+			<div class="content">
+				<img src="/s.gif" class="pageTitleIcon" title="Article" alt="Article" />
+					<h1 class="pageType">Article</h1>
+					<span class="titleSeparatingColon">:</span>
+					<h2 class="pageDescription">{!knowArt.Title}</h2>
+			</div>				
+		</div>
+	</div>
+	
+	<apex:pageBlock title="Daily Article Viewstate">
+		<apex:outputText rendered="{!NOT(hasArtStat)}" value="No Related Article Viewstate" />
+		<apex:pageBlockTable value="{!lstArtStat}" var="artSta" rendered="{!hasArtStat}">
+			<apex:column >
+				<apex:facet name="header">{!$ObjectType.DailyArticleState__c.fields.Name.Label}</apex:facet>
+				<apex:outputLink value="/{!artSta.Id}">{!artSta.Name}</apex:outputLink>
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">{!$ObjectType.DailyArticleState__c.fields.ArticleNumber__c.Label}</apex:facet>
+				<apex:outputField value="{!artSta.ArticleNumber__c}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">{!$ObjectType.DailyArticleState__c.fields.ArticleTitle__c.Label}</apex:facet>
+				<apex:outputField value="{!artSta.ArticleTitle__c}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">{!$ObjectType.DailyArticleState__c.fields.ViewCount__c.Label}</apex:facet>
+				<apex:outputField value="{!artSta.ViewCount__c}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">{!$ObjectType.DailyArticleState__c.fields.ViewDate__c.Label}</apex:facet>
+				<apex:outputField value="{!artSta.ViewDate__c}" />
+			</apex:column>
+		</apex:pageBlockTable>
+	</apex:pageBlock>
+</apex:page>

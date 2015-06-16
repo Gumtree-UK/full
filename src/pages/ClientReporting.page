@@ -1,0 +1,155 @@
+<apex:page standardController="Opportunity" showHeader="false" renderas="pdf">
+<head>
+    <style type="text/css">
+            body {font-family: "Arial" "Sans-Serif"; font-size:12px; }
+    </style>
+</head>
+<table border="0" cellspacing="0" cellpadding="0" width="100%" id="table1">
+<tr>
+    <td>
+        <img src='{!URLFOR($Resource.GumtreeMediaLogo)}' title="logo" />
+    </td>
+    <td align="left">
+        {!$Organization.Name}<br/>
+        {!$Organization.Street}<br/>
+        {!$Organization.State}, {!$Organization.PostalCode}<br/>
+        {!$Organization.Country}<br/>
+    </td>
+    <td align="right"><b>CAMPAIGN REPORT<br/> INSERTION ORDER # {!Opportunity.IOnumber__c}</b><br/>
+    <br/>
+
+    </td>
+</tr>
+</table>
+<br/>
+<hr/>
+<table border="0" bordercolor="#000000" width="100%">
+    <tr>
+        <td width="20%">
+            <b>Campaign Contact</b>
+        </td>
+        <td width="30%">
+        
+        </td>
+        <td width="20%">
+        <b>Gumtree Contact</b>
+        </td>
+        <td width="30%">
+        
+        </td>
+    </tr>
+    <tr>
+        <td width="20%">
+            <font>Name:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Primary_Contact__r.FirstName} {!Opportunity.Primary_Contact__r.LastName}</font>
+        </td>
+        <td width="20%">
+            <font>Name:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Owner.FirstName} {!Opportunity.Owner.LastName}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font>Company:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Primary_Contact__r.Account.Name}</font>
+        </td>
+        <td width="20%">
+            <font>Email:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Owner.Email}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font>Email:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Primary_Contact__r.Email}</font>
+        </td>
+        <td width="20%">
+            <font>Phone:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Owner.Phone}</font>
+        </td>
+    </tr>
+        <tr>
+        <td width="20%">
+            <font>Phone:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Primary_Contact__r.Phone}</font>
+        </td>
+        <td width="20%">
+            <font></font>
+        </td>
+        <td width="30%">
+            <font></font>
+        </td>
+    </tr>
+    <tr>
+        <td width="20%">
+            <font>Billing Address:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Primary_Contact__r.Account.BillingStreet}<br/>{!Opportunity.Primary_Contact__r.Account.BillingCity}, {!Opportunity.Primary_Contact__r.Account.BillingCountry}, {!Opportunity.Primary_Contact__r.Account.BillingPostalCode}</font>
+        </td>
+        <td width="20%">
+            <font>Advertiser:</font>
+        </td>
+        <td width="30%">
+            <font>{!Opportunity.Account.name}</font>
+        </td>
+    </tr>
+</table>
+<br/>
+<hr/>
+<p><b><font>Campaign Deliveries: {!Opportunity.Campaign_Name__c}</font></b></p>
+<table border="0" width="100%" id="table4">
+<tr>
+       <td bgcolor="#C0C0C0" border="" bordercolor="#000000" align="center"><font color="000000" size="2"><b>PRODUCT</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font color="000000" size="2"><b>START</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font color="000000" size="2"><b>END</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font color="000000" size="2"><b>QUANTITY BOOKED</b></font></td> 
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font color="000000" size="2"><b>METRIC</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font color="000000" size="2"><b>DELIVERED IMPRESSIONS</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font color="000000" size="2"><b>DELIVERED CLICKS</b></font></td>
+       <td bgcolor="#C0C0C0" bordercolor="#000000" align="center"><font color="000000" size="2"><b>CLICK RATE</b></font></td>
+</tr>
+<tr>
+       <apex:repeat value="{!Opportunity.OpportunityLineItems}" var="line">
+          <tr>
+             <td align="center" bordercolor="#000000"><font>{!line.PricebookEntry.Name}</font></td>
+             <td align="center" bordercolor="#000000"><font>{!day(line.from_Date__c)}/{!month(line.from_Date__c)}/{!year(line.from_Date__c)}</font></td>
+             <td align="center" bordercolor="#000000"><font>{!day(line.until_Date__c)}/{!month(line.until_Date__c)}/{!year(line.until_Date__c)}</font></td>
+             <td align="center" bordercolor="#000000"><font><apex:outputText value="{0, number, ###,###,###,###}"><apex:param value="{!line.Quantity}"/></apex:outputText></font></td>
+             <td align="center" bordercolor="#000000"><font>{!line.Billing_Category__c}</font></td>
+             <td align="center" bordercolor="#000000"><font><apex:outputText value="{0, number, ###,###,###,###}"><apex:param value="{!line.delivered_AI_LT__c}"/></apex:outputText></font></td>
+             <td align="center" bordercolor="#000000"><font><apex:outputText value="{0, number, ###,###,###,###}"><apex:param value="{!line.delivered_Clicks_LT__c}"/></apex:outputText></font></td>
+             <td align="center" bordercolor="#000000"><font>{!line.Click_Rate_LT__c}</font></td>
+          </tr>
+          <tr>
+          <td bgcolor="#E8E8E8" bordercolor="#000000" colspan="9" align="left">
+          <font>{!line.Description}</font></td>
+          </tr>
+       </apex:repeat>  
+</tr>
+</table>
+<br/>
+<hr/>
+<br/>
+<font><b>Best Performing Creative</b></font><br/>
+<br/>
+<apex:outputText value="{!Opportunity.Best_Performing_Creative__c}" escape="false" /><br/>
+<br/>
+<font><b>Campaign Synopsis</b></font><br/>
+<br/>
+<font><apex:outputText value="{!Opportunity.Campaign_Synopsis__c}" /></font><br/>
+</apex:page>

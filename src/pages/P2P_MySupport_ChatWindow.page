@@ -1,0 +1,135 @@
+<apex:page showHeader="false" controller="P2P_MySupport_ChatController">
+	<head>
+	    <script>
+	        liveagent.addEventListener(liveagent.chasitor.Events.CHAT_ESTABLISHED, myCallBack);
+		    function myCallBack(){
+		        var details = liveagent.chasitor.getDetails();
+		        var agent  = details['agent'];
+		        var userId = agent['userId'];       
+		        var caseId ='';
+		        var prechatDetails = details['prechatDetails'];
+		        for(var i=0;i<prechatDetails.length;i++){
+		           var item = prechatDetails[i];
+		            if(item['label']== 'PreChatCaseId'){
+		              caseId = item['value'];           
+		            }
+		       	}
+		       	try{                 
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.P2P_MySupport_ChatController.updateCaseOwner}',
+                        caseId, 
+                        userId,                         
+                        function(result, event)
+                        {                        
+                            if (event.status) {
+                                //if(result['Result'] =='Error'){                                      
+                            	//alert('Error= '+result['Error']);                                       
+                                //}  
+                            }                        
+                        },
+                        {escape: false}
+                    );
+                }catch(ex){
+                    alert(ex.message);              
+                }   
+		    }
+	    </script>
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+		<meta name="apple-mobile-web-app-capable" content="yes"/>   
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+		<meta http-equiv="X-UA-Compatible" content="chrome=1"/>
+	</head>
+
+	<!-- Add custom CSS here ?  
+	
+	<!-- The root element for the chat window. This element gets a CSS class dynamically applied to indicate the state of the chat window. Available states are:  
+	“liveAgentStateWaiting” - indicates that the chat has not yet been answered.  “liveAgentState” - indicates that the chat is engaged  
+	“liveAgentStateStatusMessage” - indicates that a status message is being displayed to the user.  
+	“liveAgentStateEnded” - indicates that the chat has ended. --> 
+
+	<liveAgent:clientchat >  
+		<style type="text/css">
+		    .waitingMessage { display:none; } /* hide the waiting message by default */
+		    .liveAgentStateWaiting div.waitingMessage { display:block; }  /* only show the waiting message when the liveagent status is waiting */
+		    .liveAgentState div.chatwrapper { display:block; }
+		    #liveAgentChatLog { overflow:auto; width:auto; height:160px; border: 0px; margin:10px 0; padding:5px; border:#B1C4DF 1px solid;} /* set width + height or style of chat log */
+		    #liveAgentChatInput {width:100%; height:30px; border: 0px; margin:0 10px 10px 0; padding:5px; border:#B1C4DF 1px solid;}
+		    .headerbox{
+		        background-color: #79b74a;
+		        -webkit-box-shadow: 0px 1px 1px #79b74a;
+		        -moz-box-shadow: 0px 1px 1px #79b74a;
+		        box-shadow: 0px 1px 1px #888888;
+		        text-align: center;
+		        height: 75px;
+		    }
+		    .headerSideLeft{
+		        position: absolute;
+		        clip: rect(0px,90px,100px,0px);
+		        left: 20px;
+		    }
+		    .headerSideRight{   
+		        position: absolute;
+		        clip: rect(0px,210px,100px,90px);
+		        right: 20px;
+		    }
+		    .cropImageHeaderRight{
+		        display: block;
+		        float: right;
+		        height: 75px;
+		        width: 122px;
+		    }
+		    .cropImageHeaderLeft{
+		        display: block;
+		        float: left;
+		        height: 75px;
+		        overflow: hidden;
+		        width: 85px;
+		    }
+		    #chatinputwindow{
+		        text-align: right;
+		        width: 100%;
+		    }
+		    #chatinputwindow > span:FIRST-CHILD{ 
+		        float: left;
+		        width: 100%;
+		    }
+		</style>
+		<div style="margin:5px; padding:0 0 10px; border:#79b74a 2px solid;"> 
+		    <table style="width:100%" cellpadding="0" cellspacing="0">
+		    	<tr>
+		    		<td>
+				        <div>
+				            <div class="headerbox">
+				                <div class="cropImageHeaderLeft" style="background: url('{!URLFOR($Resource.GumtreeLiveChatHeader)}') no-repeat scroll 0 -13px transparent;"></div>
+				                <div class="cropImageHeaderRight" style="background: url('{!URLFOR($Resource.GumtreeLiveChatHeader)}') no-repeat scroll -95px -13px transparent;"></div>
+				            </div>
+				              
+				            <div style="padding: 10px 10px 0;">
+				                <div id="chatControls" class="pod" style="width:auto; border: 0px; text-align: right;">
+				                    <liveAgent:clientChatEndButton label="End" /> 
+				                </div>
+				                <div id="waitingMessage" class="modal waitingMessage"> 
+				                    <em>Welcome to Gumtree Help Live Chat. <br/><br/>You will be connected to a representative shortly...</em> 
+				                </div>         
+				                <liveAgent:clientChatLog /> 
+				                <liveAgent:clientChatMessages />  
+				                <div id="chatinputwindow" class="pod">
+				                	<liveagent:clientChatInput id="inputbox"/> 
+				                	<liveAgent:clientChatFileTransfer fileTransferSendFileLabel="Upload or drag your file here."/>
+				                    <liveAgent:clientChatSendButton />
+				                </div>
+				            </div>
+				        </div>
+		        	</td>
+		        </tr>
+			</table>   
+		</div>
+	</liveAgent:clientchat>  
+	<!-- You can customize the window title with the js below --> 
+	<script type="text/javascript"> 
+		document.title = "Gumtree Help Live Chat"; 
+		window.onload = function(){
+	        window.resizeTo(430,480);
+	    }
+	</script>  
+</apex:page>

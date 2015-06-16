@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>17.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>// Saves the custom detail to a custom field on LiveChatTranscript at the end of a chat
+liveagent.addCustomDetail(&apos;Company&apos;, &apos;Acme&apos;).saveToTranscript(&apos;Company__c&apos;);</description>
+    <label>KnowledgeContactOptionsV2</label>
+</ApexPage>

@@ -1,0 +1,69 @@
+<apex:page controller="EmailSenderController" >
+<!-- <c:EmailSender opId="{!Oppid}" groupIds="{!groupId}" GeneratePDF="true"/>-->
+
+  <head>
+        <style type="text/css">
+            .blockRequired {
+                background-color: #CC0000; 
+                bottom: 1px;
+                left: -4px; 
+                position: absolute;
+                top: 1px;
+                width: 3px;
+            }
+            .requiredInput {
+                height: 100%;
+                position: relative;
+            }       
+        </style>  
+    </head>
+     
+    <apex:form id="form"> 
+        
+        <apex:SectionHeader title="E-Mail" subtitle="Sending an email"/>
+        <apex:PageBlock id="PageBlock" mode="edit">           
+            <apex:PageBlockSection id="PageBlockSection" title="Compose" columns="1" >             
+                <apex:outputPanel id="Panel" >
+                    <table width="100%"> 
+                        
+                        <tr><td width ="10%" align="right"><apex:outputText value="To"></apex:outputText></td><td width ="1%"></td>
+                            <td width="70%" align="left">
+                                <div class="requiredInput"><div class="blockRequired"></div><apex:inputText id="toEmail" style="width:100%" value="{!toAddress}" required="true"/></div>     
+                            </td><td width ="19%"></td>  
+                        </tr>
+                       
+                        <tr><td align="right"><apex:outputText value="CC"></apex:outputText></td><td></td>
+                            <td align="left">
+                                <apex:inputText style="width:100%" value="{!ccAddress}"/>           
+                            </td> <td align="left"><apex:outputText value="( ';' semicolon separator)"/></td>
+                        </tr>
+                          
+                        <tr><td align="right" ><apex:outputLabel value="Subject "/></td><td></td> 
+                            <td align="left"><apex:inputText style="width:100%" value="{!subject}"/>  
+                            </td>  
+                        </tr> 
+                        
+                         <tr><td><br/> </td></tr>
+                        <tr><td align="right"><apex:outputLabel value="Body"/></td><td></td>
+                            <td align="left">
+                                <apex:inputTextArea richtext="true" style="width:500px;" rows="30" value="{!bodyEmail}"></apex:inputTextArea> 
+                            </td>
+                         </tr> 
+                         <tr ><td></td><td align="right">Attachment:</td>
+                             <td align="left">
+                             <!-- <apex:outputLink onclick="window.open('/apex/GeneratePDFV2?groupId={!groupId}&OppId={!oppId}&isPreview=true');" rendered="{!isGeneratePDF}"> <b>{!atmentName}</b></apex:outputLink> -->
+                             <apex:outputLink onclick="window.open('/{!lstcon[0].id}?isdtp=vw');return false;" rendered="{!isPreview}"> <b>{!atmentName}</b></apex:outputLink>
+                             </td>
+                            
+                         </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:PageBlockSection>
+           
+            <apex:PageBlockButtons >
+                <apex:commandButton value="Send" action="{!sendMail}"/> 
+                 <apex:commandButton value="back" action="/{!oppId}"/> 
+            </apex:PageBlockButtons>
+        </apex:PageBlock> 
+    </apex:form>
+</apex:page>
